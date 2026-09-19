@@ -7,18 +7,12 @@ import {
   ArrowLeft,
   ArrowDownLeft,
   ArrowUpRight,
-  Calendar,
-  Clock,
   CheckCircle2,
   Loader2,
-  DollarSign,
-  Tag,
-  CreditCard,
-  FileText
 } from 'lucide-react';
 import type { Category, payment_methods, Transaction, TransactionCreate,User } from '@/types';
 import { LoadingTransaction } from '@/components/ui/loading';
-
+import { getExchangeRate } from '@/utils/exchange';
 const QUICK_AMOUNTS = [10, 25, 50, 100, 250];
 
 interface TransactionProps {
@@ -44,7 +38,7 @@ export default function TransactionAction(
       amount: transaction?.amount??0,
       title:transaction?.title??"",
       type: transaction?.type??'EXPENSE',
-      currency: transaction?.currency??'USD',
+      currency: transaction?.currency??user?.currency??'USD',
       category_id: transaction?.categories?.id??'',
       date:transaction?.date??new Date().toISOString().split('T')[0],
       payment_method_id: transaction?.payment_methods?.id??'',
@@ -59,6 +53,7 @@ export default function TransactionAction(
         await fetchCategories();
         await fetchPaymentMethods();
         setIsLoadingFetch(false);
+        
       }
       fetchdata();
   }, []);
@@ -107,7 +102,6 @@ export default function TransactionAction(
     const data = await response.json();
     if (response.ok) {
       setCategories(data.categories);
-      
     }
   }catch(error){
     console.error('Error fetching categories:', error);
@@ -142,7 +136,6 @@ export default function TransactionAction(
     d.setDate(d.getDate() - daysAgo);
     setTransactionData({...transactionData,date:d.toISOString().split('T')[0]});
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -165,6 +158,9 @@ export default function TransactionAction(
     setLoading(true)
 
     if(mode==='create'){
+      console.log(transactionData)
+      const rate = await getExchangeRate(user?.currency || 'USD');
+      const SendData = {...transactionData,amount:(transactionData.amount / (rate ?? 1)).toFixed(2)}
       try {
       const response = await fetch(`${APP_URL}/api/transactions`, {
         method: 'POST',
@@ -173,11 +169,10 @@ export default function TransactionAction(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(transactionData),
+        body: JSON.stringify(SendData),
       });
 
       const data = await response.json();
-
       if (response.ok || data.status === 200 || data.status === 201) {
         toast.success(
           `${transactionData.type === 'INCOME' ? 'Income' : 'Expense'} recorded successfully`
@@ -585,6 +580,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
+              <option value="">Select Category</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id} style={{ background: '#111', color: '#fff' }}>
                   {cat.name}
@@ -627,6 +623,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
+              <option value="">Select Payment Method</option>
               {paymentMethods.map((pm) => (
                 <option key={pm.id} value={pm.id} style={{ background: '#111', color: '#fff' }}>
                   {pm.name}

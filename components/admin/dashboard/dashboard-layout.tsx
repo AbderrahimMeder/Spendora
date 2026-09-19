@@ -16,8 +16,7 @@ import {
   Menu,
   Sparkles
 } from 'lucide-react';
-import {toast} from 'sonner';
-import { useAuth } from '@/hooks/auth';
+import {toast} from 'sonner';;
 import { User } from '@/types';
 interface DashboardLayoutProps {
   children?: ReactNode;
@@ -28,13 +27,21 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
   
   const router = useRouter();
   const pathname = usePathname();
-  const { logout } = useAuth() as User;
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [collapsed] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const handleLogout = () => {
-    logout();
-    toast.success('Successfully signed out');
+  const handleLogout =async () => {
+    try{
+      const res= await fetch('/api/auth/me', {
+        method: 'GET',
+      });
+      const data = await res.json();
+      if(data.status === 200){
+        toast.success(data.message);
+      }
+    }catch(error){
+      toast.error('Logout failed');
+    }
     router.push('/login');
   };
   const navLinks = [

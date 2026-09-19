@@ -10,9 +10,10 @@ export default async function Page() {
     if(token == undefined || null || !user){
         redirect('/login');
     }
+    
     return (
         <div>
-            <Transactions  rate={1} fetchagain={false} token={token} currency={user?.currency} />
+            <Transactions fetchagain={false} token={token} currency={user?.currency} />
         </div>
     );
 }
