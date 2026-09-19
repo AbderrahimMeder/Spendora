@@ -1,5 +1,8 @@
+"use client"
 import  { useState, ReactNode, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   Wallet,
   LayoutDashboard,
@@ -13,36 +16,30 @@ import {
   Menu,
   Sparkles
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 import { useAuth } from '@/hooks/auth';
 import { User } from '@/types';
 interface DashboardLayoutProps {
   children?: ReactNode;
-  onOpenAddModal?: (type: 'expense' | 'income') => void;
+  user: User;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user, logout } = useAuth() as User;
+export default function DashboardLayout({ children, user }: DashboardLayoutProps) {
+  
+  const router = useRouter();
+  const pathname = usePathname();
+  const { logout } = useAuth() as User;
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [collapsed] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-    }
-  }, [])
   const handleLogout = () => {
     logout();
     toast.success('Successfully signed out');
-    navigate('/login');
+    router.push('/login');
   };
-  const transactionsCount = localStorage.getItem("transactionsCount");
   const navLinks = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, badge: null },
-    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: transactionsCount },
+    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: '0' },
     { label: 'Budgets', path: '/budgets', icon: Target, badge: null },
     { label: 'Analytics & Reports', path: '/reports', icon: BarChart3, badge: '21' },
     { label: 'Settings', path: '/settings', icon: Settings, badge: null },
@@ -103,7 +100,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             padding: '0 0.5rem',
           }}>
             <Link
-              to="/"
+              href="/"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -150,11 +147,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {navLinks.map((link) => {
               const Icon = link.icon;
-              const isActive = location.pathname === link.path || (link.path === '/dashboard' && location.pathname === '/dashboard/');
+              const isActive = pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/');
               return (
                 <Link
                   key={link.label}
-                  to={link.path}
+                  href={link.path}
                   onClick={() => setMobileSidebarOpen(false)}
                   style={{
                     display: 'flex',

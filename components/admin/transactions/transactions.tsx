@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+'use client';
+import React, { useState, useMemo,useEffect } from 'react';
 import {
   Search,
   Plus,
@@ -31,45 +32,33 @@ import {
   SlidersHorizontal,
   RefreshCw
 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Transaction } from '@/types';
 import { useAuth } from '@/hooks/auth';
-import toast from 'react-hot-toast';
-import Loading, { LoadingTransaction } from '../ui/loading';
+import {toast} from 'sonner';
+import Loading, { LoadingTransaction } from '@/components/ui/loading';
+import { navigate } from 'next/dist/client/components/segment-cache/navigation';
 
-const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
-};
 
 interface TransactionsProps {
-  transactions?: Transaction[];
-  currency?: string;
-  rate?: number;
-  fetchagain: boolean;
+  currency: string;
+  rate: number;
+  fetchagain?: boolean;
+  token:string|null;
 }
 
-export default function Transactions({
-  transactions = [],
+export  function Transactions({
   rate = 1,
-  fetchagain
+  fetchagain,
+  token
 }: TransactionsProps) {
   const APP_URL = 'http://localhost:8000';
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
-  const [actionId, setActionId] = useState('');
+  const [actionId, setActionId] = useState<string|null>(null);
   const [fetchAgainLocaly, setFetchAgain] = useState(fetchagain);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   // Filters State
   const [filterType, setFilterType] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -82,16 +71,38 @@ export default function Transactions({
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
 
   const [loadingTrash, setLoadingTrash] = useState<boolean>(false);
+  const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
   // list of payment methods
-  const paymentMethods = [
-    'ALL',
-    ...new Set(
-      transactions
-        .map((t) => t.payment_methods?.name ?? ''.replace(/_/g, ' '))
-        .filter(Boolean)
-    ),
-  ];
 
+//fetch trasactions from api 
+        useEffect(() => {
+          const fetchTransactions = async () => {
+            setLoadingFetch(true);
+            try {
+              const res = await fetch(`${APP_URL}/api/transactions`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              const data = await res.json();
+              if(data.status == 200){
+                setTransactions(data.transactions??[]);
+              }else{
+                toast.error(data.message);
+                setTransactions([])
+                router.push('/login');
+              }
+            } catch (error) {
+              toast.error('Failed to fetch transactions');
+              setTransactions([])
+              router.push('/login');
+            }
+            setLoadingFetch(false);
+          };
+          fetchTransactions();
+        }, []);
   //handle delete 
   const handleDeleteTrasaction = async (id: string) => {
     try {
@@ -118,11 +129,25 @@ export default function Transactions({
   };
   //handleEdit 
   const handleEditTrasaction = (id: string) => {
-    navigate(`/transactions/${id}/edit`);
+    router.push(`/transactions/${id}/edit`);
   };
   // Category Helper
-
-
+  const paymentMethods = [
+    'ALL',
+    ...new Set(
+      (transactions??[])
+        .map((t) => t.payment_methods?.name ?? ''.replace(/_/g, ' ')??'')
+        .filter(Boolean)
+    ),
+  ];
+  const categories = [
+    'ALL',
+    ...new Set(
+      (transactions??[])
+        .map((t) => t.categories?.name ?? ''.replace(/_/g, ' ')??'')
+        .filter(Boolean)
+    ),
+  ];
   // Payment Method Helper
   const getPaymentIcon = (method?: string) => {
     const m = (method || '').toLowerCase();
@@ -135,7 +160,7 @@ export default function Transactions({
 
   // Filtered and sorted transactions
   const processedTransactions = useMemo(() => {
-    return transactions
+    return (transactions??[])
       .filter((tx) => {
         // Type filter
         const matchesType =
@@ -144,12 +169,12 @@ export default function Transactions({
         // Category filter
         const matchesCategory =
           selectedCategory === 'ALL' ||
-          (tx.categories.name || '').toLowerCase() === selectedCategory.toLowerCase();
+          (tx.categories?.name || '').toLowerCase() === selectedCategory.toLowerCase();
 
         // Payment method filter
         const matchesPayment =
           selectedPaymentMethod === 'ALL' ||
-          (tx.payment_methods.name || '').toLowerCase().replace(/_/g, ' ') === selectedPaymentMethod.toLowerCase();
+          (tx.payment_methods?.name || '').toLowerCase().replace(/_/g, ' ') === selectedPaymentMethod.toLowerCase();
         // Date range filter
         let matchesDate = true;
         if (dateRange !== 'ALL' && tx.date) {
@@ -178,8 +203,8 @@ export default function Transactions({
           !query ||
           (tx.title || '').toLowerCase().includes(query) ||
           (tx.description || '').toLowerCase().includes(query) ||
-          (tx.categories.name || '').toLowerCase().includes(query) ||
-          (tx.payment_methods.name || '').toLowerCase().includes(query) ||
+          (tx.categories?.name || '').toLowerCase().includes(query) ||
+          (tx.payment_methods?.name || '').toLowerCase().includes(query) ||
           (tx.date || '').toLowerCase().includes(query) ||
           String(tx.amount || '').includes(query);
 
@@ -247,12 +272,12 @@ export default function Transactions({
       tx.id,
       tx.type,
       `"${(tx.title || '').replace(/"/g, '""')}"`,
-      `"${(tx.categories.name || '').replace(/"/g, '""')}"`,
+      `"${(tx.categories?.name || '').replace(/"/g, '""')}"`,
       tx.amount,
       user?.currency || 'USD',
       tx.date || '',
       tx.time || '',
-      `"${(tx.payment_methods.name || '').replace(/"/g, '""')}"`,
+      `"${(tx.payment_methods?.name || '').replace(/"/g, '""')}"`,
       tx.status || 'Completed',
       `"${(tx.description || '').replace(/"/g, '""')}"`,
     ]);
@@ -271,7 +296,13 @@ export default function Transactions({
   };
 
   const userCurrency = user?.currency || 'USD';
-
+  if(loadingFetch){
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoadingTransaction hight={140} />
+      </div>
+    );
+  }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Search & Filter Toolbar */}
@@ -415,9 +446,9 @@ export default function Transactions({
             }}
           >
             <option value="ALL">All Categories</option>
-            {transactions.map((cat) => (
-              <option key={cat.categories.slug} value={cat.categories.name}>
-                {cat.categories.name}
+            {categories?.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
               </option>
             ))}
           </select>
@@ -657,7 +688,7 @@ export default function Transactions({
                   </button>
                 ) : (
                   <Link
-                    to="/transactions/new"
+                    href="/transactions/new"
                     className="btn btn-primary"
                     style={{ fontSize: '0.825rem', padding: '0.5rem 1.25rem', gap: '0.4rem' }}
                   >
@@ -675,7 +706,7 @@ export default function Transactions({
                 return (
                   <div
                     key={tx.id || idx}
-                    onClick={() => navigate(`/transactions/${tx.id}`)}
+                    onClick={() => router.push(`/transactions/${tx.id}`)}
                     style={{
                       display: 'grid',
                       gridTemplateColumns: 'minmax(200px, 2fr) 1.2fr 1fr 1fr 1.2fr 100px',

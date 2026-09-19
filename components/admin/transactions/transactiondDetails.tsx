@@ -1,9 +1,10 @@
+'use client';
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { useParams,useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { Transaction,User } from '@/types';
 import { getExchangeRate } from '@/utils/exchange';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -43,7 +44,7 @@ import {
   CircleEllipsis,
   RefreshCw
 } from 'lucide-react';
-import { LoadingTransaction } from '../ui/loading';
+import { LoadingTransaction } from '@/components/ui/loading';
 
 const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
   Utensils,
@@ -61,9 +62,9 @@ const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; cla
   CircleEllipsis,
 };
 
-export default function TransactionDetails({id,user}: {id: string,user:User}) {
-  const navigate = useNavigate();
-
+export default function TransactionDetails({user,token}: {user:User,token:string}) {
+  const router = useRouter();
+  const id = useParams().id as string;
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [rate, setRate] = useState<number>(1);
@@ -91,8 +92,6 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-
-    const token = localStorage.getItem('token');
     const APP_URL = 'http://localhost:8000';
 
     const fetchTransaction = async () => {
@@ -106,7 +105,8 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
         });
 
         if (!res.ok) {
-          throw new Error(`Error ${res.status}`);
+                toast.error("Unauthorized");
+                router.push('/login');
         }
 
         const data = await res.json();
@@ -201,7 +201,7 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
   };
 
   return (
-    <DashboardLayout>
+    <>
       {/* Printable Receipt Container Styles */}
       <style>{`
         @media print {
@@ -243,7 +243,7 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <button
-              onClick={() => navigate('/transactions')}
+              onClick={() => router.push('/transactions')}
               className="btn btn-secondary"
               style={{
                 display: 'inline-flex',
@@ -338,10 +338,10 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
               We couldn't locate a transaction with ID <strong style={{ color: '#ffffff' }}>#{id}</strong>. It might have been deleted or the identifier is invalid.
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
-              <button onClick={() => navigate('/transactions')} className="btn btn-primary">
+              <button onClick={() => router.push('/transactions')} className="btn btn-primary">
                 Go back 
               </button>
-              <button onClick={() => navigate(`/transactions/${id}/edit`)} className="btn btn-secondary">
+              <button onClick={() => router.push(`/transactions/${id}/edit`)} className="btn btn-secondary">
                 Edit
               </button>
             </div>
@@ -882,7 +882,7 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
                 }}
               >
                 <button
-                  onClick={() => navigate('/transactions')}
+                  onClick={() => router.push('/transactions')}
                   className="btn btn-secondary"
                   style={{
                     padding: '0.75rem',
@@ -898,7 +898,7 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
                 </button>
 
                 <button
-                  onClick={() => navigate(`/transactions/${id}/edit`)}
+                  onClick={() => router.push(`/transactions/${id}/edit`)}
                   className="btn btn-secondary"
                   style={{
                     padding: '0.75rem',
@@ -926,6 +926,6 @@ export default function TransactionDetails({id,user}: {id: string,user:User}) {
           }
         }
       `}</style>
-    </DashboardLayout>
+    </>
   );
 }

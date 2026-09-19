@@ -1,7 +1,8 @@
+'use client';
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link,useParams } from 'react-router-dom';
-import { useAuth } from '@/hooks/auth';
-import toast from 'react-hot-toast';
+import { useParams,useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {toast} from 'sonner';
 import {
   ArrowLeft,
   ArrowDownLeft,
@@ -15,7 +16,7 @@ import {
   CreditCard,
   FileText
 } from 'lucide-react';
-import type { Category, payment_methods, Transaction, TransactionCreate } from '@/types';
+import type { Category, payment_methods, Transaction, TransactionCreate,User } from '@/types';
 import { LoadingTransaction } from '@/components/ui/loading';
 
 const QUICK_AMOUNTS = [10, 25, 50, 100, 250];
@@ -25,16 +26,17 @@ interface TransactionProps {
   paymentMethods?: payment_methods[];
   mode?: 'create' | 'edit';
   transaction?: Transaction;
+  user?:User;
+  token?:string;
 }
 export default function TransactionAction(
-  { mode = 'create',transaction }: TransactionProps
+  { mode = 'create',transaction,user,token }: TransactionProps
 ) {
-  const {id} = useParams(); 
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  const {id} = useParams<{id: string}>(); 
+  const router = useRouter();
   const APP_URL = 'http://localhost:8000';
   const [categories, setCategories] = useState<Category[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState<payment_methods[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
   const [transactionData, setTransactionData] = useState<TransactionCreate>(
@@ -53,21 +55,47 @@ export default function TransactionAction(
   useEffect(() => {
     const fetchdata = async () => {
         setIsLoadingFetch(true);
+        if(mode === 'edit') await fetchTransaction();
         await fetchCategories();
         await fetchPaymentMethods();
         setIsLoadingFetch(false);
       }
       fetchdata();
   }, []);
-  
+  const fetchTransaction = async () => {
+      try{
+        if (!token) {
+          toast.error('Session expired. Please log in again.');
+          router.push('/login');
+          return;
+        }
+
+        const response = await fetch(`${APP_URL}/api/transactions/${id}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setTransactionData(data.transaction);
+        }
+      }catch(error){
+        console.error('Error fetching transaction:', error);
+      }
+  };
+
+
   const fetchCategories = async () => {
     try{
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
+
     const response = await fetch(`${APP_URL}/api/categories`, {
       method: 'GET',
       headers: {
@@ -86,10 +114,9 @@ export default function TransactionAction(
   }
   };
   const fetchPaymentMethods = async () => {
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
     const response = await fetch(`${APP_URL}/api/payment-methods`, {
@@ -124,15 +151,14 @@ export default function TransactionAction(
       return;
     }
 
-    if (!transactionData.title.trim()) {
+    if (!transactionData?.title?.trim()) {
       toast.error('Please enter a title');
       return;
     }
 
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
 
@@ -156,7 +182,7 @@ export default function TransactionAction(
         toast.success(
           `${transactionData.type === 'INCOME' ? 'Income' : 'Expense'} recorded successfully`
         );
-        navigate('/transactions');
+        router.push('/transactions');
       } else {
         toast.error(data.message || 'Failed to save transaction');
       }
@@ -180,7 +206,7 @@ export default function TransactionAction(
       const data = await response.json();
       if(response.ok || data.status === 200 || data.status === 201){
         toast.success('Transaction updated successfully');
-        navigate(`/transactions/${id}`);
+        router.push(`/transactions/${id}`);
       }else{
         toast.error('Failed to update transaction');
       }
@@ -195,7 +221,7 @@ export default function TransactionAction(
       {/* Top Header */}
       <div style={{ marginBottom: '1.5rem' }}>
         <Link
-          to="/transactions"
+          href="/transactions"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -660,7 +686,7 @@ export default function TransactionAction(
             </div>
             <input
               type="date"
-              value={transactionData.date}
+              value={transactionData.date?.split("T")[0] ?? ""}
               onChange={(e) => setTransactionData({...transactionData,date:e.target.value})}
               style={{
                 width: '100%',
@@ -760,7 +786,7 @@ export default function TransactionAction(
 
           <button
             type="button"
-            onClick={() => navigate('/transactions')}
+            onClick={() => router.push('/transactions')}
             style={{
               padding: '0.8rem 1.5rem',
               background: '#181818',

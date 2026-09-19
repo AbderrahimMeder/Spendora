@@ -10,11 +10,9 @@ import { FcGoogle } from 'react-icons/fc';
 interface LoginProps {
     onSwitchToRegister?: () => void;
     onSwitchToForgotPassword?: () => void;
-    onLoginSuccess?: (data: any) => void;
 }
 
-export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: LoginProps) {
-    const { login } = useAuth();
+export default function Login({ onSwitchToForgotPassword }: LoginProps) {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -40,7 +38,7 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
         }
         setIsLoading(true);
         try {
-            const res = await fetch(`${url}/api/login`, {
+            const res = await fetch(`/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -54,21 +52,14 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
                 return;
             }
             if (data.status === 200) {
-                localStorage.setItem('token', data.token);
-                login(data.user);
+                console.log(data);
                 toast.success(data.message || 'Login successful');
-                if (onLoginSuccess) {
-                    onLoginSuccess(data);
-                } else {
-                    router.push('/dashboard');
-                }
+                router.push('/dashboard');
                 return;
             }
             toast.error(data.message || 'Login failed');
-            setError(data.message || 'Invalid credentials');
         } catch (err) {
             toast.error('Network error during login');
-            setError('Network error. Please try again.');
         } finally {
             setIsLoading(false);
         }

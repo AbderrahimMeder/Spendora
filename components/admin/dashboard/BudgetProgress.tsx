@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, AlertTriangle, CheckCircle2, SlidersHorizontal } from 'lucide-react';
 import { formatCurrency, getCategoryDetails } from '@/utils/dashboardUtils';
-import { Budget, CategorySpending } from '@/types';
+import type { Budget, CategorySpending } from '@/types';
 
 interface BudgetProgressProps {
   budget?: Budget;
