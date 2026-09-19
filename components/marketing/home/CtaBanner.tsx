@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 export default function CtaBanner() {
@@ -26,7 +26,7 @@ export default function CtaBanner() {
           </p>
 
           <Link
-            to="/register"
+            href="/register"
             className="btn btn-primary"
             style={{ fontSize: '0.95rem', padding: '0.75rem 1.75rem', textDecoration: 'none' }}
           >

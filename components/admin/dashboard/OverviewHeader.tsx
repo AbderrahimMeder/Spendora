@@ -1,6 +1,7 @@
+'use client';
 import React from 'react';
 import { Calendar, RefreshCw, TrendingUp, TrendingDown } from 'lucide-react';
-import { CURRENCIES } from '../../data/initialData';
+
 
 interface OverviewHeaderProps {
   userName?: string;

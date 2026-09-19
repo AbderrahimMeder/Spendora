@@ -1,23 +1,18 @@
+'use client';
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link,useParams } from 'react-router-dom';
-import { useAuth } from '@/hooks/auth';
-import toast from 'react-hot-toast';
+import { useParams,useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {toast} from 'sonner';
 import {
   ArrowLeft,
   ArrowDownLeft,
   ArrowUpRight,
-  Calendar,
-  Clock,
   CheckCircle2,
   Loader2,
-  DollarSign,
-  Tag,
-  CreditCard,
-  FileText
 } from 'lucide-react';
-import type { Category, payment_methods, Transaction, TransactionCreate } from '@/types';
+import type { Category, payment_methods, Transaction, TransactionCreate,User } from '@/types';
 import { LoadingTransaction } from '@/components/ui/loading';
-
+import { getExchangeRate } from '@/utils/exchange';
 const QUICK_AMOUNTS = [10, 25, 50, 100, 250];
 
 interface TransactionProps {
@@ -25,16 +20,17 @@ interface TransactionProps {
   paymentMethods?: payment_methods[];
   mode?: 'create' | 'edit';
   transaction?: Transaction;
+  user?:User;
+  token?:string;
 }
 export default function TransactionAction(
-  { mode = 'create',transaction }: TransactionProps
+  { mode = 'create',transaction,user,token }: TransactionProps
 ) {
-  const {id} = useParams(); 
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  const {id} = useParams<{id: string}>(); 
+  const router = useRouter();
   const APP_URL = 'http://localhost:8000';
   const [categories, setCategories] = useState<Category[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState<payment_methods[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
   const [transactionData, setTransactionData] = useState<TransactionCreate>(
@@ -42,7 +38,7 @@ export default function TransactionAction(
       amount: transaction?.amount??0,
       title:transaction?.title??"",
       type: transaction?.type??'EXPENSE',
-      currency: transaction?.currency??'USD',
+      currency: transaction?.currency??user?.currency??'USD',
       category_id: transaction?.categories?.id??'',
       date:transaction?.date??new Date().toISOString().split('T')[0],
       payment_method_id: transaction?.payment_methods?.id??'',
@@ -53,21 +49,48 @@ export default function TransactionAction(
   useEffect(() => {
     const fetchdata = async () => {
         setIsLoadingFetch(true);
+        if(mode === 'edit') await fetchTransaction();
         await fetchCategories();
         await fetchPaymentMethods();
         setIsLoadingFetch(false);
+        
       }
       fetchdata();
   }, []);
-  
+  const fetchTransaction = async () => {
+      try{
+        if (!token) {
+          toast.error('Session expired. Please log in again.');
+          router.push('/login');
+          return;
+        }
+
+        const response = await fetch(`${APP_URL}/api/transactions/${id}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setTransactionData(data.transaction);
+        }
+      }catch(error){
+        console.error('Error fetching transaction:', error);
+      }
+  };
+
+
   const fetchCategories = async () => {
     try{
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
+
     const response = await fetch(`${APP_URL}/api/categories`, {
       method: 'GET',
       headers: {
@@ -79,17 +102,15 @@ export default function TransactionAction(
     const data = await response.json();
     if (response.ok) {
       setCategories(data.categories);
-      
     }
   }catch(error){
     console.error('Error fetching categories:', error);
   }
   };
   const fetchPaymentMethods = async () => {
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
     const response = await fetch(`${APP_URL}/api/payment-methods`, {
@@ -115,7 +136,6 @@ export default function TransactionAction(
     d.setDate(d.getDate() - daysAgo);
     setTransactionData({...transactionData,date:d.toISOString().split('T')[0]});
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -124,21 +144,23 @@ export default function TransactionAction(
       return;
     }
 
-    if (!transactionData.title.trim()) {
+    if (!transactionData?.title?.trim()) {
       toast.error('Please enter a title');
       return;
     }
 
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Session expired. Please log in again.');
-      navigate('/login');
+      router.push('/login');
       return;
     }
 
     setLoading(true)
 
     if(mode==='create'){
+      console.log(transactionData)
+      const rate = await getExchangeRate(user?.currency || 'USD');
+      const SendData = {...transactionData,amount:(transactionData.amount / (rate ?? 1)).toFixed(2)}
       try {
       const response = await fetch(`${APP_URL}/api/transactions`, {
         method: 'POST',
@@ -147,16 +169,15 @@ export default function TransactionAction(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(transactionData),
+        body: JSON.stringify(SendData),
       });
 
       const data = await response.json();
-
       if (response.ok || data.status === 200 || data.status === 201) {
         toast.success(
           `${transactionData.type === 'INCOME' ? 'Income' : 'Expense'} recorded successfully`
         );
-        navigate('/transactions');
+        router.push('/transactions');
       } else {
         toast.error(data.message || 'Failed to save transaction');
       }
@@ -180,7 +201,7 @@ export default function TransactionAction(
       const data = await response.json();
       if(response.ok || data.status === 200 || data.status === 201){
         toast.success('Transaction updated successfully');
-        navigate(`/transactions/${id}`);
+        router.push(`/transactions/${id}`);
       }else{
         toast.error('Failed to update transaction');
       }
@@ -195,7 +216,7 @@ export default function TransactionAction(
       {/* Top Header */}
       <div style={{ marginBottom: '1.5rem' }}>
         <Link
-          to="/transactions"
+          href="/transactions"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -559,6 +580,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
+              <option value="">Select Category</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id} style={{ background: '#111', color: '#fff' }}>
                   {cat.name}
@@ -601,6 +623,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
+              <option value="">Select Payment Method</option>
               {paymentMethods.map((pm) => (
                 <option key={pm.id} value={pm.id} style={{ background: '#111', color: '#fff' }}>
                   {pm.name}
@@ -660,7 +683,7 @@ export default function TransactionAction(
             </div>
             <input
               type="date"
-              value={transactionData.date}
+              value={transactionData.date?.split("T")[0] ?? ""}
               onChange={(e) => setTransactionData({...transactionData,date:e.target.value})}
               style={{
                 width: '100%',
@@ -760,7 +783,7 @@ export default function TransactionAction(
 
           <button
             type="button"
-            onClick={() => navigate('/transactions')}
+            onClick={() => router.push('/transactions')}
             style={{
               padding: '0.8rem 1.5rem',
               background: '#181818',

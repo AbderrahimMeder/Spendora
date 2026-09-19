@@ -1,5 +1,5 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import Navbar from '@/components/marketing/home/Navbar';
+import Footer from '@/components/marketing/home/Footer';
 import FaqUI from '@/components/marketing/faq-ui';
 
 export default function FaqPage() {

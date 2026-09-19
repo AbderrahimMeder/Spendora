@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import {
   ArrowUpDown,
@@ -22,30 +23,17 @@ import {
   ChevronRight,
   LucideIcon
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getCategoryDetails, formatCurrency } from '@/utils/dashboardUtils';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { getCategoryDetails, } from '@/utils/dashboardUtils';
 import { Transaction } from '@/types';
 import { useAuth } from '@/hooks/auth';
-const ICON_MAP: Record<string, LucideIcon> = {
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
-};
+
 
 interface RecentTransactionsProps {
   transactions?: Transaction[];
   currency?: string;
-  rate?: number;
+  rate: number;
   onAddTransaction?: (type: 'expense' | 'income') => void;
   onViewAll?: () => void;
 }
@@ -54,8 +42,9 @@ export default function RecentTransactions({
   transactions = [],
   onAddTransaction,
   rate,
+  currency,
 }: RecentTransactionsProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   const [filterType, setFilterType] = useState<string>('ALL');
 
@@ -135,7 +124,7 @@ export default function RecentTransactions({
               gap: '0.3rem',
             }}
           >
-            <Link to="/transactions" style={{ textDecoration: 'none', color: 'inherit', padding: 0 }} >View All</Link>
+            <Link href="/transactions" style={{ textDecoration: 'none', color: 'inherit', padding: 0 }} >View All</Link>
             <ExternalLink size={13} />
           </button>
         </div>
@@ -155,26 +144,15 @@ export default function RecentTransactions({
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
               No transactions match your search or filter.
             </p>
-            {onAddTransaction && (
-              <button
-                onClick={() => onAddTransaction('expense')}
-                className="btn btn-secondary"
-                style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
-              >
-                <Plus size={14} />
-                <span>Add First Transaction</span>
-              </button>
-            )}
           </div>
         ) : (
           displayedTransactions.map((tx) => {
-            const cat = getCategoryDetails(tx.categories.name);
             const isIncome = tx.type === 'INCOME';
 
             return (
               <div
                 key={tx.id}
-                onClick={() => navigate(`/transactions/${tx.id}`)}
+                onClick={() => router.push(`/transactions/${tx.id}`)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -227,7 +205,7 @@ export default function RecentTransactions({
                         </>
                       )}
                       <span>•</span>
-                      <span style={{ color: 'var(--text-secondary)' }}>{cat.name}</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>{'g'}</span>
 
                     </div>
                   </div>
@@ -244,7 +222,7 @@ export default function RecentTransactions({
                       alignItems: 'center',
                       gap: '2px',
                     }}>
-                      {isIncome ? '+' : '-'} {(tx.amount * rate).toFixed(2)} {user.currency}
+                      {isIncome ? '+' : '-'} {(tx.amount * rate).toFixed(2)} {currency}
                     </div>
                     <div style={{
                       display: 'inline-flex',

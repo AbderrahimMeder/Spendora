@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { X, Target, Check } from 'lucide-react';
-import { CURRENCIES } from '../../data/initialData';
-import { getCategoryDetails } from '../../utils/dashboardUtils';
-import toast from 'react-hot-toast';
-import { Budget } from '../../types';
+import { CURRENCIES } from '@/utils/dashboardUtils';
+import { getCategoryDetails } from '@/utils/dashboardUtils';
+import {toast} from 'sonner';
+import { Budget } from '@/types';
 
 interface BudgetModalProps {
   isOpen: boolean;
