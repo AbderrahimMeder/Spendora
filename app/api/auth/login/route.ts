@@ -30,6 +30,9 @@ export async function POST(request: Request) {
                 }
             );
         }
+        if (data.user.email_verified_at===null) {
+            return NextResponse.json({ status: 400 });
+        }
         const nextResponse = NextResponse.json({
             message: data.message,
             user: data.user,
@@ -48,6 +51,7 @@ export async function POST(request: Request) {
                 id: data.user.id,
                 name: data.user.name,
                 email: data.user.email,
+                email_verified_at: data.user.email_verified_at,
                 role: data.user.role,
                 currency: data.user.currency,
                 country: data.user.country,

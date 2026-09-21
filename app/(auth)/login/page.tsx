@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowLeft, ArrowRight, Eye, EyeOff, Wallet, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/auth';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -52,9 +51,13 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 return;
             }
             if (data.status === 200) {
-                console.log(data);
-                toast.success(data.message || 'Login successful');
+                toast.success('welcome back');
                 router.push('/dashboard');
+                return;
+            }
+            if (data.status === 400) {
+                toast.error('Please verify your email');
+                router.push('/verify-email?email=' + email);
                 return;
             }
             toast.error(data.message || 'Login failed');
@@ -89,7 +92,7 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                             <Wallet className="h-4 w-4 stroke-[2.5]" />
                         </div>
                         <span className="text-base font-extrabold tracking-tight text-white">
-                            Expense<span className="text-emerald-400">Tracker</span>
+                            Spend<span className="text-emerald-400">Ora</span>
                         </span>
                     </Link>
 

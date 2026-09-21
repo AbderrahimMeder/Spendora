@@ -1,42 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-
-import {
-  Search,
-  Plus,
-  Edit2,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
-  CheckCircle2,
-  Clock,
-  ChevronRight,
-  ChevronLeft,
-  Download,
-  Calendar,
-  CreditCard,
-  Building2,
-  Wallet,
-  DollarSign,
-  Trash2,
-  Receipt,
-  X,
-  SlidersHorizontal,
-  RefreshCw
-} from 'lucide-react';
+import {Plus} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Transaction, User } from '@/types';
@@ -44,8 +9,6 @@ import { toast } from 'sonner';
 import Loading, { LoadingTransaction } from '@/components/ui/loading';
 import { getExchangeRate } from '@/utils/exchange';
 import Transactionstable from './TransactionsTable';
-
-
 
 interface TransactionsProps {
   currency: string;
@@ -57,7 +20,7 @@ export function Transactions({
   currency,
   token,
 }: TransactionsProps) {
-  const APP_URL = 'http://localhost:8000';
+  const APP_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [rate, setRate] = useState<number>(1);
@@ -72,8 +35,9 @@ export function Transactions({
   const fetchTransactions = async (isManualRefresh = false) => {
     if (!isManualRefresh) {
       setLoadingFetch(true);
-    }
+    }else{
       setIsRefreshing(true);
+    }
     try {
       const res = await fetch(`${APP_URL}/api/transactions`, {
         method: 'GET',
@@ -85,15 +49,13 @@ export function Transactions({
       const data = await res.json();
       if (data.status == 200) {
         setTransactions(data.transactions ?? []);
-      } else {
-        toast.error(data.message);
-        setTransactions([])
-        router.push('/login');
+      }
+      if(data.status == 500){
+        router.push('/error?code=500&message='+data.message);
       }
     } catch (error) {
       toast.error('Failed to fetch transactions');
       setTransactions([])
-      router.push('/login');
     }
     setLoadingFetch(false);
     if (isManualRefresh) {
@@ -102,31 +64,7 @@ export function Transactions({
   };
   //fetch trasactions from api 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      setLoadingFetch(true);
-      try {
-        const res = await fetch(`${APP_URL}/api/transactions`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await res.json();
-        if (data.status == 200) {
-          setTransactions(data.transactions ?? []);
-        } else {
-          toast.error(data.message);
-          setTransactions([])
-          router.push('/login');
-        }
-      } catch (error) {
-        toast.error('Failed to fetch transactions');
-        setTransactions([])
-        router.push('/login');
-      }
-      setLoadingFetch(false);
-    };
+    fetchTransactions()
 
   const getRate = async () => {
       const rate = await getExchangeRate(currency)

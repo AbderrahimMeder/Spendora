@@ -1,7 +1,7 @@
 import { type Transaction, CurrencyOption } from '@/types';
 
 
-export function formatCurrency(amount: number, currency: string) {
+export function formatCurrency(amount: number, currency?: string) {
   const formatter = new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: currency,
@@ -50,7 +50,7 @@ export function getCategoryDetails(id: string|null) {
     },
   }
 
-  return categories[id] || {
+  return categories[id||''] || {
     name: 'Other',
     icon: '🔹',
     color: '#6b7280', // Gray
