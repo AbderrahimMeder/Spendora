@@ -1,16 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Wallet, Menu, X, ArrowRight } from 'lucide-react';
 import { DashboardItems } from '@/config/dashboard-link';
 import { useAuth } from '@/hooks/auth';
 import { User } from '@/types';
 
-export default function Navbar() {
-  const user = useAuth()?.user as User | null
+export default function Navbar({ user }: User) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [logged, setLogged] = useState(true);
   const [profileToggle, setProfileToggle] = useState(false);
   const dashboardLinks = DashboardItems;
   const { logout } = useAuth();
@@ -22,17 +19,6 @@ export default function Navbar() {
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
   ];
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setLogged(false);
-        return;
-      }
-    };
-    fetchUser();
-  }, []);
 
   return (
     <nav style={{
@@ -117,7 +103,7 @@ export default function Navbar() {
         </div>
 
         {/* Action Buttons */}
-        {!logged ? (
+        {!user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link
               href="/login"
@@ -147,7 +133,7 @@ export default function Navbar() {
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {!user || loading ? (
+            {!!!user ? (
               <div
                 style={{
                   width: "36px",

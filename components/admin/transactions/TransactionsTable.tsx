@@ -42,7 +42,6 @@ import Link from 'next/link';
 import type { Transaction, User } from '@/types';
 import { toast } from 'sonner';
 import { LoadingTransaction } from '@/components/ui/loading';
-import { getExchangeRate } from '@/utils/exchange';
 
 type TransactionstableProps = {
   transactions: Transaction[],
@@ -65,25 +64,26 @@ export default function Transactionstable({
       const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('ALL');
       const [dateRange, setDateRange] = useState<string>('ALL');
       const [sortBy, setSortBy] = useState<string>('date-desc');
+      const [showHidden, setShowHidden] = useState<string>('ALL');
       const [searchQuery, setSearchQuery] = useState<string>('');
       const [currentPage, setCurrentPage] = useState<number>(1);
       const [itemsPerPage, setItemsPerPage] = useState<number>(10);
       const [actionId, setActionId] = useState<string | null>(null);
-
+      const [checkdelete, setcheckdelete] = useState<boolean>(false);
       const [loadingTrash, setLoadingTrash] = useState<boolean>(false);
       const router = useRouter();
-      const handleDeleteTrasaction = async (id: string) => {
+  const handleDeleteTrasaction = async (id: string) => {
     try {
       setLoadingTrash(true)
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions/${id}/delete`, {
+      const res = await fetch(`${process.env.LARAVEL_API_URL}/api/transactions/${id}/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         }
       });
-      window.location.reload()
       const data = await res.json();
+
       if (data.status == 200) {
         toast.success('Transaction deleted successfully!');
 
@@ -134,12 +134,13 @@ export default function Transactionstable({
         // Type filter
         const matchesType =
           filterType === 'ALL' || (tx.type || '').toUpperCase() === filterType.toUpperCase();
-
         // Category filter
         const matchesCategory =
           selectedCategory === 'ALL' ||
           (tx.categories?.name || '').toLowerCase() === selectedCategory.toLowerCase();
-
+        // Show/Hide hidden transactions
+        const matchesHidden =
+          showHidden === 'ALL' || !tx.is_hidden===(showHidden ==="FALSE");
         // Payment method filter
         const matchesPayment =
           selectedPaymentMethod === 'ALL' ||
@@ -177,7 +178,7 @@ export default function Transactionstable({
           (tx.date || '').toLowerCase().includes(query) ||
           String(tx.amount || '').includes(query);
 
-        return matchesType && matchesCategory && matchesPayment && Boolean(matchesDate) && matchesSearch;
+        return matchesType && matchesCategory && matchesPayment && Boolean(matchesDate) && matchesSearch && matchesHidden;
       })
       .sort((a, b) => {
         if (sortBy === 'date-desc') {
@@ -205,6 +206,7 @@ export default function Transactionstable({
     dateRange,
     sortBy,
     searchQuery,
+    showHidden,
   ]);
 
   // Pagination calculation
@@ -219,7 +221,8 @@ export default function Transactionstable({
     selectedCategory !== 'ALL' ||
     selectedPaymentMethod !== 'ALL' ||
     dateRange !== 'ALL' ||
-    searchQuery.trim().length > 0;
+    searchQuery.trim().length > 0 ||
+    showHidden !== 'ALL';
   const handleResetFilters = () => {
     setFilterType('ALL');
     setSelectedCategory('ALL');
@@ -228,6 +231,7 @@ export default function Transactionstable({
     setSortBy('date-desc');
     setSearchQuery('');
     setCurrentPage(1);
+    setShowHidden('ALL');
   };
 
   // CSV Export
@@ -519,27 +523,48 @@ export default function Transactionstable({
               )}
             </div>
             {/* Sort By Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              style={{
-                background: '#0e0e0e',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.35rem 0.65rem',
-                color: 'var(--text-secondary)',
-                fontSize: '0.775rem',
-                outline: 'none',
-                cursor: 'pointer',
-                marginLeft: 'auto',
-              }}
-            >
-              <option value="date-desc">Newest First</option>
-              <option value="date-asc">Oldest First</option>
-              <option value="amount-desc">Highest Amount</option>
-              <option value="amount-asc">Lowest Amount</option>
-              <option value="title-asc">Alphabetical (A-Z)</option>
-            </select>
+            <div className='flex items-end justify-between gap-2'>
+              <select
+                value={showHidden}
+                onChange={(e) => setShowHidden(e.target.value)}
+                style={{
+                  background: '#0e0e0e',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '0.35rem 0.65rem',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.775rem',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  marginLeft: 'auto',
+                }}
+              >
+                <option value="ALL">All</option>
+                <option value="FALSE">Hide </option>
+                <option value="TRUE">Show </option>
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  background: '#0e0e0e',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '0.35rem 0.65rem',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.775rem',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  marginLeft: 'auto',
+                }}
+              >
+                <option value="date-desc">Newest First</option>
+                <option value="date-asc">Oldest First</option>
+                <option value="amount-desc">Highest Amount</option>
+                <option value="amount-asc">Lowest Amount</option>
+                <option value="title-asc">Alphabetical (A-Z)</option>
+              </select>
+            </div>
 
             {/* Reset Filters */}
             {hasActiveFilters && (
@@ -894,7 +919,7 @@ export default function Transactionstable({
                           >
                             <button
                               onClick={() => {
-                                handleDeleteTrasaction(tx.id)
+                                setcheckdelete(true)
                                 // View voucher logic
                               }}
                               disabled={loadingTrash}
@@ -935,6 +960,64 @@ export default function Transactionstable({
                               Edit
                             </button>
                           </div>
+
+                        )}
+                        {checkdelete && (
+                          <>
+                            <div
+                              style={{
+                                position: 'fixed',
+                                top: '0',
+                                left: '0',
+                                width: '100%',
+                                height: '100%',
+                                background: 'rgba(0, 0, 0, 0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: '1000',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  background: 'var(--bg-primary)',
+                                  padding: '1.5rem',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                                }}
+                              >
+                                <p>Are you sure you want to delete this transaction?</p>
+                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                  <button
+                                    onClick={() => handleDeleteTrasaction(tx.id)}
+                                    style={{
+                                      padding: '0.5rem 1rem',
+                                      background: '#f87171',
+                                      border: 'none',
+                                      borderRadius: '6px',
+                                      color: 'white',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    onClick={() => setcheckdelete(false)}
+                                    style={{
+                                      padding: '0.5rem 1rem',
+                                      background: 'var(--bg-secondary)',
+                                      border: 'none',
+                                      borderRadius: '6px',
+                                      color: 'var(--text-primary)',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </>
                         )}
                       </div>
 

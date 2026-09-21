@@ -9,7 +9,7 @@ import {
   ShoppingBag,
   LucideIcon,
 } from 'lucide-react';
-import { formatCurrency } from '../data/initialData';
+import { formatCurrency } from '@/utils/dashboardUtils';
 
 interface DemoTransaction {
   id: number;

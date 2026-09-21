@@ -1,5 +1,6 @@
+'use client'
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface HeroSectionProps {
@@ -68,7 +69,7 @@ export default function HeroSection({ onScrollToDemo }: HeroSectionProps) {
         marginBottom: '3rem',
       }}>
         <Link
-          to="/register"
+          href="/register"
           className="btn btn-primary"
           style={{ fontSize: '0.95rem', padding: '0.75rem 1.6rem', textDecoration: 'none' }}
         >

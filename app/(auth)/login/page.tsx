@@ -52,8 +52,7 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 return;
             }
             if (data.status === 200) {
-                console.log(data);
-                toast.success(data.message || 'Login successful');
+                toast.success('welcome back');
                 router.push('/dashboard');
                 return;
             }
