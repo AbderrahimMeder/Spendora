@@ -1,5 +1,5 @@
 "use client"
-import  { useState, ReactNode, useEffect } from 'react';
+import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -14,39 +14,66 @@ import {
   Bell,
   Search,
   Menu,
-  Sparkles
+  Sparkles,
+  ChevronDown,
+  ChevronRight,
+  Layers,
+  Tag,
+  CreditCard
 } from 'lucide-react';
-import {toast} from 'sonner';;
+import { toast } from 'sonner';
 import { User } from '@/types';
+
 interface DashboardLayoutProps {
   children?: ReactNode;
   user: User;
 }
 
 export default function DashboardLayout({ children, user }: DashboardLayoutProps) {
-  
   const router = useRouter();
   const pathname = usePathname();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [collapsed] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const handleLogout =async () => {
-    try{
-      const res= await fetch('/api/auth/me', {
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
+    Management: true,
+  });
+
+  const toggleDropdown = (label: string) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/me', {
         method: 'GET',
       });
       const data = await res.json();
-      if(data.status === 200){
+      if (data.status === 200) {
         toast.success(data.message);
       }
-    }catch(error){
+    } catch (error) {
       toast.error('Logout failed');
     }
     router.push('/login');
   };
+
   const navLinks = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, badge: null },
-    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: '0' },
+    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: null },
+    {
+      label: 'Management',
+      path: null,
+      icon: Layers,
+      badge: null,
+      children: [
+        { label: 'Categories', path: '/categories', icon: Tag, badge: null },
+        { label: 'Payment Methods', path: '/payment-method', icon: CreditCard, badge: null },
+      ],
+    },
     { label: 'Budgets', path: '/budgets', icon: Target, badge: null },
     { label: 'Analytics & Reports', path: '/reports', icon: BarChart3, badge: '21' },
     { label: 'Settings', path: '/settings', icon: Settings, badge: null },
@@ -154,11 +181,146 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             {navLinks.map((link) => {
               const Icon = link.icon;
-              const isActive = pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/');
+              const hasChildren = Boolean(link.children && link.children.length > 0);
+              const isChildActive = Boolean(
+                link.children?.some(
+                  (child) => pathname === child.path || (child.path && pathname.startsWith(child.path + '/'))
+                )
+              );
+              const isActive = link.path ? (pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/')) : isChildActive;
+              const isOpen = openDropdowns[link.label] ?? isChildActive;
+
+              if (hasChildren && link.children) {
+                return (
+                  <div key={link.label} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <button
+                      type="button"
+                      onClick={() => toggleDropdown(link.label)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: collapsed ? 'center' : 'space-between',
+                        width: '100%',
+                        padding: '0.75rem 0.9rem',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: '0.875rem',
+                        fontWeight: isChildActive ? '700' : '500',
+                        color: isChildActive ? '#ffffff' : 'var(--text-secondary)',
+                        background: isChildActive ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
+                        border: isChildActive ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
+                        transition: 'all 0.15s ease',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isChildActive) {
+                          e.currentTarget.style.background = '#161616';
+                          e.currentTarget.style.color = '#ffffff';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isChildActive) {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-secondary)';
+                        }
+                      }}
+                      title={collapsed ? link.label : undefined}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                        <Icon size={19} color={isChildActive ? 'var(--accent-primary)' : 'currentColor'} />
+                        {!collapsed && <span>{link.label}</span>}
+                      </div>
+                      {!collapsed && (
+                        isOpen ? (
+                          <ChevronDown size={16} color={isChildActive ? 'var(--accent-primary)' : 'var(--text-secondary)'} />
+                        ) : (
+                          <ChevronRight size={16} color="var(--text-secondary)" />
+                        )
+                      )}
+                    </button>
+
+                    {/* Children Sub-links */}
+                    {isOpen && !collapsed && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.25rem',
+                          marginLeft: '1.25rem',
+                          paddingLeft: '0.75rem',
+                          marginTop: '0.35rem',
+                          marginBottom: '0.35rem',
+                          borderLeft: '2px solid rgba(255, 255, 255, 0.08)',
+                        }}
+                      >
+                        {link.children.map((child) => {
+                          const ChildIcon = child.icon;
+                          const isCurrentChildActive =
+                            pathname === child.path || (child.path && pathname.startsWith(child.path + '/'));
+
+                          return (
+                            <Link
+                              key={child.label}
+                              href={child.path}
+                              onClick={() => setMobileSidebarOpen(false)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '0.55rem 0.75rem',
+                                borderRadius: 'var(--radius-md)',
+                                textDecoration: 'none',
+                                fontSize: '0.825rem',
+                                fontWeight: isCurrentChildActive ? '600' : '400',
+                                color: isCurrentChildActive ? '#ffffff' : 'var(--text-secondary)',
+                                background: isCurrentChildActive ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+                                border: isCurrentChildActive ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isCurrentChildActive) {
+                                  e.currentTarget.style.background = '#161616';
+                                  e.currentTarget.style.color = '#ffffff';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isCurrentChildActive) {
+                                  e.currentTarget.style.background = 'transparent';
+                                  e.currentTarget.style.color = 'var(--text-secondary)';
+                                }
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+                                <ChildIcon size={16} color={isCurrentChildActive ? 'var(--accent-primary)' : 'currentColor'} />
+                                <span>{child.label}</span>
+                              </div>
+                              {child.badge && child.badge !== '0' && (
+                                <span
+                                  style={{
+                                    fontSize: '0.65rem',
+                                    background: '#1c1c1c',
+                                    color: 'var(--text-muted)',
+                                    padding: '1px 6px',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--border-subtle)',
+                                  }}
+                                >
+                                  {child.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={link.label}
-                  href={link.path}
+                  href={link.path || '#'}
                   onClick={() => setMobileSidebarOpen(false)}
                   style={{
                     display: 'flex',
@@ -193,14 +355,16 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
                     {!collapsed && <span>{link.label}</span>}
                   </div>
                   {!collapsed && link.badge && link.badge !== '0' && (
-                    <span style={{
-                      fontSize: '0.7rem',
-                      background: '#1c1c1c',
-                      color: 'var(--text-muted)',
-                      padding: '2px 7px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-subtle)'
-                    }}>
+                    <span
+                      style={{
+                        fontSize: '0.7rem',
+                        background: '#1c1c1c',
+                        color: 'var(--text-muted)',
+                        padding: '2px 7px',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-subtle)',
+                      }}
+                    >
                       {link.badge}
                     </span>
                   )}
@@ -328,8 +492,31 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
           top: 0,
           zIndex: 80,
         }}>
+          {/* Left Topbar Action / Mobile Hamburger Menu */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="mobile-menu-btn"
+              style={{
+                display: 'none',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '38px',
+                height: '38px',
+                borderRadius: 'var(--radius-md)',
+                background: '#161616',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+              }}
+              aria-label="Open navigation menu"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
+
           {/* Right Topbar Actions */}
-          <div style={{ display: 'flex', position: 'absolute', right: '22px', top: '16px', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {/* Notifications toggle */}
             <div style={{ position: 'relative' }}>
               <button

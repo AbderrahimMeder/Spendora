@@ -15,6 +15,7 @@ export interface payment_methods {
     type:string;
     is_active:boolean
 }
+
 export interface Transaction {
   id: string;
   account_id?: string;
@@ -54,7 +55,11 @@ export interface Category {
   color: string;
   bg: string;
 }
-
+export interface payment_methodsCreate {
+    name:string;
+    type:string;
+    is_active:boolean
+}
 export interface CategorySpending {
   id: string;
   name: string;
