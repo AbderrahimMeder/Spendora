@@ -9,7 +9,7 @@ export default async function NewPaymentMethodPage() {
     }
     return (
         <div>
-            <NewPaymentMethod token={token} />
+            <NewPaymentMethod token={token} mode="create" />
         </div>
     );
 }

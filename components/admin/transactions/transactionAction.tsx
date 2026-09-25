@@ -158,7 +158,6 @@ export default function TransactionAction(
     setLoading(true)
 
     if(mode==='create'){
-      console.log(transactionData)
       const rate = await getExchangeRate(user?.currency || 'USD');
       const SendData = {...transactionData,amount:(transactionData.amount / (rate ?? 1)).toFixed(2)}
       try {

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter,useParams } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import {
@@ -15,47 +15,79 @@ import {
   Loader2,
   CheckCircle2,
 } from 'lucide-react';
-import type { payment_methodsCreate } from '@/types';
+import type { payment_methodsCreate,User } from '@/types';
 const PAYMENT_TYPE_OPTIONS = [
-  { value: 'BANK_TRANSFER', label: 'Bank Transfer / Wire', icon: Building2 },
-  { value: 'CREDIT_CARD', label: 'Credit Card', icon: CreditCard },
-  { value: 'DEBIT_CARD', label: 'Debit Card', icon: CreditCard },
+  { value: 'BANK', label: 'Bank Transfer / Wire', icon: Building2 },
+  { value: 'CARD', label: 'Debit Card', icon: CreditCard },
   { value: 'CASH', label: 'Cash', icon: DollarSign },
-  { value: 'DIGITAL_WALLET', label: 'Digital Wallet (PayPal, Stripe, etc.)', icon: Wallet },
-  { value: 'CRYPTO', label: 'Cryptocurrency', icon: Coins },
-  { value: 'MOBILE_PAYMENT', label: 'Mobile Payment (Apple Pay, Google Pay)', icon: Smartphone },
+  { value: 'ONLINE', label: 'Digital Wallet (PayPal, Stripe, etc.)', icon: Wallet },
+  { value: 'MOBILE', label: 'Mobile Payment (Apple Pay, Google Pay)', icon: Smartphone },
   { value: 'OTHER', label: 'Other', icon: CreditCard },
 ];
 
 type NewPaymentMethodProps = {
+  user?:User;
   token?: string | null;
+  PaymentMethodId?:string|null;
+  mode?: "create" | "edit";
 };
 
-export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
+export function NewPaymentMethod({ user,token,PaymentMethodId,mode }: NewPaymentMethodProps) {
+  const {id} = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [foundData,setFoundData] = useState(false);
   const [PaymentData,setPaymentData] = useState<payment_methodsCreate>({
     name:"",
     type:"CASH",
-    is_active:true
+    is_active_method:true
   })
+  const GetMethodForUpdate=async()=>{
+    const apiUrl = process.env.LARAVEL_API_URL || 'http://localhost:8000';
+    const response = await fetch(`${apiUrl}/api/payment-method/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if(response.ok||response.status===200||response.status===201){
+        const data = await response.json();
+        setPaymentData({
+          name:data?.payment_method?.name,
+          type:data?.payment_method?.type,
+          is_active_method:data?.payment_method?.is_active_method
+        })
+        setFoundData(true);
+        console.log(PaymentData)
+      }
+      else{
+        toast.error("Failed to get payment method")
+        setFoundData(false);
+      }
+  }
+  useEffect(()=>{
+    if(mode==='edit') GetMethodForUpdate()
+  },[])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!PaymentData.name.trim()) {
+    if (!PaymentData.name?.trim()) {
       toast.error('Please enter a payment method name');
       return;
     }
 
-    if (!PaymentData.type.trim()) {
+    if (!PaymentData.type?.trim()) {
       toast.error('Please select or specify a payment method type');
       return;
     }
 
     try {
       setLoading(true);
+      console.log(PaymentData)
       const apiUrl = process.env.LARAVEL_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/payment-methods`, {
+      const response = await fetch(`${apiUrl}/api/payment-method`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,9 +113,18 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
       setLoading(false);
     }
   };
-
+  if(!foundData && mode==='edit'){
+    return(
+      <>
+      {!foundData&&(
+        <p>Payment Data not found</p>
+      )}
+      </>
+    )
+  }
   return (
-    <div style={{ maxWidth: '560px', margin: '0 auto', paddingBottom: '3rem' }}>
+      <>
+      <div style={{ maxWidth: '560px', margin: '0 auto', paddingBottom: '3rem' }}>
       {/* Top Header */}
       <div style={{ marginBottom: '1.5rem' }}>
         <Link
@@ -115,10 +156,10 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
           }}
         >
           <ArrowLeft size={14} />
-          <span>Back to Payment Methods</span>
+          <span>Back</span>
         </Link>
         <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-          New Payment Method
+          {mode === 'edit' ? 'Edit Payment Method' : 'New Payment Method'}
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
           Add a new payment method to record and organize your transactions.
@@ -267,8 +308,8 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
           >
             <input
               type="checkbox"
-              checked={PaymentData.is_active}
-              onChange={(e) => setPaymentData({ ...PaymentData, is_active: e.target.checked })}
+              checked={PaymentData.is_active_method}
+              onChange={(e) => setPaymentData({ ...PaymentData, is_active_method: e.target.checked })}
               style={{ opacity: 0, width: 0, height: 0 }}
             />
             <span
@@ -278,7 +319,7 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: PaymentData.is_active ? 'var(--accent-primary)' : '#222222',
+                backgroundColor: PaymentData.is_active_method ? 'var(--accent-primary)' : '#222222',
                 borderRadius: '24px',
                 transition: '0.2s',
               }}
@@ -289,7 +330,7 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
                   content: '""',
                   height: '18px',
                   width: '18px',
-                  left: PaymentData.is_active ? '23px' : '3px',
+                  left: PaymentData.is_active_method ? '23px' : '3px',
                   bottom: '3px',
                   backgroundColor: '#ffffff',
                   borderRadius: '50%',
@@ -341,17 +382,18 @@ export function NewPaymentMethod({ token }: NewPaymentMethodProps) {
             {loading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                <span>Creating...</span>
+                <span>{mode === 'edit' ? 'Updating...' : 'Creating...'}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 size={16} />
-                <span>Create Payment Method</span>
+                <span>{mode === 'edit' ? 'Update Payment Method' : 'Create Payment Method'}</span>
               </>
             )}
           </button>
         </div>
       </form>
     </div>
+    </>
   );
 }

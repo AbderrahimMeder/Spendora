@@ -177,8 +177,8 @@ export function TablePaymentMethod({
         // Status filter (Active / Inactive)
         const matchesStatus =
           filterStatus === 'ALL' ||
-          (filterStatus === 'ACTIVE' && item.is_active) ||
-          (filterStatus === 'INACTIVE' && !item.is_active);
+          (filterStatus === 'ACTIVE' && item.is_active_method) ||
+          (filterStatus === 'INACTIVE' && !item.is_active_method);
 
         // Type filter
         const matchesType =
@@ -192,7 +192,7 @@ export function TablePaymentMethod({
           (item.name || '').toLowerCase().includes(query) ||
           (item.type || '').toLowerCase().includes(query) ||
           (item.id || '').toLowerCase().includes(query) ||
-          (item.is_active ? 'active' : 'inactive').includes(query);
+          (item.is_active_method ? 'active' : 'inactive').includes(query);
 
         return matchesStatus && matchesType && matchesSearch;
       })
@@ -210,10 +210,10 @@ export function TablePaymentMethod({
           return (b.type || '').localeCompare(a.type || '');
         }
         if (sortBy === 'status-active') {
-          return (b.is_active ? 1 : 0) - (a.is_active ? 1 : 0);
+          return (b.is_active_method ? 1 : 0) - (a.is_active_method ? 1 : 0);
         }
         if (sortBy === 'status-inactive') {
-          return (a.is_active ? 1 : 0) - (b.is_active ? 1 : 0);
+          return (a.is_active_method ? 1 : 0) - (b.is_active_method ? 1 : 0);
         }
         return 0;
       });
@@ -250,7 +250,7 @@ export function TablePaymentMethod({
       pm.id,
       `"${(pm.name || '').replace(/"/g, '""')}"`,
       `"${(pm.type || '').replace(/"/g, '""')}"`,
-      pm.is_active ? 'Active' : 'Inactive',
+      pm.is_active_method ? 'Active' : 'Inactive',
     ]);
 
     const csvContent =
@@ -328,7 +328,7 @@ if(loadingPaymentMethods){
           {/* Action Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link
-              href="/transactions/new"
+              href="/payment-method/new"
               className="btn btn-primary"
               style={{
                 gap: '0.5rem',
@@ -382,12 +382,12 @@ if(loadingPaymentMethods){
                 {
                   id: 'ACTIVE',
                   label: 'Active',
-                  count: paymentMethods?.filter((p) => p.is_active).length,
+                  count: paymentMethods?.filter((p) => p.is_active_method).length,
                 },
                 {
                   id: 'INACTIVE',
                   label: 'Inactive',
-                  count: paymentMethods?.filter((p) => !p.is_active).length,
+                  count: paymentMethods?.filter((p) => !p.is_active_method).length,
                 },
               ].map((tab) => {
                 const active = filterStatus === tab.id;
@@ -732,9 +732,9 @@ if(loadingPaymentMethods){
                             width: '40px',
                             height: '40px',
                             borderRadius: '10px',
-                            background: pm.is_active ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.05)',
-                            border: `1px solid ${pm.is_active ? 'rgba(16, 185, 129, 0.25)' : 'var(--border-subtle)'}`,
-                            color: pm.is_active ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            background: pm.is_active_method ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.05)',
+                            border: `1px solid ${pm.is_active_method ? 'rgba(16, 185, 129, 0.25)' : 'var(--border-subtle)'}`,
+                            color: pm.is_active_method ? 'var(--accent-primary)' : 'var(--text-secondary)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -805,9 +805,9 @@ if(loadingPaymentMethods){
                             gap: '0.35rem',
                             padding: '0.25rem 0.65rem',
                             borderRadius: '6px',
-                            background: pm.is_active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                            border: `1px solid ${pm.is_active ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                            color: pm.is_active ? '#10b981' : '#f87171',
+                            background: pm.is_active_method ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                            border: `1px solid ${pm.is_active_method ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                            color: pm.is_active_method ? '#10b981' : '#f87171',
                             fontSize: '0.75rem',
                             fontWeight: '700',
                           }}
@@ -817,11 +817,11 @@ if(loadingPaymentMethods){
                               width: '6px',
                               height: '6px',
                               borderRadius: '50%',
-                              background: pm.is_active ? '#10b981' : '#f87171',
-                              boxShadow: pm.is_active ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none',
+                              background: pm.is_active_method ? '#10b981' : '#f87171',
+                              boxShadow: pm.is_active_method ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none',
                             }}
                           />
-                          <span>{pm.is_active ? 'Active' : 'Inactive'}</span>
+                          <span>{pm.is_active_method? 'Active' : 'Inactive'}</span>
                         </span>
                       </div>
 

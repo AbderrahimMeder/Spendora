@@ -13,7 +13,7 @@ export interface payment_methods {
     id:string;
     name:string;
     type:string;
-    is_active:boolean
+    is_active_method:boolean
 }
 
 export interface Transaction {
@@ -58,7 +58,7 @@ export interface Category {
 export interface payment_methodsCreate {
     name:string;
     type:string;
-    is_active:boolean
+    is_active_method:boolean
 }
 export interface CategorySpending {
   id: string;
