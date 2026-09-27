@@ -24,7 +24,7 @@ export default function Register({ onSwitchToLogin, onRegisterSuccess }: Registe
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const url = process.env.LARAVEL_API_URL!;
+  const url = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
 
   const handleGoogleSignup = () => {
     setIsGoogleLoading(true);

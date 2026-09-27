@@ -43,7 +43,7 @@ export function NewPaymentMethod({ user,token,PaymentMethodId,mode }: NewPayment
     is_active_method:true
   })
   const GetMethodForUpdate=async()=>{
-    const apiUrl =process.env.LARAVEL_API_URL!;
+    const apiUrl =process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
     const response = await fetch(`${apiUrl}/api/payment-method/${id}`, {
         method: 'GET',
         headers: {
@@ -86,7 +86,7 @@ export function NewPaymentMethod({ user,token,PaymentMethodId,mode }: NewPayment
     try {
       setLoading(true);
       console.log(PaymentData)
-      const apiUrl = process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL!;
+      const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
       const response = await fetch(`${apiUrl}/api/payment-method`, {
         method: 'POST',
         headers: {

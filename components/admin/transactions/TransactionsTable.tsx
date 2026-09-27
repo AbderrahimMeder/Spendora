@@ -75,7 +75,7 @@ export default function Transactionstable({
   const handleDeleteTrasaction = async (id: string) => {
     try {
       setLoadingTrash(true)
-      const res = await fetch(`${process.env.LARAVEL_API_URL}/api/transactions/${id}/delete`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/transactions/${id}/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
