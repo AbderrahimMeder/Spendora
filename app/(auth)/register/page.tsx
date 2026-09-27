@@ -24,7 +24,7 @@ export default function Register({ onSwitchToLogin, onRegisterSuccess }: Registe
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const url = 'http://localhost:8000';
+  const url = process.env.LARAVEL_API_URL!;
 
   const handleGoogleSignup = () => {
     setIsGoogleLoading(true);
@@ -375,4 +375,5 @@ export default function Register({ onSwitchToLogin, onRegisterSuccess }: Registe
     </div>
   );
 }
+
 

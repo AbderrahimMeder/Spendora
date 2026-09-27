@@ -88,7 +88,7 @@ export function TablePaymentMethod({
     const fetchPaymentMethods = async () => {
         try {
             setLoadingPaymentMethods(true);
-            const response = await fetch(`http://localhost:8000/api/payment-methods`, {
+            const response = await fetch(`${process.env.LARAVEL_API_URL}/api/payment-methods`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -127,7 +127,7 @@ export function TablePaymentMethod({
       if (onDelete) {
         await onDelete(id);
       } else {
-        const apiUrl = process.env.LARAVEL_API_URL || 'http://localhost:8000';
+        const apiUrl = process.env.LARAVEL_API_URL || process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
         const res = await fetch(`${apiUrl}/api/payment-methods/${id}`, {
           method: 'DELETE',
           headers: {
@@ -1184,3 +1184,4 @@ if(loadingPaymentMethods){
     </>
   );
 }
+

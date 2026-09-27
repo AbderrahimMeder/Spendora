@@ -610,3 +610,4 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
     </div>
   );
 }
+

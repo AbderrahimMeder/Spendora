@@ -233,3 +233,4 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
     </div>
   );
 }
+

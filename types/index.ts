@@ -47,13 +47,15 @@ export interface TransactionCreate {
 
 
 export interface Category {
-  id: string;
-  name: string;
-  slug:string;
-  type: TransactionType;
-  icon: string;
-  color: string;
-  bg: string;
+  id?: string;
+  name?: string;
+  slug?:string;
+  type?: TransactionType;
+  category_image?: string;
+  category_color?: string;
+  bg?: string;
+  max_budget?:string;
+  budget_period?:String
 }
 export interface payment_methodsCreate {
     name:string;

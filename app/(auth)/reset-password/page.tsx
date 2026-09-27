@@ -17,7 +17,7 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const url = 'http://localhost:8000';
+  const url = process.env.LARAVEL_API_URL!;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -218,4 +218,5 @@ export default function ResetPassword() {
     </div>
   );
 }
+
 
