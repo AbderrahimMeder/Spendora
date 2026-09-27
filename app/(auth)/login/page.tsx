@@ -3,18 +3,15 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowLeft, ArrowRight, Eye, EyeOff, Wallet, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/auth';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 
 interface LoginProps {
     onSwitchToRegister?: () => void;
     onSwitchToForgotPassword?: () => void;
-    onLoginSuccess?: (data: any) => void;
 }
 
-export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: LoginProps) {
-    const { login } = useAuth();
+export default function Login({ onSwitchToForgotPassword }: LoginProps) {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -23,7 +20,7 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-    const url = 'http://localhost:8000';
+    const url = process.env.LARAVEL_API_URL!;
 
     const handleGoogleLogin = () => {
         setIsGoogleLoading(true);
@@ -40,7 +37,7 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
         }
         setIsLoading(true);
         try {
-            const res = await fetch(`${url}/api/login`, {
+            const res = await fetch(`/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -54,21 +51,18 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
                 return;
             }
             if (data.status === 200) {
-                localStorage.setItem('token', data.token);
-                login(data.user);
-                toast.success(data.message || 'Login successful');
-                if (onLoginSuccess) {
-                    onLoginSuccess(data);
-                } else {
-                    router.push('/dashboard');
-                }
+                toast.success('welcome back');
+                router.push('/dashboard');
+                return;
+            }
+            if (data.status === 400) {
+                toast.error('Please verify your email');
+                router.push('/verify-email?email=' + email);
                 return;
             }
             toast.error(data.message || 'Login failed');
-            setError(data.message || 'Invalid credentials');
         } catch (err) {
             toast.error('Network error during login');
-            setError('Network error. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -98,7 +92,7 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
                             <Wallet className="h-4 w-4 stroke-[2.5]" />
                         </div>
                         <span className="text-base font-extrabold tracking-tight text-white">
-                            Expense<span className="text-emerald-400">Tracker</span>
+                            Spend<span className="text-emerald-400">Ora</span>
                         </span>
                     </Link>
 
@@ -257,4 +251,5 @@ export default function Login({ onSwitchToForgotPassword, onLoginSuccess }: Logi
         </div>
     );
 }
+
 

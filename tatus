@@ -1,0 +1,139 @@
+warning: in the working copy of 'app/(admin)/payment-method/new/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(marketing)/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/dashboard/BudgetModal.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/dashboard/OverviewHeader.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/dashboard/RecentTransactions.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/dashboard/StatCards.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/payment-method/new-payment.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/payment-method/table-payment-method.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/transactions/transactionAction.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/admin/transactions/transactions.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/about-ui.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/contact-ui.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/faq-ui.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/features-ui.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/CtaBanner.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/FeaturesSection.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/Footer.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/HeroSection.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/HowItWorksSection.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/InteractiveDemo.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/Navbar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/TechStackSection.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/home/TestimonialsSection.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/marketing/reports-ui.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'config/dashboard-link.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'hooks/auth.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'types/index.ts', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/app/(admin)/budgets/page.tsx b/app/(admin)/budgets/page.tsx[m
+[1mindex 9309dd3..e7dc4cd 100644[m
+[1m--- a/app/(admin)/budgets/page.tsx[m
+[1m+++ b/app/(admin)/budgets/page.tsx[m
+[36m@@ -6,4 +6,4 @@[m [mexport default function Budget() {[m
+             <h1>Budget</h1>[m
+         </div>[m
+     )[m
+[31m-}   [m
+\ No newline at end of file[m
+[32m+[m[32m}[m[41m   [m
+[1mdiff --git a/app/(admin)/dashboard/page.tsx b/app/(admin)/dashboard/page.tsx[m
+[1mindex 9fb2ccc..b9a7782 100644[m
+[1m--- a/app/(admin)/dashboard/page.tsx[m
+[1m+++ b/app/(admin)/dashboard/page.tsx[m
+[36m@@ -11,4 +11,4 @@[m [mexport default async  function DashboardPage() {[m
+             }[m
+         </>[m
+     )[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(admin)/layout.tsx b/app/(admin)/layout.tsx[m
+[1mindex e99b5af..feaa9fb 100644[m
+[1m--- a/app/(admin)/layout.tsx[m
+[1m+++ b/app/(admin)/layout.tsx[m
+[36m@@ -21,4 +21,4 @@[m [mexport default async function AdminLayout({[m
+             }[m
+         </>[m
+     )[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(admin)/payment-method/new/page.tsx b/app/(admin)/payment-method/new/page.tsx[m
+[1mindex c77444d..066379e 100644[m
+[1m--- a/app/(admin)/payment-method/new/page.tsx[m
+[1m+++ b/app/(admin)/payment-method/new/page.tsx[m
+[36m@@ -12,4 +12,4 @@[m [mexport default async function NewPaymentMethodPage() {[m
+             <NewPaymentMethod token={token} mode="create" />[m
+         </div>[m
+     );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(admin)/payment-method/page.tsx b/app/(admin)/payment-method/page.tsx[m
+[1mindex 119774b..73690c7 100644[m
+[1m--- a/app/(admin)/payment-method/page.tsx[m
+[1m+++ b/app/(admin)/payment-method/page.tsx[m
+[36m@@ -12,4 +12,4 @@[m [mexport default async function PaymentMethod() {[m
+             <TablePaymentMethod token={token}/>[m
+         </div>[m
+     );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(admin)/transactions/new/page.tsx b/app/(admin)/transactions/new/page.tsx[m
+[1mindex 8084c80..61fc2a7 100644[m
+[1m--- a/app/(admin)/transactions/new/page.tsx[m
+[1m+++ b/app/(admin)/transactions/new/page.tsx[m
+[36m@@ -13,4 +13,4 @@[m [mexport default async function Page() {[m
+             <TransactionAction mode='create' user={user} token={token}/>[m
+         </div>[m
+     );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(admin)/transactions/page.tsx b/app/(admin)/transactions/page.tsx[m
+[1mindex d98215c..7ab1c7c 100644[m
+[1m--- a/app/(admin)/transactions/page.tsx[m
+[1m+++ b/app/(admin)/transactions/page.tsx[m
+[36m@@ -16,4 +16,4 @@[m [mexport default async function Page() {[m
+             <Transactions fetchagain={false} token={token} currency={user?.currency} />[m
+         </div>[m
+     );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(auth)/forget-password/page.tsx b/app/(auth)/forget-password/page.tsx[m
+[1mindex 8c4bcb7..e24c91c 100644[m
+[1m--- a/app/(auth)/forget-password/page.tsx[m
+[1m+++ b/app/(auth)/forget-password/page.tsx[m
+[36m@@ -13,7 +13,7 @@[m [mexport default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)[m
+   const [isSubmitted, setIsSubmitted] = useState(false);[m
+   const [error, setError] = useState('');[m
+   const [isLoading, setIsLoading] = useState(false);[m
+[31m-  const url = 'http://localhost:8000';[m
+[32m+[m[32m  const url = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;[m
+ [m
+   const handleSubmit = async (e: React.FormEvent) => {[m
+     e.preventDefault();[m
+[36m@@ -209,3 +209,4 @@[m [mexport default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)[m
+   );[m
+ }[m
+ [m
+[41m+[m
+[1mdiff --git a/app/(auth)/google/callback/page.tsx b/app/(auth)/google/callback/page.tsx[m
+[1mindex 02e3870..86f340d 100644[m
+[1m--- a/app/(auth)/google/callback/page.tsx[m
+[1m+++ b/app/(auth)/google/callback/page.tsx[m
+[36m@@ -36,4 +36,4 @@[m [mexport default function GoogleCallback() {[m
+       Signing you in...[m
+     </div>[m
+   );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/(auth)/login/page.tsx b/app/(auth)/login/page.tsx[m
+[1mindex bb06a7e..7ae119a 100644[m
+[1m--- a/app/(auth)/login/page.tsx[m
+[1m+++ b/app/(auth)/login/page.tsx[m
+[36m@@ -20,7

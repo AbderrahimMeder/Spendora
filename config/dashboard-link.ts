@@ -40,3 +40,4 @@ export const DashboardItems: DashboardItem[] = [
     href: "/dashboard/settings",
   },
 ];
+

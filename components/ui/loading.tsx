@@ -1,4 +1,4 @@
-import '../../App.css';
+import '@/app/app.css';
 
 export default function Loading(){
     return(
@@ -72,3 +72,4 @@ export  function LoadingTransaction({hight}:{hight:number}){
     </div>
   );
 }
+

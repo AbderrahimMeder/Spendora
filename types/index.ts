@@ -13,8 +13,9 @@ export interface payment_methods {
     id:string;
     name:string;
     type:string;
-    is_active:boolean
+    is_active_method:boolean
 }
+
 export interface Transaction {
   id: string;
   account_id?: string;
@@ -26,6 +27,7 @@ export interface Transaction {
   description?: string;
   date: string;
   time?: string;
+  is_hidden: boolean;
   status?: string;
   categories?:Category;
   payment_methods?:payment_methods;
@@ -45,15 +47,21 @@ export interface TransactionCreate {
 
 
 export interface Category {
-  id: string;
-  name: string;
-  slug:string;
-  type: TransactionType;
-  icon: string;
-  color: string;
-  bg: string;
+  id?: string;
+  name?: string;
+  slug?:string;
+  type?: TransactionType;
+  category_image?: string;
+  category_color?: string;
+  bg?: string;
+  max_budget?:string;
+  budget_period?:String
 }
-
+export interface payment_methodsCreate {
+    name:string;
+    type:string;
+    is_active_method:boolean
+}
 export interface CategorySpending {
   id: string;
   name: string;
