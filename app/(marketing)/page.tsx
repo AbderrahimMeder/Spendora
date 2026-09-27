@@ -134,7 +134,6 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
       {/* 01. Navbar */}
-      <Navbar />
 
       <main style={{ flex: 1 }}>
         {/* =========================================================================

@@ -26,6 +26,7 @@ export interface Transaction {
   description?: string;
   date: string;
   time?: string;
+  is_hidden: boolean;
   status?: string;
   categories?:Category;
   payment_methods?:payment_methods;

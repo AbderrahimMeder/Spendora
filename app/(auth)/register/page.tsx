@@ -14,7 +14,6 @@ interface RegisterProps {
 
 export default function Register({ onSwitchToLogin, onRegisterSuccess }: RegisterProps) {
   const router = useRouter();
-  const { login } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -86,38 +85,15 @@ export default function Register({ onSwitchToLogin, onRegisterSuccess }: Registe
         }),
       });
       const data = await res.json();
-      if (data.status === 'success' || data.status === 200) {
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-        if (data.user) {
-          login(data.user);
-        }
-        toast.success(data.message || 'Registration successful!');
-        if (onRegisterSuccess) {
-          onRegisterSuccess(data);
-        } else {
-          router.push('/dashboard/overview');
-        }
+      if (data.status === 200) {
+        toast.success('Registration successful!');
+        router.push('/login');
         return;
       } else {
         setError(data.message || 'Registration failed');
       }
     } catch (err) {
-      // Offline fallback simulation
-      localStorage.setItem(
-        'expense_auth_user',
-        JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-        })
-      );
-      toast.success('Account created successfully!');
-      if (onRegisterSuccess) {
-        onRegisterSuccess({ user: { name, email } });
-      } else {
-        router.push('/dashboard/overview');
-      }
+      toast.error('Network error during registration');
     } finally {
       setIsLoading(false);
     }
