@@ -55,7 +55,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
     else setLoading(true);
 
     try {
-      const apiUrl = process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL!;
+      const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
       const response = await fetch(`${apiUrl}/api/categories`, {
         method: 'GET',
         headers: {
@@ -91,7 +91,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
     setIsDeleting(true);
 
     try {
-      const apiUrl = process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL!;
+      const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
       let succeeded = false;
 
       if (token) {
