@@ -30,7 +30,7 @@ export function CreateToggle({
     if (mode !== 'edit') return;
     try {
       setLoading(true)
-      const apiUrl = process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL!;
+      const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
       const res = await fetch(`${apiUrl}/api/categories/${categoryId}`, {
         headers: {
           Accept: 'application/json',
@@ -72,7 +72,7 @@ export function CreateToggle({
           setIsSaving(true);
 
           try {
-            const apiUrl =process.env.LARAVEL_API_URL || process.env.LARAVEL_API_URL!;
+            const apiUrl =process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
             const isEdit = Boolean(mode==='edit');
             const url = isEdit ? `${apiUrl}/api/categories/${id}/update` : `${apiUrl}/api/categories/create`;
             const method = isEdit ? 'PATCH' : 'POST';

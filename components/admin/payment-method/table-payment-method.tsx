@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo,useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   Plus,
@@ -45,7 +45,7 @@ export function TablePaymentMethod({
 }: TablePaymentMethodProps) {
   const router = useRouter();
   // transactions 
-  const [paymentMethods,setpayment_methods] = useState<payment_methods[]>([]);
+  const [paymentMethods, setpayment_methods] = useState<payment_methods[]>([]);
   const [loadingPaymentMethods, setLoadingPaymentMethods] = useState<boolean>(false);
   // Filter & Search States
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
@@ -84,30 +84,30 @@ export function TablePaymentMethod({
     }
     return CreditCard;
   };
-    useEffect(() => {
+  useEffect(() => {
     const fetchPaymentMethods = async () => {
-        try {
-            setLoadingPaymentMethods(true);
-            const response = await fetch(`${process.env.LARAVEL_API_URL}/api/payment-methods`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-            });
-            const data = await response.json();
-            if (data?.status === 200 || response.ok) {
-                setpayment_methods(data.payment_methods);
-            } else {
-                toast.error(data?.message || 'Failed to fetch payment methods');
-            }
-        } catch (error:any) {
-            toast.error(error.message || 'Failed to fetch payment methods');
-        } finally {
-            setLoadingPaymentMethods(false);
+      try {
+        setLoadingPaymentMethods(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/payment-methods`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+        const data = await response.json();
+        if (data?.status === 200 || response.ok) {
+          setpayment_methods(data.payment_methods);
+        } else {
+          toast.error(data?.message || 'Failed to fetch payment methods');
         }
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to fetch payment methods');
+      } finally {
+        setLoadingPaymentMethods(false);
+      }
     };
     fetchPaymentMethods();
-    }, [token]);
+  }, [token]);
   // Types list for filter dropdown
   const uniqueTypes = useMemo(() => {
     return [
@@ -127,7 +127,7 @@ export function TablePaymentMethod({
       if (onDelete) {
         await onDelete(id);
       } else {
-        const apiUrl = process.env.LARAVEL_API_URL || process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
+        const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
         const res = await fetch(`${apiUrl}/api/payment-methods/${id}`, {
           method: 'DELETE',
           headers: {
@@ -145,7 +145,7 @@ export function TablePaymentMethod({
       }
       setDeleteTargetId(null);
       setActionId(null);
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error);
     } finally {
       setLoadingDelete(false);
@@ -270,79 +270,79 @@ export function TablePaymentMethod({
     URL.revokeObjectURL(url);
     toast.success('Payment methods CSV exported successfully!');
   };
-if(loadingPaymentMethods){
+  if (loadingPaymentMethods) {
     return <LoadingTransaction hight={150} />
   }
   return (
     <>      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '3rem' }}>
-        {/* Page Header */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.25rem',
-            paddingBottom: '1.25rem',
-            borderBottom: '1px solid var(--border-subtle)',
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
-              <h1
-                style={{
-                  fontSize: '1.85rem',
-                  fontWeight: '800',
-                  color: '#ffffff',
-                  letterSpacing: '-0.02em',
-                  margin: 0,
-                }}
-              >
-                Payment Methods
-              </h1>
-              <span
-                style={{
-                  fontSize: '0.75rem',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  color: '#10b981',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
-                  fontWeight: '700',
-                }}
-              >
-                {paymentMethods?.length} Records
-              </span>
-            </div>
-            <p
+      {/* Page Header */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1.25rem',
+          paddingBottom: '1.25rem',
+          borderBottom: '1px solid var(--border-subtle)',
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+            <h1
               style={{
-                fontSize: '0.875rem',
-                color: 'var(--text-secondary)',
+                fontSize: '1.85rem',
+                fontWeight: '800',
+                color: '#ffffff',
+                letterSpacing: '-0.02em',
                 margin: 0,
               }}
             >
-             Manage all your enabled payment methods and their configurations.
-            </p>
-          </div>
-
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Link
-              href="/payment-method/new"
-              className="btn btn-primary"
+              Payment Methods
+            </h1>
+            <span
               style={{
-                gap: '0.5rem',
-                padding: '0.65rem 1.25rem',
-                fontSize: '0.9rem',
-                boxShadow: 'var(--accent-glow)',
+                fontSize: '0.75rem',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#10b981',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                fontWeight: '700',
               }}
             >
-              <Plus size={16} />
-              <span>Create Payment Method</span>
-            </Link>
+              {paymentMethods?.length} Records
+            </span>
           </div>
+          <p
+            style={{
+              fontSize: '0.875rem',
+              color: 'var(--text-secondary)',
+              margin: 0,
+            }}
+          >
+            Manage all your enabled payment methods and their configurations.
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link
+            href="/payment-method/new"
+            className="btn btn-primary"
+            style={{
+              gap: '0.5rem',
+              padding: '0.65rem 1.25rem',
+              fontSize: '0.9rem',
+              boxShadow: 'var(--accent-glow)',
+            }}
+          >
+            <Plus size={16} />
+            <span>Create Payment Method</span>
+          </Link>
         </div>
       </div>
+    </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {/* Search & Filter Toolbar */}
         <div
@@ -821,7 +821,7 @@ if(loadingPaymentMethods){
                               boxShadow: pm.is_active_method ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none',
                             }}
                           />
-                          <span>{pm.is_active_method? 'Active' : 'Inactive'}</span>
+                          <span>{pm.is_active_method ? 'Active' : 'Inactive'}</span>
                         </span>
                       </div>
 

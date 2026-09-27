@@ -28,7 +28,7 @@ export default function TransactionAction(
 ) {
   const {id} = useParams<{id: string}>(); 
   const router = useRouter();
-  const APP_URL = process.env.LARAVEL_API_URL!;
+  const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<payment_methods[]>([]);
   const [loading, setLoading] = useState<boolean>(false);

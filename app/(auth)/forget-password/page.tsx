@@ -13,7 +13,7 @@ export default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const url = process.env.LARAVEL_API_URL!;
+  const url = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
