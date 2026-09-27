@@ -25,3 +25,4 @@ export default async function VerifieEmailPage({ searchParams }: VerifyEmailPage
     );
 }
 
+

@@ -306,3 +306,4 @@ export default function Navbar({ user }: User) {
     </nav>
   );
 }
+

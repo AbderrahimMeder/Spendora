@@ -92,7 +92,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    const APP_URL = 'http://localhost:8000';
+    const APP_URL = process.env.LARAVEL_API_URL!;
 
     const fetchTransaction = async () => {
       try {

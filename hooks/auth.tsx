@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/current-user", {
+        const response = await fetch(`${process.env.LARAVEL_API_URL}/api/current-user`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -75,3 +75,4 @@ export function useAuth(): AuthContextType {
 
   return context;
 }
+

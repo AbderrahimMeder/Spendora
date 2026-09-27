@@ -13,7 +13,7 @@ import { LoadingTransaction } from '@/components/ui/loading';
 
 
 export  function Dashboard({user, token}:{user:User,token:string}) {
-    const APP_URL = 'http://localhost:8000'
+    const APP_URL = process.env.LARAVEL_API_URL!
     const route = useRouter();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -218,3 +218,4 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
 
     );
 }
+

@@ -6,7 +6,7 @@ export function VerifieEmail({userEmail}: { userEmail: string }) {
     const sendEmailVerification=async(email:string)=>{
     try {
         const response = await fetch(
-            "http://localhost:8000/api/send-email-verification",
+            `${process.env.LARAVEL_API_URL}/api/send-email-verification`,
             {
                 method: "POST",
                 headers: {

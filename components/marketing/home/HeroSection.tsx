@@ -114,3 +114,4 @@ export default function HeroSection({ onScrollToDemo }: HeroSectionProps) {
     </section>
   );
 }
+

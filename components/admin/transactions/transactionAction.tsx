@@ -28,7 +28,7 @@ export default function TransactionAction(
 ) {
   const {id} = useParams<{id: string}>(); 
   const router = useRouter();
-  const APP_URL = 'http://localhost:8000';
+  const APP_URL = process.env.LARAVEL_API_URL!;
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<payment_methods[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -158,7 +158,6 @@ export default function TransactionAction(
     setLoading(true)
 
     if(mode==='create'){
-      console.log(transactionData)
       const rate = await getExchangeRate(user?.currency || 'USD');
       const SendData = {...transactionData,amount:(transactionData.amount / (rate ?? 1)).toFixed(2)}
       try {
@@ -813,3 +812,4 @@ export default function TransactionAction(
     </div>
   );
 }
+

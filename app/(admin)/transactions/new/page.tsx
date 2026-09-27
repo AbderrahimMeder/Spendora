@@ -10,7 +10,7 @@ export default async function Page() {
     }
     return (
         <div>
-            <TransactionAction mode='create'user={user} token={token}/>
+            <TransactionAction mode='create' user={user} token={token}/>
         </div>
     );
 }

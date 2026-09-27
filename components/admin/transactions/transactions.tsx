@@ -20,7 +20,7 @@ export function Transactions({
   currency,
   token,
 }: TransactionsProps) {
-  const APP_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const APP_URL = process.env.LARAVEL_API_URL!;
   const router = useRouter();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [rate, setRate] = useState<number>(1);
@@ -222,3 +222,4 @@ export function Transactions({
     </>
   );
 }
+

@@ -1,4 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+:root {
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Minimalist Black & Green Palette */
+    --bg-primary: #080808;
+    --bg-secondary: #111111;
+    --bg-card: #141414;
+    --bg-card-hover: #1c1c1c;
+    --bg-subtle: #181818;
+
+    --border-subtle: #222222;
+    --border-hover: #333333;
+    --border-focus: #10b981;
+
+    --text-primary: #ffffff;
+    --text-secondary: #a3a3a3;
+    --text-muted: #666666;
+
+    /* Pure Emerald Green Accents */
+    --accent-primary: #002aff;
+    --accent-hover: #059669;
+    --accent-light: rgba(16, 185, 129, 0.12);
+    --accent-border: rgba(16, 185, 129, 0.3);
+    --accent-glow: 0 0 20px rgba(16, 185, 129, 0.25);
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+
+    --transition: 0.2s ease;
+    
+}
 
 :root {
     --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -32,7 +66,67 @@
 
     --transition: 0.2s ease;
 }
+@theme {
+  /* Green */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
 
+  /* Red */
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+
+  /* Yellow */
+  --color-warning-50: #fefce8;
+  --color-warning-100: #fef9c3;
+  --color-warning-200: #fef08a;
+  --color-warning-300: #fde047;
+  --color-warning-400: #facc15;
+  --color-warning-500: #eab308;
+  --color-warning-600: #ca8a04;
+  --color-warning-700: #a16207;
+  --color-warning-800: #854d0e;
+  --color-warning-900: #713f12;
+
+  /* Blue */
+  --color-info-50: #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-200: #bfdbfe;
+  --color-info-300: #93c5fd;
+  --color-info-400: #60a5fa;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+  --color-info-800: #1e40af;
+  --color-info-900: #1e3a8a;
+
+  /* Black / Neutral */
+  --color-black-50: #fafafa;
+  --color-black-100: #f5f5f5;
+  --color-black-200: #e5e5e5;
+  --color-black-300: #d4d4d4;
+  --color-black-400: #a3a3a3;
+  --color-black-500: #737373;
+  --color-black-600: #525252;
+  --color-black-700: #404040;
+  --color-black-800: #262626;
+  --color-black-900: #171717;
+}
 body {
     font-family: var(--font-main);
     background-color: var(--bg-primary);
@@ -137,7 +231,10 @@ body {
     color: var(--text-primary);
     border-color: var(--border-hover);
 }
-
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 /* Minimalist Badge */
 .badge {
     display: inline-flex;
