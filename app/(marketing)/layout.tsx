@@ -15,10 +15,12 @@ export default async function RootLayout({
 }>) {
   const { user }: User = await getCurrentUser()
   return (
-    <body>
+    <html>
+      <body>
       <Navbar user={user} />
       {children}
       <Footer />
     </body>
+    </html>
   );
 }

@@ -21,14 +21,12 @@ export async function POST(request: Request) {
         );
         const data = await response.json();
         if (!response.ok) {
-            return NextResponse.json(
-                {
-                    message: data.message ?? "Login failed",
-                },
-                {
-                    status: response.status,
-                }
-            );
+            const nextResponse =NextResponse.json(data, {
+            status: response.status,
+            });
+            nextResponse.headers.set("Retry-After",response.headers.get("Retry-After") ?? "");
+            nextResponse.headers.set('x-my-helo','heelo ')
+            return nextResponse;
         }
         if (data.user.email_verified_at===null) {
             return NextResponse.json({ status: 400 });

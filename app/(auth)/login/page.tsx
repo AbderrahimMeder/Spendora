@@ -46,10 +46,8 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 })
             });
             const data = await res.json();
-            if (data.status === 401) {
-                router.push('/error?code=401');
-                return;
-            }
+            const islimiting = res.headers.get('Retry-After')?.length!==0
+            if(islimiting)return toast.warning(`Please try again after ${res.headers.get("Retry-After")} seconds`)
             if (data.status === 200) {
                 toast.success('welcome back');
                 router.push('/dashboard');
@@ -61,8 +59,8 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 return;
             }
             toast.error(data.message || 'Login failed');
-        } catch (err) {
-            toast.error('Network error during login');
+        } catch (err:any) {
+            toast.error(err.message);
         } finally {
             setIsLoading(false);
         }
