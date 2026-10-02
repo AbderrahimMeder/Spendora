@@ -15,7 +15,7 @@ export default async function RootLayout({
 }>) {
   const { user }: User = await getCurrentUser()
   return (
-    <html>
+    <html lang='en'>
       <body>
       <Navbar user={user} />
       {children}
