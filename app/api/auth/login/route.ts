@@ -24,8 +24,7 @@ export async function POST(request: Request) {
             const nextResponse =NextResponse.json(data, {
             status: response.status,
             });
-            nextResponse.headers.set("Retry-After",response.headers.get("Retry-After") ?? "");
-            nextResponse.headers.set('x-my-helo','heelo ')
+
             return nextResponse;
         }
         if (data.user.email_verified_at===null) {
@@ -36,6 +35,7 @@ export async function POST(request: Request) {
             user: data.user,
             status: data.status,
         });
+        nextResponse.headers.set("Retry-After",response.headers.get("Retry-After") ?? "");
         nextResponse.cookies.set("token", data.token, {
             httpOnly: true,
             secure: false,
