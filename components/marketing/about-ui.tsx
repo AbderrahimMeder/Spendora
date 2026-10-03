@@ -158,7 +158,7 @@ export function AboutUs() {
             }}
           >
             <Sparkles size={15} />
-            <span>Welcome to Finora · Financial Clarity</span>
+            <span>Welcome to Spendora · Financial Clarity</span>
           </div>
 
           {/* Headline */}
@@ -172,7 +172,7 @@ export function AboutUs() {
               marginBottom: '1.4rem',
             }}
           >
-            Welcome to Finora. <br />
+            Welcome to Spendora. <br />
             <span style={{ color: 'var(--accent-primary)' }}>
               A clearer way to understand your money.
             </span>
@@ -188,7 +188,7 @@ export function AboutUs() {
               margin: '0 auto 2.5rem auto',
             }}
           >
-            Finora helps you understand where your money goes, track your spending, manage your accounts and subscriptions,
+            Spendora helps you understand where your money goes, track your spending, manage your accounts and subscriptions,
             and get a clear view of your financial activity.
           </p>
 
@@ -217,7 +217,7 @@ export function AboutUs() {
               className="btn btn-secondary"
               style={{ fontSize: '0.95rem', padding: '0.8rem 1.6rem', textDecoration: 'none' }}
             >
-              <span>Explore Finora</span>
+              <span>Explore Spendora</span>
             </a>
           </div>
 
@@ -251,7 +251,7 @@ export function AboutUs() {
                 <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#f59e0b' }} />
                 <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#10b981' }} />
                 <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  finora.app/overview
+                  spendora.app/overview
                 </span>
               </div>
               <span className="badge badge-green">Live Financial Workspace</span>
@@ -397,7 +397,7 @@ export function AboutUs() {
             Our Guiding Principles
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
-            The foundational beliefs that shape every pixel and algorithm in Finora.
+            The foundational beliefs that shape every pixel and algorithm in Spendora.
           </p>
         </div>
 
@@ -465,7 +465,7 @@ export function AboutUs() {
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link href="/register" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}>
-                <span>Start Using Finora — Free</span>
+                <span>Start Using Spendora — Free</span>
                 <ArrowRight size={18} />
               </Link>
             </div>
