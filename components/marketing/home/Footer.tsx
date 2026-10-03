@@ -1,5 +1,5 @@
 import React from 'react';
-import Link  from 'next/link';
+import Link from 'next/link';
 import { Wallet } from 'lucide-react';
 
 export default function Footer() {
@@ -34,7 +34,7 @@ export default function Footer() {
               <Wallet size={18} strokeWidth={2.5} />
             </div>
             <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#ffffff' }}>
-              Fin<span style={{ color: 'var(--accent-primary)' }}>ora</span>
+              Spend<span style={{ color: 'var(--accent-primary)' }}>ora</span>
             </span>
           </Link>
           <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
@@ -42,9 +42,9 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Finora Navigation */}
+        {/* Spnedora Navigation */}
         <div>
-          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Finora</h4>
+          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Spendora</h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
             <li><Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Home</Link></li>
             <li><a href="/#accounts" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Features</a></li>
@@ -70,7 +70,7 @@ export default function Footer() {
           <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Support</h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
             <li><a href="/#faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Help Center</a></li>
-            <li><a href="mailto:support@finora.app" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Contact Us</a></li>
+            <li><a href="mailto:support@Spnedora.app" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Contact Us</a></li>
             <li><a href="/#faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>FAQ</a></li>
           </ul>
         </div>
@@ -100,7 +100,7 @@ export default function Footer() {
         color: 'var(--text-muted)',
       }}>
         <div>
-          © 2026 Finora. All rights reserved.
+          © 2026 Spendora. All rights reserved.
         </div>
         <div style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
           Know your money. Own your decisions.

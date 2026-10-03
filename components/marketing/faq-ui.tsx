@@ -21,13 +21,13 @@ export function FaqUI() {
 
   const faqData: FaqItem[] = [
     {
-      q: 'What is Finora?',
-      a: 'Finora is a simple, smart platform that helps you organize your finances, manage expenses and accounts, and stay focused on what matters most to your financial growth.',
+      q: 'What is Spendora?',
+      a: 'Spendora is a simple, smart platform that helps you organize your finances, manage expenses and accounts, and stay focused on what matters most to your financial growth.',
       category: 'general',
     },
     {
-      q: 'Is Finora free to use?',
-      a: 'Yes, you can start using Finora for free. Additional premium intelligence and automation features may be available depending on your plan.',
+      q: 'Is Spendora free to use?',
+      a: 'Yes, you can start using Spendora for free. Additional premium intelligence and automation features may be available depending on your plan.',
       category: 'general',
     },
     {
@@ -57,7 +57,7 @@ export function FaqUI() {
     },
     {
       q: 'How can I contact support?',
-      a: 'You can contact our support team anytime through our Contact page or directly by email at support@finora.app. We typically respond within 24 hours.',
+      a: 'You can contact our support team anytime through our Contact page or directly by email at support@spendora.com. We typically respond within 24 hours.',
       category: 'support',
     },
   ];
@@ -140,7 +140,7 @@ export function FaqUI() {
               margin: '0 auto 2.5rem auto',
             }}
           >
-            Find quick answers to common questions about using Finora, account privacy, multi-device support, and billing.
+            Find quick answers to common questions about using Spendora, account privacy, multi-device support, and billing.
           </p>
 
           {/* Interactive Search Bar */}
