@@ -173,7 +173,7 @@ export function ContactUI() {
                     Email Support
                   </div>
                   <a
-                    href="mailto:support@finora.app"
+                    href="mailto:support@spendora.com"
                     style={{
                       fontSize: '1rem',
                       fontWeight: '700',
@@ -184,7 +184,7 @@ export function ContactUI() {
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-primary)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = '#ffffff')}
                   >
-                    support@finora.app
+                    support@spendora.com
                   </a>
                 </div>
               </div>
@@ -456,10 +456,10 @@ export function ContactUI() {
               We're happy to hear from you.
             </h3>
             <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto 1.75rem auto', lineHeight: '1.6' }}>
-              Send us a message and we'll get back to you as soon as possible. Your feedback helps make Finora better every day.
+              Send us a message and we'll get back to you as soon as possible. Your feedback helps make Spnedora better every day.
             </p>
             <div style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
-              Finora Support Team · Available Monday–Friday
+              Spnedora Support Team · Available Monday–Friday
             </div>
           </div>
         </div>

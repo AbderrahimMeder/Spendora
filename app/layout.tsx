@@ -5,7 +5,7 @@ import './app.css'
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: 'Finora',
+  title: 'spendora',
   description: 'Personal finance management',
 };
 

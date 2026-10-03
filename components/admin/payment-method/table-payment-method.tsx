@@ -262,7 +262,7 @@ export function TablePaymentMethod({
     link.setAttribute('href', url);
     link.setAttribute(
       'download',
-      `Finora_Payment_Methods_${new Date().toISOString().split('T')[0]}.csv`
+      `Spnedora_Payment_Methods_${new Date().toISOString().split('T')[0]}.csv`
     );
     document.body.appendChild(link);
     link.click();

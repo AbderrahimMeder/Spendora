@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams,useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import type { Transaction,User } from '@/types';
+import type { Transaction, User } from '@/types';
 import { getExchangeRate } from '@/utils/exchange';
-import {toast} from 'sonner';
+import { toast } from 'sonner';
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -62,7 +62,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; cla
   CircleEllipsis,
 };
 
-export default function TransactionDetails({user,token}: {user:User,token:string}) {
+export default function TransactionDetails({ user, token }: { user: User, token: string }) {
   const router = useRouter();
   const id = useParams().id as string;
   const [transaction, setTransaction] = useState<Transaction | null>(null);
@@ -105,8 +105,8 @@ export default function TransactionDetails({user,token}: {user:User,token:string
         });
 
         if (!res.ok) {
-                toast.error("Unauthorized");
-                router.push('/login');
+          toast.error("Unauthorized");
+          router.push('/login');
         }
 
         const data = await res.json();
@@ -189,7 +189,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
 
   const handleCopySummary = () => {
     if (!transaction) return;
-    const summary = `Finora Transaction Receipt\nID: #${transaction.id}\nTitle: ${transaction.title || transaction.description}\nType: ${isIncome ? 'Income' : 'Expense'}\nAmount: ${isIncome ? '+' : '-'}${convertedAmount} ${currencyCode}\nDate: ${transaction.date} ${transaction.time || ''}\nCategory: ${categoryMeta.name}\nStatus: ${transaction.status || 'Completed'}`;
+    const summary = `Spnedora Transaction Receipt\nID: #${transaction.id}\nTitle: ${transaction.title || transaction.description}\nType: ${isIncome ? 'Income' : 'Expense'}\nAmount: ${isIncome ? '+' : '-'}${convertedAmount} ${currencyCode}\nDate: ${transaction.date} ${transaction.time || ''}\nCategory: ${categoryMeta.name}\nStatus: ${transaction.status || 'Completed'}`;
     navigator.clipboard.writeText(summary);
     setCopiedSummary(true);
     toast.success('Summary copied to clipboard!');
@@ -298,7 +298,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
 
         {/* Loading State */}
         {loading && (
-          <LoadingTransaction hight={130}/>
+          <LoadingTransaction hight={130} />
         )}
 
         {/* Error / Not Found State */}
@@ -339,7 +339,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
               <button onClick={() => router.push('/transactions')} className="btn btn-primary">
-                Go back 
+                Go back
               </button>
               <button onClick={() => router.push(`/transactions/${id}/edit`)} className="btn btn-secondary">
                 Edit
@@ -725,7 +725,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <ShieldCheck size={14} color="var(--accent-primary)" />
                     <span style={{ fontSize: '0.675rem', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                      Finora Cryptographic Ledger Verified
+                      Spnedora Cryptographic Ledger Verified
                     </span>
                   </div>
                   {/* Decorative Barcode Lines */}
@@ -829,7 +829,7 @@ export default function TransactionDetails({user,token}: {user:User,token:string
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.725rem', color: 'var(--text-muted)' }}>
-                    <span>CARDHOLDER: {user?.name?.toUpperCase() || 'FINORA USER'}</span>
+                    <span>CARDHOLDER: {user?.name?.toUpperCase() || 'Spnedora USER'}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--accent-primary)' }}>
                       <ShieldCheck size={12} />
                       <span>256-Bit SSL</span>
