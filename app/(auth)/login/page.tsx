@@ -46,10 +46,9 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 })
             });
             const data = await res.json();
-            if (data.status === 401) {
-                router.push('/error?code=401');
-                return;
-            }
+            router.push('/error?code=500')
+            const islimiting = res.headers.get('Retry-After')??0!==0
+            if(islimiting && data.status===429)return toast.warning(`Please try again after ${res.headers.get("Retry-After")} seconds`)
             if (data.status === 200) {
                 toast.success('welcome back');
                 router.push('/dashboard');
@@ -61,8 +60,9 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 return;
             }
             toast.error(data.message || 'Login failed');
-        } catch (err) {
-            toast.error('Network error during login');
+        } catch (err:any) {
+            router.push('/error?code=500')
+            toast.error('Inernal server Error ');
         } finally {
             setIsLoading(false);
         }

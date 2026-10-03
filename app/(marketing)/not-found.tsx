@@ -1,12 +1,12 @@
 'use client'
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter,useSearchParams } from 'next/navigation';
 import { Home, ArrowLeft, Wallet } from 'lucide-react';
 
 
 export default function NotFound() {
   const router = useRouter()
-  const code = '404'
+  const code=useSearchParams().get('code')
   const message = ''
   const errors: Record<string, {
     title: string;
@@ -51,7 +51,7 @@ export default function NotFound() {
     },
   };
 
-  const error = errors[code] || errors['404'];
+  const error = errors[code??''] || errors['404'];
 
   return (  
     <div style={{
@@ -96,7 +96,7 @@ export default function NotFound() {
             <Wallet size={20} strokeWidth={2.5} />
           </div>
           <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff' }}>
-           Fin<span style={{ color: '#10b981' }}>ore</span> 
+           Spend<span style={{ color: '#10b981' }}>ora</span> 
           </span>
         </Link>
 
