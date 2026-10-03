@@ -1,58 +1,13 @@
 'use client'
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Home, ArrowLeft, Wallet } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Home, ArrowLeft, Wallet, UserPlusIcon } from 'lucide-react';
 
 
 export default function NotFound() {
   const router = useRouter()
-  const code = '404'
-  const message = ''
-  const errors: Record<string, {
-    title: string;
-    message: string;
-    button: string;
-    action: () => void;
-  }> = {
-    '401': {
-      title: "Session Expired",
-      message: message||"Your session has expired. Please log in again.",
-      button: "Go to Login",
-      action:()=>{
-        router.push('/login')
-      }
-    },
-
-    '403': {
-      title: "Access Denied",
-      message: message||"You do not have permission to access this page.",
-      button: "Go Back",
-      action:()=>{
-        router.back()
-      }
-    },
-
-    '404': {
-      title: "Page Not Found",
-      message: message||"The page you are looking for does not exist.",
-      button: "Go Home",
-      action:()=>{
-        router.push('/')
-      }
-    },
-
-    '500': {
-      title: "Server Error",
-      message: message || "Something went wrong on our server.",
-      button: "Try Again",
-      action:()=>{
-        window.location.reload()
-      }
-    },
-  };
-
-  const error = errors[code] || errors['404'];
-
+  const code=useSearchParams().get('code')
+  const message = useSearchParams().get('message')
   return (  
     <div style={{
       minHeight: '100vh',
@@ -121,7 +76,7 @@ export default function NotFound() {
           letterSpacing: '-0.02em',
           marginBottom: '0.65rem',
         }}>
-          {error.title}
+          {code}
         </h2>
 
         <p style={{
@@ -131,7 +86,7 @@ export default function NotFound() {
           maxWidth: '380px',
           margin: '0 auto 2rem auto',
         }}>
-          {error.message}
+          {message}
         </p>
 
         {/* Actions */}
@@ -143,12 +98,12 @@ export default function NotFound() {
           flexWrap: 'wrap',
         }}>
           <button
-            onClick={() => error.action()}
+            onClick={() => router.back()}
             className="btn btn-secondary"
             style={{ padding: '0.65rem 1.25rem' }}
           >
             <ArrowLeft size={16} />
-            <span>{error.button}</span>
+            <span>Back</span>
           </button>
 
           <Link

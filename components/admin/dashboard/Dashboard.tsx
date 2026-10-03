@@ -42,8 +42,7 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
                 }
                 setLoading(false);
             } catch (error) {
-                route.push('/error?code=500')
-                setLoading(false);
+                route.push(`/error?message=none&code=500`)
             } finally {
                 setLoading(false);
             }
