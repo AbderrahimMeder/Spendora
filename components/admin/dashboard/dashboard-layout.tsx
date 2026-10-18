@@ -76,7 +76,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
     },
     { label: 'Budgets', path: '/budgets', icon: Target, badge: null },
     { label: 'Analytics & Reports', path: '/reports', icon: BarChart3, badge: '21' },
-    { label: 'Settings', path: '/settings', icon: Settings, badge: null },
+    { label: 'Settings', path: '/setting', icon: Settings, badge: null },
   ];
 
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : 'U');
@@ -187,8 +187,9 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
                   (child) => pathname === child.path || (child.path && pathname.startsWith(child.path + '/'))
                 )
               );
-              const isActive = link.path ? (pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/')) : isChildActive;
-              const isOpen = openDropdowns[link.label] ?? isChildActive;
+              const isActive = link.path
+                ? (pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/'))
+                : isChildActive;
 
               if (hasChildren && link.children) {
                 return (
@@ -231,7 +232,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
                         {!collapsed && <span>{link.label}</span>}
                       </div>
                       {!collapsed && (
-                        isOpen ? (
+                        openDropdowns[link.label] ? (
                           <ChevronDown size={16} color={isChildActive ? 'var(--accent-primary)' : 'var(--text-secondary)'} />
                         ) : (
                           <ChevronRight size={16} color="var(--text-secondary)" />
@@ -240,7 +241,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
                     </button>
 
                     {/* Children Sub-links */}
-                    {isOpen && !collapsed && (
+                    {openDropdowns[link.label] && !collapsed && (
                       <div
                         style={{
                           display: 'flex',

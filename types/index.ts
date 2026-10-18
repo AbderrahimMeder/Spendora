@@ -5,6 +5,10 @@ export interface User {
   avatar?: string;
   profile?: string;
   currency?: string;
+  bio?: string;
+  country?: string;
+  phone?: string;
+  email_verified_at?:string|null|undefined;
   [key: string]: any;
 }
 
