@@ -40,32 +40,6 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
     autoConvertExchange: true,
   });
 
-  useEffect(() => {
-    try {
-      const storedCurrency = localStorage.getItem('finora_currency') || user?.currency || 'USD';
-      const storedFiscal = localStorage.getItem('finora_fiscal_start_day') || '1';
-      const storedTxType = (localStorage.getItem('finora_default_tx_type') as 'EXPENSE' | 'INCOME') || 'EXPENSE';
-      const storedAutoFx = localStorage.getItem('finora_auto_fx') !== null
-        ? localStorage.getItem('finora_auto_fx') === 'true'
-        : true;
-
-      const loaded = {
-        currency: storedCurrency,
-        fiscalStartDay: storedFiscal,
-        defaultTransactionType: storedTxType,
-        autoConvertExchange: storedAutoFx,
-      };
-
-      setCurrency(loaded.currency);
-      setFiscalStartDay(loaded.fiscalStartDay);
-      setDefaultTransactionType(loaded.defaultTransactionType);
-      setAutoConvertExchange(loaded.autoConvertExchange);
-      setInitialState(loaded);
-    } catch {
-      // Ignore local storage error
-    }
-  }, [user]);
-
   // Check if anything differs from default/initial values
   const hasChanges =
     currency !== initialState.currency ||
@@ -82,38 +56,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
   const handleSave = async () => {
     if (!hasChanges || isSaving) return;
     setIsSaving(true);
-    try {
-      localStorage.setItem('finora_currency', currency);
-      localStorage.setItem('finora_fiscal_start_day', fiscalStartDay);
-      localStorage.setItem('finora_default_tx_type', defaultTransactionType);
-      localStorage.setItem('finora_auto_fx', String(autoConvertExchange));
-
-      if (token && user?.id) {
-        await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/update-profile/${user?.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            currency,
-          }),
-        }).catch(() => {});
-      }
-
-      setInitialState({
-        currency,
-        fiscalStartDay,
-        defaultTransactionType,
-        autoConvertExchange,
-      });
-
-      toast.success('Financial preferences saved successfully!');
-    } catch (error) {
-      toast.error('Failed to save financial preferences.');
-    } finally {
-      setIsSaving(false);
-    }
+    
   };
 
   const ToggleSwitch = ({
@@ -413,56 +356,6 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: autoConvertExchange ? '#10b981' : '#f59e0b', marginTop: '0.15rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Globe size={13} />
                 {autoConvertExchange ? 'Enabled' : 'Disabled'}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Formatting Samples Card */}
-        <div
-          style={{
-            background: '#111111',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '1.5rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-            <Sparkles size={15} color="var(--accent-primary)" />
-            <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-              Live Currency Formatting Preview
-            </h3>
-          </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0 0 1.25rem 0' }}>
-            Real-time preview of formatted numbers across your analytics and ledgers.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {/* Positive Sample */}
-            <div style={{ background: '#161616', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Positive Balance Sample</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: '#10b981', fontWeight: '600' }}>
-                  <ArrowUpRight size={13} />
-                  Credit
-                </div>
-              </div>
-              <div style={{ fontSize: '1.45rem', fontWeight: '800', color: '#10b981', marginTop: '0.25rem' }}>
-                +{activeSymbol} 14,850.50
-              </div>
-            </div>
-
-            {/* Expense Sample */}
-            <div style={{ background: '#161616', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Expense Transaction Sample</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: '#f87171', fontWeight: '600' }}>
-                  <ArrowDownRight size={13} />
-                  Debit
-                </div>
-              </div>
-              <div style={{ fontSize: '1.45rem', fontWeight: '800', color: '#f87171', marginTop: '0.25rem' }}>
-                -{activeSymbol} 320.00
               </div>
             </div>
           </div>

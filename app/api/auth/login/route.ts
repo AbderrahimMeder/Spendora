@@ -57,6 +57,8 @@ export async function POST(request: Request) {
                 theme: data.user.theme,
                 timezone: data.user.timezone,
                 avatar: data.user.avatar,
+                bio:data.user.bio,
+                phone:data.user.phone
             }),
             {
                 httpOnly: false,

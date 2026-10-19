@@ -1,9 +1,12 @@
 'use client'
 import { useState } from "react";
-import { UserIcon, Mail, Smartphone, Sparkles } from "lucide-react";
+import { UserIcon, Mail, Smartphone, Sparkles, Loader2 } from "lucide-react";
 import { User } from "@/types";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 export default function SettingProfiles({ user , token }: { user: User | null, token: string|null|undefined }) {
+  const router = useRouter()
+  console.log(user)
   const [UserProfile, setUserPorfile] = useState({
     name: user?.name ?? '',
     email: user?.email ?? '',
@@ -12,43 +15,88 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
     bio: user?.bio ?? '',
     hasSubscription: user?.hasSubscription ?? false,
   })
+  const [loading,setloading]=useState<boolean>(false)
   const CanUserChangeProfile =
     (user?.email ?? '') !== UserProfile.email ||
     (user?.name ?? '') !== UserProfile.name ||
     (user?.phone ?? '') !== UserProfile.phone ||
     (user?.country ?? '') !== UserProfile.country ||
     (user?.bio ?? '') !== UserProfile.bio;
-  const StyleForSaveButton = CanUserChangeProfile ? 'var(--accent-primary)' : 'rgba(16, 185, 129, 0.15)'
+  
+
+  const validation = (): string | null => {
+      if (!CanUserChangeProfile) {
+          return "You cannot edit this profile";
+      }
+      if (!UserProfile.name.trim()) {
+          return "Name is required";
+      }
+
+      if (!UserProfile.email.trim()) {
+          return "Email is required";
+       }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(UserProfile.email.trim())) {
+          return "Please enter a valid email address";
+      }
+
+      if (!UserProfile.phone.trim()) {
+          return "Phone number is required";
+      }
+
+      if (!UserProfile.country.trim()) {
+           return "Country is required";
+      }
+      return null;
+  };
+
+  const StyleForSaveButton = CanUserChangeProfile && !loading
+      ? "var(--accent-primary)"
+      : "rgba(16, 185, 129, 0.15)";
+
   const SaveUserProfileChange = async () => {
-    try{
-        if (!CanUserChangeProfile) return null;
-        const res = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/update-profile/${user?.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            name: UserProfile.name,
-            email: UserProfile.email,
-            phone: UserProfile.phone,
-            country: UserProfile.country,
-            bio: UserProfile.bio,
-          })
-        })
-        if(!res.ok){
-          toast.error('Failed to update profile');
+      setloading(true)
+      const validationError = validation();
+      console.log('clicked')
+      if (validationError) {
+          toast.error(validationError);
+          setloading(false)
           return;
+      }
+      try {
+          const res = await fetch("/api/Profile/Information", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: UserProfile.name.trim(),
+                    email: UserProfile.email.trim(),
+                    phone: UserProfile.phone.trim(),
+                    country: UserProfile.country.trim(),
+                    bio: UserProfile.bio.trim(),
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                toast.error(data.message || "Failed to update profile");
+                return;
+            }
+            if (data.status === 200) {
+                toast.success(data.message);
+                router.refresh();
+            }
+        } catch (error: unknown) {
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong"
+            );
         }
-        const data= await res.json();
-        if(data.status==201){
-          toast.success(data.message);
-        }
-    }
-    catch(error:any){
-      toast.error('Internal server Error');
-    }
-  }
+        setloading(false)
+    };
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
       {/* Personal Details Card */}
@@ -229,7 +277,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
           </div>
           <button
             type="button"
-            disabled={!CanUserChangeProfile}
+            disabled={!CanUserChangeProfile || loading}
             onClick={() => {
               SaveUserProfileChange()
             }}
@@ -242,10 +290,17 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
               color: '#000000',
               fontSize: '0.85rem',
               fontWeight: '700',
-              cursor: CanUserChangeProfile ? 'pointer' : 'not-allowed',
+              cursor: CanUserChangeProfile && !loading ? 'pointer' : 'not-allowed',
             }}
           >
-            Save Changes
+            {loading ? (
+                    < span className="flex justify-center">
+                    Saving...<Loader2 className="h-4 w-4 animate-spin" style={{marginTop:'4px'}} />
+                    </span >
+                  
+                ) : (
+                    "Save Changes"
+                )}
           </button>
         </div>
       </div>
