@@ -48,7 +48,7 @@ import {
 } from 'lucide-react';
 import type { User } from '@/types';
 import SettingProfiles from './SettingProfiles';
-import { SettingFaince } from './SettingFaince';
+import { SettingFaince } from './SettingFainance';
 
 interface SettingsViewProps {
   user: User;
