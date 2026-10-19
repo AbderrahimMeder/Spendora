@@ -46,8 +46,9 @@ import {
   Layers,
   ArrowUpRight,
 } from 'lucide-react';
-import type { User, CurrencyOption } from '@/types';
+import type { User } from '@/types';
 import SettingProfiles from './SettingProfiles';
+import { SettingFaince } from './SettingFaince';
 
 interface SettingsViewProps {
   user: User;
@@ -56,13 +57,6 @@ interface SettingsViewProps {
 
 type TabType = 'profile' | 'financial' | 'security' | 'notifications' | 'appearance' | 'data';
 
-const CURRENCIES: CurrencyOption[] = [
-  { code: 'USD', symbol: '$', name: 'US Dollar (USD)' },
-  { code: 'EUR', symbol: '€', name: 'Euro (EUR)' },
-  { code: 'MAD', symbol: 'DH', name: 'Moroccan Dirham (MAD)' },
-  { code: 'GBP', symbol: '£', name: 'British Pound (GBP)' },
-  { code: 'CAD', symbol: 'CA$', name: 'Canadian Dollar (CAD)' },
-];
 
 const THEME_OPTIONS = [
   {
@@ -104,13 +98,6 @@ export function SettingsView({ user, token }: SettingsViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
-  // Financial Settings States
-  const [currency, setCurrency] = useState(user?.currency || 'USD');
-  const [fiscalStartDay, setFiscalStartDay] = useState('1');
-  const [defaultTransactionType, setDefaultTransactionType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
-  const [numberFormat, setNumberFormat] = useState('en-US');
-  const [autoConvertExchange, setAutoConvertExchange] = useState(true);
 
   // Security States
   const [currentPassword, setCurrentPassword] = useState('');
@@ -186,8 +173,6 @@ export function SettingsView({ user, token }: SettingsViewProps) {
       if (storedPrivacy) setPrivacyBlurMode(storedPrivacy === 'true');
       const storedCompact = localStorage.getItem('finora_compact');
       if (storedCompact) setCompactMode(storedCompact === 'true');
-      const storedCurrency = localStorage.getItem('finora_currency');
-      if (storedCurrency) setCurrency(storedCurrency);
     } catch {
       // Ignore local storage error
     }
@@ -227,7 +212,6 @@ export function SettingsView({ user, token }: SettingsViewProps) {
       localStorage.setItem('finora_theme', selectedTheme);
       localStorage.setItem('finora_privacy_mode', String(privacyBlurMode));
       localStorage.setItem('finora_compact', String(compactMode));
-      localStorage.setItem('finora_currency', currency);
 
       // Attempt to persist cookie / api if available
       await new Promise((resolve) => setTimeout(resolve, 600));
@@ -306,7 +290,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
         { id: 'tx-104', title: 'Freelance Design Retainer', amount: 1200.0, type: 'INCOME', category: 'Work & Salary', date: '2026-10-10' },
       ],
       settings: {
-        currency,
+        currency: user?.currency || 'USD',
         budgetAlertThreshold: `${budgetThreshold}%`,
         privacyMode: privacyBlurMode,
       },
@@ -650,7 +634,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 <span>🌍 {user?.country}</span>
                 <span>•</span>
-                <span>💰 Default Currency: <strong style={{ color: '#ffffff' }}>{currency}</strong></span>
+                <span>💰 Default Currency: <strong style={{ color: '#ffffff' }}>{user?.currency || 'USD'}</strong></span>
                 <span>•</span>
                 <span>🔒 2FA: <strong style={{ color: twoFactorEnabled ? '#10b981' : '#f59e0b' }}>{twoFactorEnabled ? 'Enabled' : 'Disabled'}</strong></span>
               </div>
@@ -760,240 +744,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
       {/* TAB CONTENT: FINANCIAL & CURRENCY */}
       {activeTab === 'financial' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          {/* Primary Currency Selection */}
-          <div
-            style={{
-              background: '#111111',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-lg)',
-              padding: '1.5rem',
-            }}
-          >
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: 'var(--radius-md)',
-                    background: 'rgba(16, 185, 129, 0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--accent-primary)',
-                  }}
-                >
-                  <DollarSign size={18} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                    Default Base Currency
-                  </h3>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                    All overview metrics, reports, and budget targets will calculate based on this currency.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
-              {CURRENCIES.map((curr) => {
-                const isSelected = currency === curr.code;
-                return (
-                  <button
-                    key={curr.code}
-                    type="button"
-                    onClick={() => {
-                      setCurrency(curr.code);
-                      markUnsaved();
-                      toast.success(`Currency changed to ${curr.code} (${curr.symbol})`);
-                    }}
-                    style={{
-                      padding: '1.1rem',
-                      borderRadius: 'var(--radius-md)',
-                      background: isSelected ? 'rgba(16, 185, 129, 0.1)' : '#161616',
-                      border: isSelected ? '1.5px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      cursor: 'pointer',
-                      position: 'relative',
-                      textAlign: 'left',
-                      transition: 'all 0.15s ease',
-                      boxShadow: isSelected ? '0 0 15px rgba(16, 185, 129, 0.2)' : 'none',
-                    }}
-                    className="hover:border-zinc-500"
-                  >
-                    {isSelected && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          top: '10px',
-                          right: '10px',
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          background: 'var(--accent-primary)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#000000',
-                        }}
-                      >
-                        <Check size={12} strokeWidth={3} />
-                      </span>
-                    )}
-                    <span style={{ fontSize: '1.4rem', fontWeight: '800', color: isSelected ? 'var(--accent-primary)' : '#ffffff' }}>
-                      {curr.symbol}
-                    </span>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff', marginTop: '0.35rem' }}>
-                      {curr.code}
-                    </span>
-                    <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-                      {curr.name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Currency formatting & Fiscal parameters */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            <div
-              style={{
-                background: '#111111',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.5rem',
-              }}
-            >
-              <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', marginBottom: '1.1rem' }}>
-                Accounting Rules & Cycles
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                    Fiscal Month Start Day
-                  </label>
-                  <select
-                    value={fiscalStartDay}
-                    onChange={(e) => {
-                      setFiscalStartDay(e.target.value);
-                      markUnsaved();
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: 'var(--radius-md)',
-                      background: '#161616',
-                      border: '1px solid var(--border-subtle)',
-                      color: '#ffffff',
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                    }}
-                  >
-                    <option value="1">1st of the month (Standard)</option>
-                    <option value="15">15th of the month</option>
-                    <option value="25">25th of the month (Payday)</option>
-                    <option value="last">Last working day of month</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                    Default New Transaction Type
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDefaultTransactionType('EXPENSE');
-                        markUnsaved();
-                      }}
-                      style={{
-                        padding: '0.65rem',
-                        borderRadius: 'var(--radius-md)',
-                        background: defaultTransactionType === 'EXPENSE' ? 'rgba(239, 68, 68, 0.15)' : '#161616',
-                        border: defaultTransactionType === 'EXPENSE' ? '1px solid #ef4444' : '1px solid var(--border-subtle)',
-                        color: defaultTransactionType === 'EXPENSE' ? '#f87171' : 'var(--text-secondary)',
-                        fontSize: '0.8rem',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Expense (-)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDefaultTransactionType('INCOME');
-                        markUnsaved();
-                      }}
-                      style={{
-                        padding: '0.65rem',
-                        borderRadius: 'var(--radius-md)',
-                        background: defaultTransactionType === 'INCOME' ? 'rgba(16, 185, 129, 0.15)' : '#161616',
-                        border: defaultTransactionType === 'INCOME' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                        color: defaultTransactionType === 'INCOME' ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                        fontSize: '0.8rem',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Income (+)
-                    </button>
-                  </div>
-                </div>
-
-                <ToggleSwitch
-                  id="auto-fx"
-                  label="Auto FX Rate Sync"
-                  description="Automatically update exchange rates via Frankfurter API on transaction entry."
-                  checked={autoConvertExchange}
-                  onChange={setAutoConvertExchange}
-                />
-              </div>
-            </div>
-
-            {/* Live Number Formatting Preview */}
-            <div
-              style={{
-                background: '#111111',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.5rem',
-              }}
-            >
-              <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.35rem' }}>
-                Live Currency Formatting Preview
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-                How values will look across tables, badges, and dashboard graphs.
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                <div style={{ background: '#161616', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Positive Balance Sample</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#10b981', marginTop: '0.25rem' }}>
-                    +{currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency === 'MAD' ? 'DH ' : '$'}
-                    14,850.50
-                  </div>
-                </div>
-
-                <div style={{ background: '#161616', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Expense Transaction Sample</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#f87171', marginTop: '0.25rem' }}>
-                    -{currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency === 'MAD' ? 'DH ' : '$'}
-                    320.00
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <SettingFaince user={user} token={token} />
       )}
 
       {/* TAB CONTENT: SECURITY & ACCESS */}
@@ -1443,7 +1194,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 <div style={{ padding: '0.85rem 1rem', background: '#161616', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Alert me for amounts over:</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <span style={{ color: 'var(--accent-primary)', fontWeight: '700' }}>{currency}</span>
+                    <span style={{ color: 'var(--accent-primary)', fontWeight: '700' }}>{user?.currency || 'USD'}</span>
                     <input
                       type="number"
                       value={largeTxAmount}
