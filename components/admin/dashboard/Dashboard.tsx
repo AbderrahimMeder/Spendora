@@ -12,7 +12,7 @@ import { getExchangeRate } from '@/utils/exchange';
 import { LoadingTransaction } from '@/components/ui/loading';
 
 
-export  function Dashboard({user, token}:{user:User,token:string}) {
+export function Dashboard({ user, token }: { user: User, token: string }) {
     const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!
     const route = useRouter();
     const [loading, setLoading] = useState(false);
@@ -27,12 +27,12 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                if(!response.ok){
+                if (!response.ok) {
                     route.push('/login')
                     toast.error('Failed to fetch transactions')
                 }
                 const data = await response.json();
-                
+
                 if (data.status == 401) {
                     toast.error('Session expired. Please log in again.');
                     route.push('/login');
@@ -55,14 +55,35 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
     const [transactions, setTransactions] = useState<Transaction[]>([])
 
     const [budget, setBudget] = useState<Budget>();
-    const [rate, setrate] = useState(1);
+    const [rate, setrate] = useState<number>(1);
+
     useEffect(() => {
-        const fetchrate = async () => {
-            const rate = await getExchangeRate(user?.currency || "USD");
-            setrate(rate)
-        }
-        fetchrate();
-    }, [user])
+        let cancelled = false;
+
+        const fetchRate = async () => {
+            try {
+                const currency = user?.currency || "USD";
+                const rate = await getExchangeRate(currency);
+
+                if (!cancelled) {
+                    setrate(rate);
+                }
+            } catch (error) {
+                console.error("Failed to fetch exchange rate:", error);
+
+                if (!cancelled) {
+                    setrate(1); // خاص state ديال rate يسمح بـ null
+                }
+            }
+        };
+
+        fetchRate();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user?.currency]);
+
     const stats = useMemo(() => {
         const now = new Date();
         const year = now.getFullYear();
@@ -123,13 +144,13 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
     };
 
     // Computed financial stats
-    const categorySpending:any[] = [];
+    const categorySpending: any[] = [];
 
     const userName = user?.name || '';
 
     return (
         <>
-        {/* 1. Overview Header with live controls */}
+            {/* 1. Overview Header with live controls */}
             {loading ?
                 <LoadingTransaction hight={200} />
                 :
@@ -213,7 +234,7 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
                     </>
                 )}
         </>
-            
+
 
     );
 }

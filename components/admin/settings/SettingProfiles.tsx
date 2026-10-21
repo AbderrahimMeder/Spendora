@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 export default function SettingProfiles({ user , token }: { user: User | null, token: string|null|undefined }) {
   const router = useRouter()
-  console.log(user)
   const [UserProfile, setUserPorfile] = useState({
     name: user?.name ?? '',
     email: user?.email ?? '',
@@ -17,13 +16,11 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
   })
   const [loading,setloading]=useState<boolean>(false)
   const CanUserChangeProfile =
-    (user?.email ?? '') !== UserProfile.email ||
-    (user?.name ?? '') !== UserProfile.name ||
-    (user?.phone ?? '') !== UserProfile.phone ||
-    (user?.country ?? '') !== UserProfile.country ||
-    (user?.bio ?? '') !== UserProfile.bio;
-  
-
+    (user?.email ?? '') !== UserProfile.email.trim() ||
+    (user?.name ?? '') !== UserProfile.name.trim() ||
+    (user?.phone ?? '') !== UserProfile.phone.trim() ||
+    (user?.country ?? '') !== UserProfile.country.trim() ||
+    (user?.bio ?? '') !== UserProfile.bio.trim();
   const validation = (): string | null => {
       if (!CanUserChangeProfile) {
           return "You cannot edit this profile";
