@@ -11,7 +11,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { User, CurrencyOption } from '@/types';
-
+import { useRouter } from 'next/navigation';
+import { ToggleSwitch } from '@/components/ui/toggle';
 export const CURRENCIES: CurrencyOption[] = [
   { code: 'USD', symbol: '$', name: 'US Dollar (USD)' },
   { code: 'EUR', symbol: '€', name: 'Euro (EUR)' },
@@ -26,9 +27,9 @@ interface SettingFainceProps {
 }
 
 export function SettingFaince({ user, token }: SettingFainceProps) {
+  const route = useRouter()
   const [currency, setCurrency] = useState(user?.currency || 'USD');
   const [fiscalStartDay, setFiscalStartDay] = useState('1');
-  const [defaultTransactionType, setDefaultTransactionType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
   const [autoConvertExchange, setAutoConvertExchange] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -43,8 +44,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
   // Check if anything differs from default/initial values
   const hasChanges =
     currency !== initialState.currency ||
-    fiscalStartDay !== initialState.fiscalStartDay ||
-    defaultTransactionType !== initialState.defaultTransactionType ||
+    //fiscalStartDay !== initialState.fiscalStartDay ||
     autoConvertExchange !== initialState.autoConvertExchange;
 
   const canSave = hasChanges && !isSaving;
@@ -52,84 +52,32 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
 
   const activeCurrencyObj = CURRENCIES.find((c) => c.code === currency) || CURRENCIES[0];
   const activeSymbol = activeCurrencyObj.symbol;
-
-  const handleSave = async () => {
+  const SendData =async()=>{
     if (!hasChanges || isSaving) return;
     setIsSaving(true);
-    
-  };
-
-  const ToggleSwitch = ({
-    checked,
-    onChange,
-    label,
-    description,
-    id,
-  }: {
-    checked: boolean;
-    onChange: (val: boolean) => void;
-    label: string;
-    description?: string;
-    id?: string;
-  }) => (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.85rem 1rem',
-        borderRadius: 'var(--radius-md)',
-        background: '#161616',
-        border: '1px solid var(--border-subtle)',
-        transition: 'all 0.2s ease',
-      }}
-      className="toggle-card hover:border-[#333333]"
-    >
-      <div style={{ paddingRight: '1rem' }}>
-        <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#ffffff' }}>{label}</div>
-        {description && (
-          <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-            {description}
-          </div>
-        )}
-      </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        id={id}
-        onClick={() => onChange(!checked)}
-        style={{
-          width: '46px',
-          height: '26px',
-          borderRadius: '9999px',
-          background: checked ? 'var(--accent-primary)' : '#262626',
-          border: '1px solid',
-          borderColor: checked ? 'rgba(16, 185, 129, 0.4)' : '#333333',
-          position: 'relative',
-          cursor: 'pointer',
-          flexShrink: 0,
-          transition: 'all 0.2s ease',
-          boxShadow: checked ? '0 0 12px rgba(16, 185, 129, 0.35)' : 'none',
-        }}
-      >
-        <span
-          style={{
-            position: 'absolute',
-            top: '2px',
-            left: checked ? '22px' : '3px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: '#ffffff',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-            transition: 'left 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        />
-      </button>
-    </div>
-  );
-
+    try{
+      const res  = await fetch('/api/Profile/Fainance',{
+        method:'PATCH',
+        headers:{
+          'content-type':'application/json',
+        },
+        body:JSON.stringify({currency:currency})
+      })
+      const data = await res.json()
+      if(!res.ok){
+        toast.error('some thing was wrong')
+      }
+      if(data.status===201){
+        toast.success(data.message)
+        route.refresh();
+      }
+    }catch(err:any){
+        toast.error(err.message??'can\' editng this now try later')
+    }finally{
+      setIsSaving(false)
+    }
+  
+  }
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
       {/* Column 1: Financial & Currency Parameters Card */}
@@ -181,12 +129,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
                 <select
                   value={currency}
                   onChange={(e) => {
-                    const selectedCode = e.target.value;
-                    const selectedOption = CURRENCIES.find((c) => c.code === selectedCode);
-                    setCurrency(selectedCode);
-                    if (selectedOption) {
-                      toast.success(`Currency changed to ${selectedOption.code} (${selectedOption.symbol})`);
-                    }
+                    setCurrency(e.target.value);
                   }}
                   style={{
                     width: '100%',
@@ -270,7 +213,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
         <button
           type="button"
           disabled={!canSave}
-          onClick={handleSave}
+          onClick={SendData}
           style={{
             width: '100%',
             padding: '0.65rem',
@@ -281,7 +224,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
             fontSize: '0.85rem',
             fontWeight: '700',
             cursor: canSave ? 'pointer' : 'not-allowed',
-            opacity: hasChanges ? 1 : 0.6,
+            opacity: hasChanges&&!isSaving ? 1 : 0.6,
             transition: 'all 0.2s ease',
             marginTop: '1.5rem',
             display: 'flex',

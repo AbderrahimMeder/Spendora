@@ -1,15 +1,18 @@
 import { type Transaction, CurrencyOption } from '@/types';
 
 
-export function formatCurrency(amount: number, currency?: string) {
-  const formatter = new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0,
-  })
 
-  return formatter.format(amount)
+export function formatCurrency(amount: number, currency = "USD") {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+
+  return formatter.format(amount);
 }
+
 
 export function getCategoryDetails(id: string|null) {
   const categories: Record<string, { name: string; icon: string; color: string }> = {
