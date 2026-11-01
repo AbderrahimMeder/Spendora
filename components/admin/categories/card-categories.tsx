@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -22,6 +22,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import type { Category, User } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface CardCategoriesProps {
   token?: string | null;
@@ -29,10 +30,11 @@ interface CardCategoriesProps {
   initialCategories?: Category[];
 }
 
-export function CardCategories({ token, user, initialCategories }: CardCategoriesProps) {
-  const router=useRouter()
+export function CardCategories({ token, initialCategories }: CardCategoriesProps) {
+  const router = useRouter();
+  const { t } = useTranslation();
   // Categories State
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(initialCategories || []);
   const [loading, setLoading] = useState<boolean>(!initialCategories);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -43,14 +45,14 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
 
   // Modal States
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
-  
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
-  //pagination 
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(12);
-  // Fetch Categories from Backend API
-  const fetchCategories = async (isManualRefresh = false) => {
+
+  const fetchCategories = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
     else setLoading(true);
 
@@ -68,22 +70,49 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
       if (response.ok) {
         const data = await response.json();
         const apiCategories = data.categories;
-        if (Array.isArray(apiCategories) && apiCategories.length > 0) {
-          setCategories(data.categories);
-        } 
-      } 
+        if (Array.isArray(apiCategories)) {
+          setCategories(apiCategories);
+        }
+      }
     } catch (error) {
       console.warn('API fetch warning, using fallback category data:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCategories();
   }, [token]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
+        const response = await fetch(`${apiUrl}/api/categories`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (isMounted && Array.isArray(data.categories)) {
+            setCategories(data.categories);
+          }
+        }
+      } catch (error) {
+        console.warn('API fetch warning:', error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
 
   // Delete Category
   const handleDeleteCategory = async () => {
@@ -92,31 +121,26 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
-      let succeeded = false;
-
       if (token) {
         try {
-          const res = await fetch(`${apiUrl}/api/categories/${deleteTarget.id}`, {
+          await fetch(`${apiUrl}/api/categories/${deleteTarget.id}`, {
             method: 'DELETE',
             headers: {
               Accept: 'application/json',
               Authorization: `Bearer ${token}`,
             },
           });
-          if (res.ok) {
-            succeeded = true;
-          }
         } catch (err) {
           console.warn('API delete error:', err);
         }
       }
 
       setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-      toast.success(`Category "${deleteTarget.name}" deleted`);
+      toast.success(t('categories_page.delete_modal.success', { name: deleteTarget.name }));
       setDeleteTarget(null);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to delete category');
+      toast.error(t('categories_page.delete_modal.error'));
     } finally {
       setIsDeleting(false);
     }
@@ -126,14 +150,13 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
   const handleCopySlug = (slug: string) => {
     navigator.clipboard.writeText(slug);
     setCopiedSlug(slug);
-    toast.success('Category slug copied to clipboard');
+    toast.success(t('categories_page.copy_slug_success'));
     setTimeout(() => setCopiedSlug(null), 2000);
   };
 
   // Compute Statistics
   const stats = useMemo(() => {
-    const total = categories.length;
-    return { total };
+    return { total: categories.length };
   }, [categories]);
 
   // Filtered & Sorted Categories
@@ -153,12 +176,12 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
         return 0;
       });
   }, [categories, searchQuery, filterType, sortBy]);
-  const totalPages = Math.max(1, Math.ceil(categories.length / itemsPerPage));
+
+  const totalPages = Math.max(1, Math.ceil(filteredCategories.length / itemsPerPage));
   const paginatedCategories = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return categories.slice(start, start + itemsPerPage);
-  }, [categories, currentPage, itemsPerPage]);
-  
+    return filteredCategories.slice(start, start + itemsPerPage);
+  }, [filteredCategories, currentPage, itemsPerPage]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '3rem' }}>
@@ -185,7 +208,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                 margin: 0,
               }}
             >
-              Categories
+              {t('categories_page.title')}
             </h1>
             <span
               style={{
@@ -198,7 +221,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                 fontWeight: '700',
               }}
             >
-              {stats.total} Total
+              {t('categories_page.total_count', { count: stats.total })}
             </span>
           </div>
           <p
@@ -208,7 +231,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
               margin: 0,
             }}
           >
-            Manage and organize your financial classification for expense tracking and revenue streams.
+            {t('categories_page.subtitle')}
           </p>
         </div>
 
@@ -218,14 +241,18 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             onClick={() => fetchCategories(true)}
             disabled={refreshing}
             className="btn btn-secondary"
-            title="Refresh Categories"
+            title={t('categories_page.refresh_tooltip')}
             style={{ padding: '0.65rem 0.9rem' }}
           >
-            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            <RefreshCw
+              size={16}
+              className={refreshing ? 'animate-spin' : ''}
+              style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}
+            />
           </button>
 
           <Link
-            href='/categories/new'
+            href="/categories/new"
             className="btn btn-primary"
             style={{
               gap: '0.5rem',
@@ -235,12 +262,10 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             }}
           >
             <Plus size={16} />
-            <span>Create Category</span>
+            <span>{t('categories_page.create_category')}</span>
           </Link>
         </div>
       </div>
-
-      {/* Top Stat Summary Cards */}
 
       {/* Filter and Search Bar */}
       <div
@@ -260,7 +285,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             size={16}
             style={{
               position: 'absolute',
-              left: '0.85rem',
+              insetInlineStart: '0.85rem',
               top: '50%',
               transform: 'translateY(-50%)',
               color: 'var(--text-muted)',
@@ -269,11 +294,15 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search categories by name or slug..."
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder={t('categories_page.search_placeholder')}
             className="form-input"
             style={{
-              paddingLeft: '2.4rem',
+              paddingInlineStart: '2.4rem',
+              paddingInlineEnd: '2.2rem',
               fontSize: '0.875rem',
               height: '40px',
               boxSizing: 'border-box',
@@ -281,10 +310,13 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
           />
           {searchQuery && (
             <button
-              onClick={() => setSearchQuery('')}
+              onClick={() => {
+                setSearchQuery('');
+                setCurrentPage(1);
+              }}
               style={{
                 position: 'absolute',
-                right: '0.75rem',
+                insetInlineEnd: '0.75rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'transparent',
@@ -314,7 +346,10 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             {(['ALL', 'EXPENSE', 'INCOME'] as const).map((type) => (
               <button
                 key={type}
-                onClick={() => setFilterType(type)}
+                onClick={() => {
+                  setFilterType(type);
+                  setCurrentPage(1);
+                }}
                 style={{
                   padding: '0.4rem 0.85rem',
                   borderRadius: 'var(--radius-sm)',
@@ -327,7 +362,11 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                   color: filterType === type ? '#000000' : 'var(--text-secondary)',
                 }}
               >
-                {type === 'ALL' ? 'All' : type === 'EXPENSE' ? 'Expenses' : 'Income'}
+                {type === 'ALL'
+                  ? t('categories_page.filter_all')
+                  : type === 'EXPENSE'
+                  ? t('categories_page.filter_expenses')
+                  : t('categories_page.filter_income')}
               </button>
             ))}
           </div>
@@ -336,7 +375,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
           <div style={{ position: 'relative' }}>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'name-asc' | 'name-desc' | 'type' | 'newest')}
               className="form-select"
               style={{
                 height: '40px',
@@ -345,9 +384,9 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                 cursor: 'pointer',
               }}
             >
-              <option value="name-asc">(A-Z)</option>
-              <option value="name-desc"> (Z-A)</option>
-              <option value="type">Type</option>
+              <option value="name-asc">{t('categories_page.sort_az')}</option>
+              <option value="name-desc">{t('categories_page.sort_za')}</option>
+              <option value="type">{t('categories_page.sort_type')}</option>
             </select>
           </div>
         </div>
@@ -362,7 +401,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             gap: '1.25rem',
           }}
         >
-          {[1, 2, 3, 4, 5, 6,7,8].map((idx) => (
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
             <div
               key={idx}
               className="glass-card"
@@ -416,294 +455,282 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
             <Tag size={28} />
           </div>
           <h3 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#ffffff', margin: '0 0 0.4rem 0' }}>
-            No categories found
+            {t('categories_page.empty_title')}
           </h3>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 0 1.5rem 0' }}>
             {searchQuery
-              ? `No category matches "${searchQuery}". Try searching with another keyword.`
-              : 'You have not added any categories yet. Create your first category to get started.'}
+              ? t('categories_page.empty_search', { query: searchQuery })
+              : t('categories_page.empty_desc')}
           </p>
-          <button onClick={()=>router.push('/categories/new')} className="btn btn-primary">
+          <button onClick={() => router.push('/categories/new')} className="btn btn-primary">
             <Plus size={16} />
-            <span>Create New Category</span>
+            <span>{t('categories_page.create_first')}</span>
           </button>
         </div>
       ) : (
         <>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          {paginatedCategories.map((cat) => {
-            const Icon = getCategoryIconComponent(cat?.category_image);
-            const isIncome = cat.type === 'INCOME';
-            const cardColor = cat?.category_color;
-            const cardBg = `${cat?.category_color}`
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}
+          >
+            {paginatedCategories.map((cat) => {
+              const Icon = getCategoryIconComponent(cat?.category_image);
+              const isIncome = cat.type === 'INCOME';
+              const cardColor = cat?.category_color || '#10b981';
+              const cardBg = `${cat?.category_color || '#10b981'}`;
 
-            return (
-              <div
-                key={cat.id}
-                className="glass-card"
-                style={{
-                  padding: '1.35rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '1.2rem',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  background: `linear-gradient(145deg, ${cardBg.replace('0.12', '0.2')} 0%, rgba(18, 18, 18, 0.85) 100%)`,
-                  border: `1px solid var(--border-subtle)`,
-                  borderRadius: 'var(--radius-lg)',
-                  transition: 'all 0.25s ease',
-                  cursor: 'default',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.borderColor = cardBg??'black';
-                  e.currentTarget.style.boxShadow = `0 10px 25px -5px ${cardBg}25`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                {/* Card Top Row */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem' }}>
-                  {/* Icon & Info */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                    <div
-                      style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '12px',
-                        background: cardBg,
-                        border: `1px solid ${cardColor}40`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: cardBg.replace('0.12','1'),
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Icon size={22} strokeWidth={2.2} />
+              return (
+                <div
+                  key={cat.id}
+                  className="glass-card"
+                  style={{
+                    padding: '1.35rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '1.2rem',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: `linear-gradient(145deg, ${cardBg.replace('0.12', '0.2')} 0%, rgba(18, 18, 18, 0.85) 100%)`,
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-lg)',
+                    transition: 'all 0.25s ease',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.borderColor = cardBg ?? 'black';
+                    e.currentTarget.style.boxShadow = `0 10px 25px -5px ${cardBg}25`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {/* Card Top Row */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem' }}>
+                    {/* Icon & Info */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                      <div
+                        style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: '12px',
+                          background: cardBg,
+                          border: `1px solid ${cardColor}40`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: cardBg.replace('0.12', '1'),
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Icon size={22} strokeWidth={2.2} />
+                      </div>
+
+                      <div>
+                        <h3
+                          style={{
+                            fontSize: '1rem',
+                            fontWeight: '700',
+                            color: '#ffffff',
+                            margin: '0 0 0.2rem 0',
+                            letterSpacing: '-0.01em',
+                          }}
+                        >
+                          {cat.name}
+                        </h3>
+                        <button
+                          onClick={() => handleCopySlug(cat.slug || cat!.name!.toLowerCase().replace(/\s+/g, '-'))}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            color: 'var(--text-muted)',
+                            fontSize: '0.75rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem',
+                            cursor: 'pointer',
+                            fontFamily: 'monospace',
+                          }}
+                          title={t('categories_page.click_to_copy')}
+                        >
+                          <span>#{cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-')}</span>
+                          {copiedSlug === (cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-')) ? (
+                            <Check size={11} color="#10b981" />
+                          ) : (
+                            <Copy size={11} />
+                          )}
+                        </button>
+                      </div>
                     </div>
 
-                    <div>
-                      <h3
-                        style={{
-                          fontSize: '1rem',
-                          fontWeight: '700',
-                          color: '#ffffff',
-                          margin: '0 0 0.2rem 0',
-                          letterSpacing: '-0.01em',
-                        }}
-                      >
-                        {cat.name}
-                      </h3>
+                    {/* Actions Buttons */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                       <button
-                        onClick={() => handleCopySlug(cat.slug || cat!.name!.toLowerCase().replace(/\s+/g, '-'))}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          padding: 0,
-                          color: 'var(--text-muted)',
-                          fontSize: '0.75rem',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.3rem',
-                          cursor: 'pointer',
-                          fontFamily: 'monospace',
-                        }}
-                        title="Click to copy slug"
+                        onClick={() => router.push(`/categories/edit/${cat.id}`)}
+                        className="btn-icon"
+                        style={{ width: '32px', height: '32px', padding: 0 }}
+                        title={t('categories_page.edit_tooltip')}
                       >
-                        <span>#{cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-')}</span>
-                        {copiedSlug === (cat.slug || cat.name?.toLowerCase().replace(/\s+/g, '-')) ? (
-                          <Check size={11} color="#10b981" />
-                        ) : (
-                          <Copy size={11} />
-                        )}
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(cat)}
+                        className="btn-icon"
+                        style={{ width: '32px', height: '32px', padding: 0, color: '#fb7185' }}
+                        title={t('categories_page.delete_tooltip')}
+                      >
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
 
-                  {/* Actions Dropdown / Buttons */}
+                  {/* Card Bottom Row: Badges */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingTop: '0.75rem',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: '700',
+                        padding: '0.2rem 0.65rem',
+                        borderRadius: 'var(--radius-full)',
+                        background: isIncome ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)',
+                        color: isIncome ? '#34d399' : '#fb7185',
+                        border: `1px solid ${isIncome ? 'rgba(16, 185, 129, 0.25)' : 'rgba(244, 63, 94, 0.25)'}`,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
+                    >
+                      {isIncome ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                      {isIncome ? t('categories_page.badge_income') : t('categories_page.badge_expense')}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div>
+            {filteredCategories.length > 0 && (
+              <div
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  background: '#0a0a0a',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  fontSize: '0.8rem',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                <div>
+                  {t('categories_page.pagination.showing')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {(currentPage - 1) * itemsPerPage + 1}
+                  </span>{' '}
+                  {t('categories_page.pagination.to')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {Math.min(currentPage * itemsPerPage, filteredCategories.length)}
+                  </span>{' '}
+                  {t('categories_page.pagination.of')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {filteredCategories.length}
+                  </span>{' '}
+                  {t('categories_page.pagination.entries')}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  {/* Items Per Page */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <button
-                      onClick={() => router.push(`/categories/edit/${cat.id}`)}
-                      className="btn-icon"
-                      style={{ width: '32px', height: '32px', padding: 0 }}
-                      title="Edit Category"
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {t('categories_page.pagination.per_page')}
+                    </span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => {
+                        setItemsPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      style={{
+                        background: '#121212',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0.4rem',
+                        color: '#ffffff',
+                        fontSize: '0.75rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                      }}
                     >
-                      <Edit2 size={14} />
+                      <option value={12}>12</option>
+                      <option value={24}>24</option>
+                      <option value={36}>36</option>
+                    </select>
+                  </div>
+
+                  {/* Prev / Next Pagination */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <button
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      style={{
+                        padding: '0.3rem 0.5rem',
+                        borderRadius: '4px',
+                        background: '#141414',
+                        border: '1px solid var(--border-subtle)',
+                        color: currentPage <= 1 ? 'var(--text-muted)' : '#ffffff',
+                        cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <ChevronLeft size={14} />
                     </button>
+
+                    <span style={{ fontSize: '0.75rem', padding: '0 0.4rem' }}>
+                      {currentPage} / {totalPages}
+                    </span>
+
                     <button
-                      onClick={() => setDeleteTarget(cat)}
-                      className="btn-icon"
-                      style={{ width: '32px', height: '32px', padding: 0, color: '#fb7185' }}
-                      title="Delete Category"
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      style={{
+                        padding: '0.3rem 0.5rem',
+                        borderRadius: '4px',
+                        background: '#141414',
+                        border: '1px solid var(--border-subtle)',
+                        color: currentPage >= totalPages ? 'var(--text-muted)' : '#ffffff',
+                        cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
                     >
-                      <Trash2 size={14} />
+                      <ChevronRight size={14} />
                     </button>
                   </div>
                 </div>
-                {/* Card Bottom Row: Badges and Color Pill */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: '0.75rem',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                  }}
-                >
-                  {/* Type Tag */}
-                  <span
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: '700',
-                      padding: '0.2rem 0.65rem',
-                      borderRadius: 'var(--radius-full)',
-                      background: isIncome ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)',
-                      color: isIncome ? '#34d399' : '#fb7185',
-                      border: `1px solid ${isIncome ? 'rgba(16, 185, 129, 0.25)' : 'rgba(244, 63, 94, 0.25)'}`,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.3rem',
-                    }}
-                  >
-                    {isIncome ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                    {isIncome ? 'INCOME' : 'EXPENSE'}
-                  </span>
-
-                  {/* Color Swatch / Visual Dot */}
-                  {/* <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                    <span
-                      style={{
-                        width: '9px',
-                        height: '9px',
-                        borderRadius: '50%',
-                        backgroundColor: cardColor,
-                        boxShadow: `0 0 8px ${cardColor}`,
-                      }}
-                    />
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                      {cardColor}
-                    </span>
-                  </div> */}
-                </div>
               </div>
-            );
-          })}
-        </div>
-        <div>
-          {categories.length > 0 && (
-            <div
-              style={{
-                padding: '0.85rem 1.25rem',
-                background: '#0a0a0a',
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <div>
-                Showing{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {(currentPage - 1) * itemsPerPage + 1}
-                </span>{' '}
-                to{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {Math.min(currentPage * itemsPerPage, categories.length)}
-                </span>{' '}
-                of{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {categories.length}
-                </span>{' '}
-                entries
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                {/* Items Per Page */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Per page:</span>
-                  <select
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                      setItemsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    style={{
-                      background: '#121212',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: '4px',
-                      padding: '0.2rem 0.4rem',
-                      color: '#ffffff',
-                      fontSize: '0.75rem',
-                      outline: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <option value={12}>12</option>
-                    <option value={24}>24</option>
-                    <option value={36}>36</option>
-                  </select>
-                </div>
-
-                {/* Prev / Next Pagination */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <button
-                    disabled={currentPage <= 1}
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    style={{
-                      padding: '0.3rem 0.5rem',
-                      borderRadius: '4px',
-                      background: '#141414',
-                      border: '1px solid var(--border-subtle)',
-                      color: currentPage <= 1 ? 'var(--text-muted)' : '#ffffff',
-                      cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <ChevronLeft size={14} />
-                  </button>
-
-                  <span style={{ fontSize: '0.75rem', padding: '0 0.4rem' }}>
-                    {currentPage} / {totalPages}
-                  </span>
-
-                  <button
-                    disabled={currentPage >= totalPages}
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    style={{
-                      padding: '0.3rem 0.5rem',
-                      borderRadius: '4px',
-                      background: '#141414',
-                      border: '1px solid var(--border-subtle)',
-                      color: currentPage >= totalPages ? 'var(--text-muted)' : '#ffffff',
-                      cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <ChevronRight size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
         </>
       )}
+
       {/* DELETE CONFIRMATION MODAL */}
       {deleteTarget && (
         <div className="modal-backdrop" onClick={() => setDeleteTarget(null)}>
@@ -725,7 +752,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                   <AlertTriangle size={16} />
                 </div>
                 <h2 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                  Delete Category
+                  {t('categories_page.delete_modal.title')}
                 </h2>
               </div>
               <button
@@ -739,9 +766,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
 
             <div className="modal-body">
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-                Are you sure you want to delete the category{' '}
-                <strong style={{ color: '#ffffff' }}>"{deleteTarget.name}"</strong>? Existing transactions assigned to
-                this category will remain in your database.
+                {t('categories_page.delete_modal.confirm_msg', { name: deleteTarget.name })}
               </p>
             </div>
 
@@ -752,7 +777,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                 className="btn btn-secondary"
                 disabled={isDeleting}
               >
-                Cancel
+                {t('categories_page.delete_modal.cancel')}
               </button>
               <button
                 type="button"
@@ -765,7 +790,7 @@ export function CardCategories({ token, user, initialCategories }: CardCategorie
                 }}
                 disabled={isDeleting}
               >
-                {isDeleting ? 'Deleting...' : 'Delete Category'}
+                {isDeleting ? t('categories_page.delete_modal.deleting') : t('categories_page.delete_modal.delete')}
               </button>
             </div>
           </div>

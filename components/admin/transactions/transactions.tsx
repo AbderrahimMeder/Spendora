@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import {Plus} from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import type { Transaction, User } from '@/types';
+import type { Transaction } from '@/types';
 import { toast } from 'sonner';
-import Loading, { LoadingTransaction } from '@/components/ui/loading';
+import { LoadingTransaction } from '@/components/ui/loading';
 import { getExchangeRate } from '@/utils/exchange';
 import Transactionstable from './TransactionsTable';
+import { useTranslation } from 'react-i18next';
 
 interface TransactionsProps {
   currency: string;
@@ -22,20 +23,16 @@ export function Transactions({
 }: TransactionsProps) {
   const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
   const router = useRouter();
+  const { t } = useTranslation();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [rate, setRate] = useState<number>(1);
-  // Pagination State
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
-  const buttonElement = useRef<HTMLButtonElement>(null);
-  const timeElement = useRef<HTMLSpanElement>(null);
-  const interval = useRef<ReturnType<typeof setInterval> | null>(null);
-  const time = useRef(0);
-  // list of payment methods
-  const fetchTransactions = async (isManualRefresh = false) => {
-    if (!isManualRefresh) {
-      setLoadingFetch(true);
-    }else{
+  const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
+  const [timerSeconds, setTimerSeconds] = useState<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchTransactions = useCallback(async (isManualRefresh = false) => {
+    if (isManualRefresh) {
       setIsRefreshing(true);
     }
     try {
@@ -47,74 +44,66 @@ export function Transactions({
         }
       });
       const data = await res.json();
-      if (data.status == 200) {
+      if (data.status === 200) {
         setTransactions(data.transactions ?? []);
       }
-      if(data.status == 500){
-        router.push('/error?code=500&message='+data.message);
+      if (data.status === 500) {
+        router.push('/error?code=500&message=' + data.message);
       }
-    } catch (error) {
-      toast.error('Failed to fetch transactions');
-      setTransactions([])
+    } catch {
+      toast.error(t('transactions_page.fetch_error'));
+      setTransactions([]);
+    } finally {
+      setLoadingFetch(false);
+      if (isManualRefresh) {
+        setIsRefreshing(false);
+      }
     }
-    setLoadingFetch(false);
-    if (isManualRefresh) {
-      setIsRefreshing(false);
-    }
-  };
-  //fetch trasactions from api 
-  useEffect(() => {
-    fetchTransactions()
+  }, [APP_URL, token, router, t]);
 
-  const getRate = async () => {
-      const rate = await getExchangeRate(currency)
-      if (rate) {
-        setRate(rate);
-      }
-    }
-    getRate();
-    fetchTransactions();
-  }, []);
-  //handle delete 
-    const startTimer = () => {
-      if (interval.current) return;
-  
-      time.current = 1;
-  
-      if (timeElement.current) {
-        timeElement.current.textContent = `${time.current}s`;
-      }
-  
-      if (buttonElement.current) {
-        buttonElement.current.disabled = true;
-        buttonElement.current.style.cursor = 'not-allowed';
-        buttonElement.current.style.opacity = '0.5';
-      }
-  
-      interval.current = setInterval(() => {
-        time.current += 1;
-  
-        if (timeElement.current) {
-          timeElement.current.textContent = `${time.current}s`;
+  useEffect(() => {
+    let isMounted = true;
+    const init = async () => {
+      try {
+        const [r] = await Promise.all([
+          getExchangeRate(currency),
+          fetchTransactions(false),
+        ]);
+        if (isMounted && r) {
+          setRate(r);
         }
-  
-        if (time.current >= 30) {
-          clearInterval(interval.current!);
-          interval.current = null;
-          time.current = 0;
-  
-          if (timeElement.current) {
-            timeElement.current.textContent = 'Refresh';
-          }
-  
-          if (buttonElement.current) {
-            buttonElement.current.disabled = false;
-            buttonElement.current.style.cursor = 'pointer';
-            buttonElement.current.style.opacity = '1';
-          }
-        }
-      }, 1000);
+      } catch (err) {
+        console.error('Transactions load error:', err);
+      }
     };
+    init();
+
+    return () => {
+      isMounted = false;
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [currency, fetchTransactions]);
+
+  const startTimer = () => {
+    if (timerIntervalRef.current || timerSeconds > 0) return;
+
+    setTimerSeconds(1);
+
+    timerIntervalRef.current = setInterval(() => {
+      setTimerSeconds((prev) => {
+        if (prev >= 30) {
+          if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+            timerIntervalRef.current = null;
+          }
+          return 0;
+        }
+        return prev + 1;
+      });
+    }, 1000);
+  };
 
   if (loadingFetch) {
     return (
@@ -123,6 +112,7 @@ export function Transactions({
       </div>
     );
   }
+
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '3rem' }}>
@@ -149,7 +139,7 @@ export function Transactions({
                   margin: 0,
                 }}
               >
-                Transactions
+                {t('transactions_page.title')}
               </h1>
               <span
                 style={{
@@ -162,7 +152,7 @@ export function Transactions({
                   fontWeight: '700',
                 }}
               >
-                {transactions.length} Records
+                {t('transactions_page.records_count', { count: transactions.length })}
               </span>
             </div>
             <p
@@ -172,7 +162,7 @@ export function Transactions({
                 margin: 0,
               }}
             >
-              Real-time audit log of inflows, expense vouchers, category classification, and statements.
+              {t('transactions_page.subtitle')}
             </p>
           </div>
 
@@ -180,19 +170,19 @@ export function Transactions({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <button
               onClick={() => { fetchTransactions(true); startTimer(); }}
-              ref={buttonElement}
-              disabled={time.current > 0}
+              disabled={timerSeconds > 0}
               className="btn btn-secondary"
               style={{ 
                 padding: '0.65rem 0.85rem',
                 gap: '0.4rem', 
-                cursor: time.current > 0 ? 'not-allowed' : 'pointer', 
-                opacity: time.current > 0 ? 0.5 : 1 , 
+                cursor: timerSeconds > 0 ? 'not-allowed' : 'pointer', 
+                opacity: timerSeconds > 0 ? 0.5 : 1 , 
               }}
-              title="Refresh ledger"
+              title={t('transactions_page.refresh_tooltip')}
             >
-
-              <span ref={timeElement}>{time.current === 0 ? 'Refresh' : time.current + 's'}</span>
+              <span>
+                {timerSeconds === 0 ? t('transactions_page.refresh') : `${timerSeconds}s`}
+              </span>
             </button>
 
             <Link
@@ -206,7 +196,7 @@ export function Transactions({
               }}
             >
               <Plus size={16} />
-              <span>Create Transaction</span>
+              <span>{t('transactions_page.create_transaction')}</span>
             </Link>
           </div>
         </div>
@@ -218,8 +208,6 @@ export function Transactions({
         fetchAgain={isRefreshing}
         rate={rate}
       />
-
     </>
   );
 }
-
