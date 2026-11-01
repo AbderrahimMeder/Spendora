@@ -1,5 +1,8 @@
+'use client';
 
+import React from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   Wallet,
   ArrowRight,
@@ -13,33 +16,8 @@ import {
   Lock,
   Eye,
   Sliders,
-  CheckCircle2,
-  Zap,
-  Building2,
-  Coffee,
-  ShoppingBag,
-  Car,
-  Home as HomeIcon,
-  Tv,
-  Activity,
   LucideIcon,
 } from 'lucide-react';
-
-interface SubscriptionSample {
-  name: string;
-  price: number;
-  cycle: string;
-  status: string;
-  nextPay: string;
-  icon: string;
-}
-
-interface CategorySample {
-  name: string;
-  icon: LucideIcon;
-  color: string;
-  sample: string;
-}
 
 interface PrincipleItem {
   title: string;
@@ -48,69 +26,51 @@ interface PrincipleItem {
   icon: LucideIcon;
 }
 
-interface RoadmapStepItem {
-  phase: string;
-  title: string;
-  status: string;
-  items: string[];
-  active: boolean;
-}
-
 export function AboutUs() {
-  // Subscriptions dataset in MAD
-  const sampleSubscriptions: SubscriptionSample[] = [
-    { name: 'Netflix 4K', price: 50, cycle: 'Monthly', status: 'Active', nextPay: 'Sep 02', icon: '🎬' },
-    { name: 'Spotify Premium', price: 60, cycle: 'Monthly', status: 'Active', nextPay: 'Sep 10', icon: '🎵' },
-    { name: 'Gym & Fitness Pro', price: 200, cycle: 'Monthly', status: 'Active', nextPay: 'Sep 01', icon: '💪' },
-    { name: 'Cloud Storage 2TB', price: 40, cycle: 'Monthly', status: 'Active', nextPay: 'Sep 18', icon: '☁️' },
-  ];
-
-  const totalMonthlySubs = sampleSubscriptions.reduce((acc, curr) => acc + curr.price, 0);
-  const totalYearlySubs = totalMonthlySubs * 12;
+  const { t } = useTranslation();
 
   // Principles
   const principles: PrincipleItem[] = [
     {
-      title: 'Simplicity',
-      quote: 'Money management shouldn’t feel complicated.',
-      desc: 'We strip away clutter, endless menus, and bloated spreadsheets so you can log an expense in under 5 seconds.',
+      title: t('about.principles.simplicity.title'),
+      quote: t('about.principles.simplicity.quote'),
+      desc: t('about.principles.simplicity.desc'),
       icon: Sparkles,
     },
     {
-      title: 'Transparency',
-      quote: 'Know exactly where your money goes.',
-      desc: 'Crystal-clear breakdown of every dirham spent across merchants, accounts, and categories with zero guesswork.',
+      title: t('about.principles.transparency.title'),
+      quote: t('about.principles.transparency.quote'),
+      desc: t('about.principles.transparency.desc'),
       icon: Eye,
     },
     {
-      title: 'Privacy',
-      quote: 'Your financial information belongs to you.',
-      desc: 'We never sell your data, run third-party advertising trackers, or compromise on your confidential records.',
+      title: t('about.principles.privacy.title'),
+      quote: t('about.principles.privacy.quote'),
+      desc: t('about.principles.privacy.desc'),
       icon: Shield,
     },
     {
-      title: 'Security',
-      quote: 'Your money deserves strong protection.',
-      desc: 'Engineered with encrypted session tokens, strict API route policies, and hardened backend standards.',
+      title: t('about.principles.security.title'),
+      quote: t('about.principles.security.quote'),
+      desc: t('about.principles.security.desc'),
       icon: Lock,
     },
     {
-      title: 'Control',
-      quote: 'Your money. Your decisions.',
-      desc: 'Set custom category limits, organize cash wallets alongside bank balances, and control your own budget pace.',
+      title: t('about.principles.control.title'),
+      quote: t('about.principles.control.quote'),
+      desc: t('about.principles.control.desc'),
       icon: Sliders,
     },
     {
-      title: 'Clarity',
-      quote: 'Turn financial activity into something you can understand.',
-      desc: 'Transform raw, cryptic bank transactions into beautiful visual reports that show real spending behavior.',
+      title: t('about.principles.clarity.title'),
+      quote: t('about.principles.clarity.quote'),
+      desc: t('about.principles.clarity.desc'),
       icon: PieChart,
     },
   ];
 
   return (
     <div style={{ color: 'var(--text-primary)', overflowX: 'hidden' }}>
-
       {/* =========================================================================
           SECTION 01: HERO SECTION
       ========================================================================== */}
@@ -158,7 +118,7 @@ export function AboutUs() {
             }}
           >
             <Sparkles size={15} />
-            <span>Welcome to Spendora · Financial Clarity</span>
+            <span>{t('about.hero.badge')}</span>
           </div>
 
           {/* Headline */}
@@ -172,9 +132,9 @@ export function AboutUs() {
               marginBottom: '1.4rem',
             }}
           >
-            Welcome to Spendora. <br />
+            {t('about.hero.title_part1')} <br />
             <span style={{ color: 'var(--accent-primary)' }}>
-              A clearer way to understand your money.
+              {t('about.hero.title_part2')}
             </span>
           </h1>
 
@@ -188,8 +148,7 @@ export function AboutUs() {
               margin: '0 auto 2.5rem auto',
             }}
           >
-            Spendora helps you understand where your money goes, track your spending, manage your accounts and subscriptions,
-            and get a clear view of your financial activity.
+            {t('about.hero.description')}
           </p>
 
           {/* CTA Buttons */}
@@ -208,7 +167,7 @@ export function AboutUs() {
               className="btn btn-primary"
               style={{ fontSize: '0.95rem', padding: '0.8rem 1.8rem', textDecoration: 'none' }}
             >
-              <span>Get Started</span>
+              <span>{t('about.hero.get_started')}</span>
               <ArrowRight size={17} />
             </Link>
 
@@ -217,7 +176,7 @@ export function AboutUs() {
               className="btn btn-secondary"
               style={{ fontSize: '0.95rem', padding: '0.8rem 1.6rem', textDecoration: 'none' }}
             >
-              <span>Explore Spendora</span>
+              <span>{t('about.hero.explore')}</span>
             </a>
           </div>
 
@@ -232,7 +191,7 @@ export function AboutUs() {
               border: '1px solid var(--border-hover)',
               borderRadius: 'var(--radius-lg)',
               boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px rgba(16, 185, 129, 0.08)',
-              textAlign: 'left',
+              textAlign: 'start',
             }}
           >
             {/* Window bar */}
@@ -250,11 +209,11 @@ export function AboutUs() {
                 <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#ef4444' }} />
                 <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#f59e0b' }} />
                 <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#10b981' }} />
-                <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  spendora.app/overview
+                <span style={{ marginLeft: '0.75rem', marginRight: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                  {t('about.hero.preview.url')}
                 </span>
               </div>
-              <span className="badge badge-green">Live Financial Workspace</span>
+              <span className="badge badge-green">{t('about.hero.preview.badge')}</span>
             </div>
 
             {/* Dashboard Mockup Grid */}
@@ -275,15 +234,15 @@ export function AboutUs() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                  <span>Total Net Balance</span>
+                  <span>{t('about.hero.preview.total_balance')}</span>
                   <Wallet size={16} color="var(--accent-primary)" />
                 </div>
                 <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em' }}>
-                  12,400 <span style={{ fontSize: '1rem', color: 'var(--accent-primary)', fontWeight: '600' }}>MAD</span>
+                  12,400 <span style={{ fontSize: '1rem', color: 'var(--accent-primary)', fontWeight: '600' }}>{t('about.hero.preview.currency')}</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   <TrendingUp size={13} />
-                  <span>Bank (11,700 MAD) + Cash (700 MAD)</span>
+                  <span>{t('about.hero.preview.balance_breakdown')}</span>
                 </div>
               </div>
 
@@ -297,11 +256,11 @@ export function AboutUs() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                  <span>Monthly Spending</span>
+                  <span>{t('about.hero.preview.monthly_spending')}</span>
                   <BarChart2 size={16} color="#3b82f6" />
                 </div>
                 <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em' }}>
-                  3,120 <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: '600' }}>/ 4,500 MAD</span>
+                  3,120 <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: '600' }}>{t('about.hero.preview.spending_limit')}</span>
                 </div>
                 <div style={{ marginTop: '0.6rem' }}>
                   <div style={{ height: '6px', background: '#222222', borderRadius: '4px', overflow: 'hidden' }}>
@@ -320,14 +279,14 @@ export function AboutUs() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.4rem' }}>
-                  <span>Active Subscriptions</span>
+                  <span>{t('about.hero.preview.active_subscriptions')}</span>
                   <Repeat size={16} color="#ec4899" />
                 </div>
                 <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em' }}>
-                  350 <span style={{ fontSize: '1rem', color: '#ec4899', fontWeight: '600' }}>MAD / mo</span>
+                  350 <span style={{ fontSize: '1rem', color: '#ec4899', fontWeight: '600' }}>{t('about.hero.preview.subscription_rate')}</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
-                  4 services (Netflix, Spotify, Gym, Cloud)
+                  {t('about.hero.preview.services_monitored')}
                 </div>
               </div>
             </div>
@@ -363,7 +322,7 @@ export function AboutUs() {
               }}
             >
               <AlertCircle size={15} />
-              <span>The Problem We Solve</span>
+              <span>{t('about.problem.badge')}</span>
             </div>
 
             <h2
@@ -377,12 +336,12 @@ export function AboutUs() {
                 margin: '0 auto 1rem auto',
               }}
             >
-              You know how much you have. <br />
-              <span style={{ color: 'var(--accent-primary)' }}>But do you know where it goes?</span>
+              {t('about.problem.title_part1')} <br />
+              <span style={{ color: 'var(--accent-primary)' }}>{t('about.problem.title_part2')}</span>
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
-              Most people check their banking app daily, but bank balances only show the remaining total—never the story behind your lifestyle spending.
+              {t('about.problem.description')}
             </p>
           </div>
         </div>
@@ -394,10 +353,10 @@ export function AboutUs() {
       <section style={{ padding: '5rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <h2 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>
-            Our Guiding Principles
+            {t('about.principles.title')}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>
-            The foundational beliefs that shape every pixel and algorithm in Spendora.
+            {t('about.principles.subtitle')}
           </p>
         </div>
 
@@ -414,6 +373,7 @@ export function AboutUs() {
                   flexDirection: 'column',
                   gap: '0.85rem',
                   background: '#0e0e0e',
+                  textAlign: 'start',
                 }}
               >
                 <div style={{
@@ -429,7 +389,9 @@ export function AboutUs() {
                   <Icon size={20} />
                 </div>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: '700', color: '#ffffff' }}>{item.title}</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: '600', fontStyle: 'italic' }}>"{item.quote}"</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: '600', fontStyle: 'italic' }}>
+                  &ldquo;{item.quote}&rdquo;
+                </p>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{item.desc}</p>
               </div>
             );
@@ -455,17 +417,17 @@ export function AboutUs() {
         >
           <div style={{ position: 'relative', zIndex: 1 }}>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '1rem', lineHeight: 1.15 }}>
-              Know your money. <br />
-              <span style={{ color: 'var(--accent-primary)' }}>Own your decisions.</span>
+              {t('about.cta.title_part1')} <br />
+              <span style={{ color: 'var(--accent-primary)' }}>{t('about.cta.title_part2')}</span>
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '540px', margin: '0 auto 2.5rem auto', lineHeight: '1.6' }}>
-              Start understanding where your money goes, organize your spending, and take control of your financial life.
+              {t('about.cta.description')}
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link href="/register" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}>
-                <span>Start Using Spendora — Free</span>
+                <span>{t('about.cta.button')}</span>
                 <ArrowRight size={18} />
               </Link>
             </div>
@@ -477,4 +439,3 @@ export function AboutUs() {
 }
 
 export default AboutUs;
-

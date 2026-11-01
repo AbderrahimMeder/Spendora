@@ -7,30 +7,22 @@ import {
   Bell,
   BellRing,
   Check,
-  CheckCheck,
   Trash2,
   Archive,
   ArchiveRestore,
-  ExternalLink,
   Search,
   X,
-  Filter,
   ChevronLeft,
   ChevronRight,
   RefreshCw,
   AlertTriangle,
-  Info,
-  Calendar,
   ArrowUpRight,
   CheckCircle2,
   Clock,
-  Eye,
-  Inbox,
   CreditCard,
-  Layers,
-  ChevronDown,
 } from 'lucide-react';
 import type { User, Notification } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationsTableProps {
   user?: User;
@@ -43,12 +35,10 @@ type SortType = 'date-desc' | 'date-asc' | 'unread-first' | 'title-asc';
 
 const ARCHIVED_STORAGE_KEY = 'spendora_archived_notification_ids';
 
-// Helper to extract actionable URL from a notification payload
 function getNotificationUrl(notification: Notification): string | null {
   if (notification.action_url) return notification.action_url;
 
-  const text =
-    notification.message || '';
+  const text = notification.message || '';
   const match = text.match(
     /https?:\/\/[^\s]+|\/(?:transactions|budgets|categories|payment-method|setting|dashboard)[^\s]*/i
   );
@@ -57,21 +47,20 @@ function getNotificationUrl(notification: Notification): string | null {
   return null;
 }
 
-// Helper to format relative and full dates
-function formatTimeAgo(dateString?: string): string {
-  if (!dateString) return 'Just now';
+function formatTimeAgo(dateString: string | undefined, t: (key: string, options?: Record<string, unknown>) => string): string {
+  if (!dateString) return t('notifications_page.time.just_now');
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return dateString;
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 60) return t('notifications_page.time.just_now');
   const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  if (diffInMinutes < 60) return t('notifications_page.time.minutes_ago', { count: diffInMinutes });
   const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return `${diffInHours}h ago`;
+  if (diffInHours < 24) return t('notifications_page.time.hours_ago', { count: diffInHours });
   const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) return `${diffInDays}d ago`;
+  if (diffInDays < 7) return t('notifications_page.time.days_ago', { count: diffInDays });
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -87,13 +76,14 @@ function formatFullDate(dateString?: string): string {
     minute: '2-digit',
   });
 }
+
 function GetHasReadNotifications(notifications: Notification[], ids: Set<string>) {
   return notifications
     .filter((notification) => ids.has(notification.id))
     .some((notification) => notification.read_at !== null);
 }
-// Icon helper based on notification content
-function getNotificationBadge(title: string = '', message: string = '') {
+
+function getNotificationBadge(title: string = '', message: string = '', t: (key: string) => string) {
   const text = `${title} ${message}`.toLowerCase();
   if (text.includes('budget') || text.includes('limit') || text.includes('warning') || text.includes('exceed')) {
     return {
@@ -101,7 +91,7 @@ function getNotificationBadge(title: string = '', message: string = '') {
       color: '#fbbf24',
       bg: 'rgba(245, 158, 11, 0.12)',
       border: 'rgba(245, 158, 11, 0.25)',
-      label: 'Budget Alert',
+      label: t('notifications_page.badges.budget'),
     };
   }
   if (text.includes('transaction') || text.includes('spent') || text.includes('received') || text.includes('payment') || text.includes('$')) {
@@ -110,7 +100,7 @@ function getNotificationBadge(title: string = '', message: string = '') {
       color: '#34d399',
       bg: 'rgba(16, 185, 129, 0.12)',
       border: 'rgba(16, 185, 129, 0.25)',
-      label: 'Finance',
+      label: t('notifications_page.badges.finance'),
     };
   }
   if (text.includes('success') || text.includes('approved') || text.includes('completed') || text.includes('verified')) {
@@ -119,7 +109,7 @@ function getNotificationBadge(title: string = '', message: string = '') {
       color: '#60a5fa',
       bg: 'rgba(59, 130, 246, 0.12)',
       border: 'rgba(59, 130, 246, 0.25)',
-      label: 'System',
+      label: t('notifications_page.badges.system'),
     };
   }
   return {
@@ -127,60 +117,53 @@ function getNotificationBadge(title: string = '', message: string = '') {
     color: '#a78bfa',
     bg: 'rgba(167, 139, 250, 0.12)',
     border: 'rgba(167, 139, 250, 0.25)',
-    label: 'Notification',
+    label: t('notifications_page.badges.notification'),
   };
 }
 
 export default function NotificationsTable({
-  user,
   token,
   initialNotifications,
 }: NotificationsTableProps) {
   const router = useRouter();
+  const { t } = useTranslation();
 
-  // Primary Notifications State
   const [notifications, setNotifications] = useState<Notification[]>(
     initialNotifications ?? []
   );
   const [loading, setLoading] = useState<boolean>(!initialNotifications);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  // Archive IDs stored in state & synced with localStorage
-  const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
+  const [archivedIds, setArchivedIds] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(ARCHIVED_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            return new Set(parsed);
+          }
+        }
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+    return new Set();
+  });
 
-  // Search & Filter Controls
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<TabType>('ALL');
   const [sortBy, setSortBy] = useState<SortType>('date-desc');
 
-  // Multi-selection for bulk operations
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
 
-  // Modals
   const [detailModal, setDetailModal] = useState<Notification | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Notification | 'BULK' | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  // Load archived IDs from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(ARCHIVED_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setArchivedIds(new Set(parsed));
-        }
-      }
-    } catch {
-      // Ignore localStorage errors
-    }
-  }, []);
-
-  // Save archived IDs to localStorage
   const saveArchivedIds = useCallback((newIds: Set<string>) => {
     setArchivedIds(newIds);
     try {
@@ -190,7 +173,6 @@ export default function NotificationsTable({
     }
   }, []);
 
-  // Fetch notifications from Laravel API
   const fetchNotifications = useCallback(
     async (isManualRefresh = false) => {
       if (isManualRefresh) setRefreshing(true);
@@ -201,8 +183,8 @@ export default function NotificationsTable({
         const response = await fetch(`${apiUrl}/api/notifications`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
@@ -213,7 +195,6 @@ export default function NotificationsTable({
         const items: Notification[] = result.data ?? [];
         setNotifications(items);
 
-        // Also check if backend returns archived_at on items
         const backendArchived = items
           .filter((n) => Boolean(n.archived_at))
           .map((n) => n.id);
@@ -224,28 +205,64 @@ export default function NotificationsTable({
             return next;
           });
         }
-      } catch (error) {
-        toast.error('internal server error')
+      } catch {
+        toast.error(t('notifications_page.toasts.server_error'));
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [token]
+    [token, t]
   );
 
   useEffect(() => {
     if (!initialNotifications || initialNotifications.length === 0) {
-      fetchNotifications();
+      let active = true;
+      const loadInitial = async () => {
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || '';
+          const response = await fetch(`${apiUrl}/api/notifications`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const result = await response.json();
+          if (active) {
+            const items: Notification[] = result.data ?? [];
+            setNotifications(items);
+            const backendArchived = items
+              .filter((n) => Boolean(n.archived_at))
+              .map((n) => n.id);
+            if (backendArchived.length > 0) {
+              setArchivedIds((prev) => {
+                const next = new Set(prev);
+                backendArchived.forEach((id) => next.add(id));
+                return next;
+              });
+            }
+          }
+        } catch {
+          if (active) toast.error(t('notifications_page.toasts.server_error'));
+        } finally {
+          if (active) setLoading(false);
+        }
+      };
+      loadInitial();
+      return () => {
+        active = false;
+      };
     }
-  }, [fetchNotifications, initialNotifications]);
+  }, [initialNotifications, token, t]);
 
-  // Is a notification archived?
-  const isArchived = (notification: Notification) => {
-    return Boolean(notification.archived_at) || archivedIds.has(notification.id);
-  }
+  const isArchived = useCallback(
+    (notification: Notification) => {
+      return Boolean(notification.archived_at) || archivedIds.has(notification.id);
+    },
+    [archivedIds]
+  );
 
-  // Counts for Stats & Filter Tabs
   const counts = useMemo(() => {
     let unreadCount = 0;
     let readCount = 0;
@@ -276,17 +293,14 @@ export default function NotificationsTable({
     };
   }, [notifications, isArchived]);
 
-  // Filter & Sort Notifications
   const processedNotifications = useMemo(() => {
     return notifications
       .filter((item) => {
         const archived = isArchived(item);
 
-        // Filter by Tab
         if (activeTab === 'ARCHIVED') {
           if (!archived) return false;
         } else {
-          // If in any non-archived tab, exclude archived items
           if (archived) return false;
 
           if (activeTab === 'UNREAD' && item.read_at) return false;
@@ -294,14 +308,10 @@ export default function NotificationsTable({
           if (activeTab === 'ACTIONABLE' && !getNotificationUrl(item)) return false;
         }
 
-        // Filter by Search Query
         if (searchQuery.trim()) {
           const query = searchQuery.trim().toLowerCase();
           const title = (item.title || '').toLowerCase();
-          const message = (
-            item.message ||
-            ''
-          ).toLowerCase();
+          const message = (item.message || '').toLowerCase();
           const url = (getNotificationUrl(item) || '').toLowerCase();
           const dateStr = formatFullDate(item.created_at).toLowerCase();
 
@@ -328,27 +338,31 @@ export default function NotificationsTable({
           return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         }
         if (sortBy === 'title-asc') {
-          const titleA = a?.title || a.title || '';
-          const titleB = b?.title || b.title || '';
+          const titleA = a?.title || '';
+          const titleB = b?.title || '';
           return titleA.localeCompare(titleB);
         }
         return 0;
       });
   }, [notifications, activeTab, isArchived, searchQuery, sortBy]);
 
-  // Pagination calculation
   const totalPages = Math.max(1, Math.ceil(processedNotifications.length / itemsPerPage));
   const paginatedNotifications = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return processedNotifications.slice(startIndex, startIndex + itemsPerPage);
   }, [processedNotifications, currentPage, itemsPerPage]);
 
-  // Reset page when search or tab changes
-  useEffect(() => {
+  const [prevFilterKey, setPrevFilterKey] = useState({ searchQuery, activeTab, sortBy, itemsPerPage });
+  if (
+    prevFilterKey.searchQuery !== searchQuery ||
+    prevFilterKey.activeTab !== activeTab ||
+    prevFilterKey.sortBy !== sortBy ||
+    prevFilterKey.itemsPerPage !== itemsPerPage
+  ) {
+    setPrevFilterKey({ searchQuery, activeTab, sortBy, itemsPerPage });
     setCurrentPage(1);
-  }, [searchQuery, activeTab, sortBy, itemsPerPage]);
+  }
 
-  // Select all / Deselect all on current page
   const allCurrentPageSelected =
     paginatedNotifications.length > 0 &&
     paginatedNotifications.every((n) => selectedIds.has(n.id));
@@ -378,12 +392,10 @@ export default function NotificationsTable({
     });
   };
 
-  // Action: Mark single notification as Read/Unread
   const handleToggleRead = async (notification: Notification) => {
     const isUnread = !notification.read_at;
     const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || '';
 
-    // Optimistic UI update
     const updatedTimestamp = isUnread ? new Date().toISOString() : null;
     setNotifications((prev) =>
       prev.map((item) =>
@@ -400,44 +412,16 @@ export default function NotificationsTable({
             'Content-Type': 'application/json',
           },
         });
-        toast.success('Marked as read');
+        toast.success(t('notifications_page.toasts.marked_read'));
       } else {
-        toast.info('Marked as unread');
+        toast.info(t('notifications_page.toasts.marked_unread'));
       }
     } catch (error) {
       console.error('Failed to update read status:', error);
-      toast.error('Failed to update status on server');
+      toast.error(t('notifications_page.toasts.server_error'));
     }
   };
 
-  // Action: Mark all notifications as read
-  const handleMarkAllRead = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || '';
-    const now = new Date().toISOString();
-
-    setNotifications((prev) =>
-      prev.map((item) => ({
-        ...item,
-        read_at: item.read_at ?? now,
-      }))
-    );
-
-    try {
-      const response = await fetch(`${apiUrl}/api/notifications/read-all`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      toast.success('All notifications marked as read');
-    } catch (error) {
-      toast.error('Failed to mark all as read on server');
-    }
-  };
-
-  // Action: Archive / Restore notification
   const handleToggleArchive = async (notification: Notification) => {
     const currentlyArchived = isArchived(notification);
     const newArchived = new Set(archivedIds);
@@ -445,14 +429,13 @@ export default function NotificationsTable({
     if (currentlyArchived) {
       newArchived.delete(notification.id);
       saveArchivedIds(newArchived);
-      toast.success('Notification restored from archive');
+      toast.success(t('notifications_page.toasts.restored'));
     } else {
       newArchived.add(notification.id);
       saveArchivedIds(newArchived);
-      toast.success('Notification moved to archive');
+      toast.success(t('notifications_page.toasts.archived'));
     }
 
-    // Try backend call if supported
     try {
       const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || '';
       await fetch(`${apiUrl}/api/notifications/${notification.id}/archive`, {
@@ -460,11 +443,10 @@ export default function NotificationsTable({
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch {
-      // Backend may not have route, local persistence works flawlessly
+      // Local persistence fallback
     }
   };
 
-  // Action: Delete notification(s)
   const executeDelete = async () => {
     if (!deleteTarget) return;
     setIsDeleting(true);
@@ -473,14 +455,12 @@ export default function NotificationsTable({
     try {
       if (deleteTarget === 'BULK') {
         const idsToDelete = Array.from(selectedIds);
-        // Optimistic state
         setNotifications((prev) => prev.filter((item) => !selectedIds.has(item.id)));
         const newArchived = new Set(archivedIds);
         idsToDelete.forEach((id) => newArchived.delete(id));
         saveArchivedIds(newArchived);
         setSelectedIds(new Set());
 
-        // Call delete for each
         await Promise.allSettled(
           idsToDelete.map((id) =>
             fetch(`${apiUrl}/api/notifications/${id}`, {
@@ -490,7 +470,7 @@ export default function NotificationsTable({
           )
         );
 
-        toast.success(`Deleted ${idsToDelete.length} notifications`);
+        toast.success(t('notifications_page.toasts.deleted_bulk', { count: idsToDelete.length }));
       } else {
         const targetId = deleteTarget.id;
         setNotifications((prev) => prev.filter((item) => item.id !== targetId));
@@ -509,18 +489,17 @@ export default function NotificationsTable({
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        toast.success('Notification deleted');
+        toast.success(t('notifications_page.toasts.deleted_single'));
       }
     } catch (error) {
       console.error('Delete failed:', error);
-      toast.error('Failed to delete on server');
+      toast.error(t('notifications_page.toasts.server_error'));
     } finally {
       setIsDeleting(false);
       setDeleteTarget(null);
     }
   };
 
-  // Bulk Actions
   const handleBulkMarkRead = async () => {
     if (selectedIds.size === 0) return;
     const now = new Date().toISOString();
@@ -529,7 +508,7 @@ export default function NotificationsTable({
     );
 
     const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || '';
-    toast.success(`Marked ${selectedIds.size} notifications as read`);
+    toast.success(t('notifications_page.toasts.bulk_read', { count: selectedIds.size }));
 
     await Promise.allSettled(
       Array.from(selectedIds).map((id) =>
@@ -547,7 +526,7 @@ export default function NotificationsTable({
     const newArchived = new Set(archivedIds);
     selectedIds.forEach((id) => newArchived.add(id));
     saveArchivedIds(newArchived);
-    toast.success(`Archived ${selectedIds.size} notifications`);
+    toast.success(t('notifications_page.toasts.bulk_archived', { count: selectedIds.size }));
     setSelectedIds(new Set());
   };
 
@@ -556,11 +535,10 @@ export default function NotificationsTable({
     const newArchived = new Set(archivedIds);
     selectedIds.forEach((id) => newArchived.delete(id));
     saveArchivedIds(newArchived);
-    toast.success(`Restored ${selectedIds.size} notifications`);
+    toast.success(t('notifications_page.toasts.bulk_restored', { count: selectedIds.size }));
     setSelectedIds(new Set());
   };
 
-  // Action: Open Action URL
   const handleOpenUrl = (url: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!url) return;
@@ -621,7 +599,7 @@ export default function NotificationsTable({
                   letterSpacing: '-0.02em',
                 }}
               >
-                Notifications & Alerts
+                {t('notifications_page.title')}
               </h1>
               <p
                 style={{
@@ -630,7 +608,7 @@ export default function NotificationsTable({
                   margin: '0.15rem 0 0 0',
                 }}
               >
-                Review, search, archive, and manage your account updates and budget notices.
+                {t('notifications_page.subtitle')}
               </p>
             </div>
           </div>
@@ -643,7 +621,7 @@ export default function NotificationsTable({
             disabled={refreshing || loading}
             className="btn-icon"
             style={{ width: '38px', height: '38px', padding: 0 }}
-            title="Refresh notifications"
+            title={t('notifications_page.refresh_tooltip')}
           >
             <RefreshCw
               size={16}
@@ -653,6 +631,7 @@ export default function NotificationsTable({
           </button>
         </div>
       </div>
+
       {/* Main Table Card */}
       <div
         className="glass-card"
@@ -692,10 +671,10 @@ export default function NotificationsTable({
           >
             {(
               [
-                { id: 'ALL', label: 'All', count: counts.all },
-                { id: 'UNREAD', label: 'Unread', count: counts.unread },
-                { id: 'READ', label: 'Read', count: counts.read },
-                { id: 'ARCHIVED', label: 'Archived', count: counts.archived },
+                { id: 'ALL', label: t('notifications_page.tabs.all'), count: counts.all },
+                { id: 'UNREAD', label: t('notifications_page.tabs.unread'), count: counts.unread },
+                { id: 'READ', label: t('notifications_page.tabs.read'), count: counts.read },
+                { id: 'ARCHIVED', label: t('notifications_page.tabs.archived'), count: counts.archived },
               ] as const
             ).map((tab) => {
               const isActive = activeTab === tab.id;
@@ -738,7 +717,7 @@ export default function NotificationsTable({
             })}
           </div>
 
-          {/* Right: Search Bar, Sort Dropdown & Reset Filters in the Same Line */}
+          {/* Right: Search Bar, Sort Dropdown & Reset Filters */}
           <div
             style={{
               display: 'flex',
@@ -749,7 +728,6 @@ export default function NotificationsTable({
               minWidth: '280px',
             }}
           >
-            {/* Search Input - Designed with Glass Aesthetic */}
             <div
               style={{
                 position: 'relative',
@@ -762,7 +740,7 @@ export default function NotificationsTable({
                 size={14}
                 style={{
                   position: 'absolute',
-                  left: '0.85rem',
+                  insetInlineStart: '0.85rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   color: 'var(--text-muted)',
@@ -771,7 +749,7 @@ export default function NotificationsTable({
               />
               <input
                 type="text"
-                placeholder="Search notifications..."
+                placeholder={t('notifications_page.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -780,7 +758,8 @@ export default function NotificationsTable({
                   background: '#141414',
                   border: '1px solid var(--border-subtle)',
                   borderRadius: 'var(--radius-md)',
-                  padding: '0 2rem 0 2.25rem',
+                  paddingInlineStart: '2.25rem',
+                  paddingInlineEnd: '2rem',
                   color: '#ffffff',
                   fontSize: '0.78rem',
                   outline: 'none',
@@ -804,7 +783,7 @@ export default function NotificationsTable({
                   onClick={() => setSearchQuery('')}
                   style={{
                     position: 'absolute',
-                    right: '0.65rem',
+                    insetInlineEnd: '0.65rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     background: 'rgba(255, 255, 255, 0.08)',
@@ -820,15 +799,7 @@ export default function NotificationsTable({
                     padding: 0,
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ffffff';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.16)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'var(--text-muted)';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                  }}
-                  title="Clear search"
+                  title={t('notifications_page.clear_search')}
                 >
                   <X size={11} />
                 </button>
@@ -862,10 +833,10 @@ export default function NotificationsTable({
                 onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--accent-primary)')}
                 onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border-subtle)')}
               >
-                <option value="date-desc">Newest First</option>
-                <option value="date-asc">Oldest First</option>
-                <option value="unread-first">Unread First</option>
-                <option value="title-asc">Title (A-Z)</option>
+                <option value="date-desc">{t('notifications_page.sort.newest')}</option>
+                <option value="date-asc">{t('notifications_page.sort.oldest')}</option>
+                <option value="unread-first">{t('notifications_page.sort.unread_first')}</option>
+                <option value="title-asc">{t('notifications_page.sort.title_asc')}</option>
               </select>
             </div>
 
@@ -894,24 +865,16 @@ export default function NotificationsTable({
                   flexShrink: 0,
                   transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
-                  e.currentTarget.style.color = '#ffffff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-                  e.currentTarget.style.color = '#f87171';
-                }}
-                title="Reset all filters"
+                title={t('notifications_page.reset_tooltip')}
               >
                 <X size={12} />
-                <span>Reset</span>
+                <span>{t('notifications_page.reset')}</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Bulk Action Bar (Visible when items selected) */}
+        {/* Bulk Action Bar */}
         {selectedIds.size > 0 && (
           <div
             style={{
@@ -923,41 +886,34 @@ export default function NotificationsTable({
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '0.75rem',
-              animation: 'fadeIn 0.2s ease',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <span
-                style={{
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  color: '',
-                }}
-              >
-                {selectedIds.size} notification{selectedIds.size > 1 ? 's' : ''} selected
+              <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>
+                {selectedIds.size === 1
+                  ? t('notifications_page.bulk.selected_single', { count: selectedIds.size })
+                  : t('notifications_page.bulk.selected_plural', { count: selectedIds.size })}
               </span>
-
             </div>
 
             {/* Bulk Action Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                {!GetHasReadNotifications(notifications, selectedIds) ? (
+              {!GetHasReadNotifications(notifications, selectedIds) && (
                 <button
-                onClick={handleBulkMarkRead}
-                className="btn btn-secondary"
-                style={{
-                  padding: '0.35rem 0.65rem',
-                  fontSize: '0.75rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                }}
-              >
-                <Check size={13} color="var(--accent-primary)" />
-                <span>Mark Read</span>
-              </button> 
-                ):''}
-              
+                  onClick={handleBulkMarkRead}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '0.35rem 0.65rem',
+                    fontSize: '0.75rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                  }}
+                >
+                  <Check size={13} color="var(--accent-primary)" />
+                  <span>{t('notifications_page.bulk.mark_read')}</span>
+                </button>
+              )}
 
               {activeTab === 'ARCHIVED' ? (
                 <button
@@ -972,7 +928,7 @@ export default function NotificationsTable({
                   }}
                 >
                   <ArchiveRestore size={13} color="#f59e0b" />
-                  <span>Restore</span>
+                  <span>{t('notifications_page.bulk.restore')}</span>
                 </button>
               ) : (
                 <button
@@ -987,7 +943,7 @@ export default function NotificationsTable({
                   }}
                 >
                   <Archive size={13} color="#f59e0b" />
-                  <span>Archive</span>
+                  <span>{t('notifications_page.bulk.archive')}</span>
                 </button>
               )}
 
@@ -1008,9 +964,9 @@ export default function NotificationsTable({
                 }}
               >
                 <Trash2 size={13} />
-                <span>Delete</span>
+                <span>{t('notifications_page.bulk.delete')}</span>
               </button>
-                <button
+              <button
                 onClick={() => setSelectedIds(new Set())}
                 style={{
                   background: 'rgba(239, 68, 68, 0.12)',
@@ -1021,9 +977,7 @@ export default function NotificationsTable({
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  textDecoration: 'underline',
                   gap: '0.3rem',
-                  
                 }}
               >
                 <X size={12} />
@@ -1038,7 +992,7 @@ export default function NotificationsTable({
             style={{
               width: '100%',
               borderCollapse: 'collapse',
-              textAlign: 'left',
+              textAlign: 'start',
               fontSize: '0.8rem',
             }}
           >
@@ -1061,15 +1015,15 @@ export default function NotificationsTable({
                     checked={allCurrentPageSelected}
                     onChange={toggleSelectAllPage}
                     style={{ cursor: 'pointer', accentColor: 'var(--accent-primary)' }}
-                    title="Select all on this page"
+                    title={t('notifications_page.headers.select_all')}
                   />
                 </th>
-                <th style={{ width: '150px', padding: '0.85rem 1rem' }}>Type</th>
-                <th style={{ padding: '0.85rem 1rem' }}>Notification</th>
-                <th style={{ width: '150px', padding: '0.85rem 1rem' }}>Time</th>
-                <th style={{ width: '130px', padding: '0.85rem 1rem' }}>Action Link</th>
+                <th style={{ width: '150px', padding: '0.85rem 1rem' }}>{t('notifications_page.headers.type')}</th>
+                <th style={{ padding: '0.85rem 1rem' }}>{t('notifications_page.headers.notification')}</th>
+                <th style={{ width: '150px', padding: '0.85rem 1rem' }}>{t('notifications_page.headers.time')}</th>
+                <th style={{ width: '130px', padding: '0.85rem 1rem' }}>{t('notifications_page.headers.action_link')}</th>
                 <th style={{ width: '150px', padding: '0.85rem 1rem', textAlign: 'center' }}>
-                  Actions
+                  {t('notifications_page.headers.actions')}
                 </th>
               </tr>
             </thead>
@@ -1077,7 +1031,6 @@ export default function NotificationsTable({
             {/* Table Body */}
             <tbody>
               {loading ? (
-                // Shimmer Loading Skeletons
                 Array.from({ length: 5 }).map((_, idx) => (
                   <tr
                     key={idx}
@@ -1160,7 +1113,6 @@ export default function NotificationsTable({
                   </tr>
                 ))
               ) : paginatedNotifications.length === 0 ? (
-                // Empty State
                 <tr>
                   <td colSpan={6} style={{ padding: '4.5rem 1.5rem', textAlign: 'center' }}>
                     <div
@@ -1187,7 +1139,7 @@ export default function NotificationsTable({
                         margin: '0 0 0.35rem',
                       }}
                     >
-                      No Notifications Found
+                      {t('notifications_page.empty.title')}
                     </h3>
                     <p
                       style={{
@@ -1199,14 +1151,14 @@ export default function NotificationsTable({
                       }}
                     >
                       {searchQuery
-                        ? `No notification matches your search for "${searchQuery}". Try searching with another term.`
+                        ? t('notifications_page.empty.search', { query: searchQuery })
                         : activeTab === 'ARCHIVED'
-                        ? 'Your archive is currently empty. Notifications you archive will appear here.'
+                        ? t('notifications_page.empty.archived')
                         : activeTab === 'UNREAD'
-                        ? 'You have caught up with all updates! No unread notifications.'
+                        ? t('notifications_page.empty.unread')
                         : activeTab === 'ACTIONABLE'
-                        ? 'No notifications currently contain actionable direct links.'
-                        : 'You do not have any notifications registered yet.'}
+                        ? t('notifications_page.empty.actionable')
+                        : t('notifications_page.empty.default')}
                     </p>
                     {(searchQuery || activeTab !== 'ALL') && (
                       <button
@@ -1217,26 +1169,20 @@ export default function NotificationsTable({
                         className="btn btn-secondary"
                         style={{ fontSize: '0.8rem', padding: '0.45rem 1rem' }}
                       >
-                        View All Notifications
+                        {t('notifications_page.empty.view_all')}
                       </button>
                     )}
                   </td>
                 </tr>
               ) : (
-                // Render Rows
                 paginatedNotifications.map((notification) => {
                   const isSelected = selectedIds.has(notification.id);
                   const isRead = Boolean(notification.read_at);
                   const archived = isArchived(notification);
-                  const title =
-                    notification.title ||
-                    notification?.title ||
-                    'Notification';
-                  const message =
-                    notification.message ??
-                    'You have a new update.';
+                  const title = notification.title || t('notifications_page.badges.notification');
+                  const message = notification.message ?? '';
                   const url = getNotificationUrl(notification);
-                  const badge = getNotificationBadge(title, message);
+                  const badge = getNotificationBadge(title, message, t);
                   const BadgeIcon = badge.Icon;
 
                   return (
@@ -1250,7 +1196,7 @@ export default function NotificationsTable({
                           : isRead
                           ? '#101010'
                           : '#141a15',
-                        borderLeft: isRead
+                        borderInlineStart: isRead
                           ? '3px solid transparent'
                           : '3px solid var(--accent-primary)',
                         transition: 'background 0.15s ease',
@@ -1326,7 +1272,6 @@ export default function NotificationsTable({
                               {title}
                             </span>
 
-                            {/* Unread dot or Archived pill */}
                             {!isRead && !archived && (
                               <span
                                 style={{
@@ -1337,7 +1282,7 @@ export default function NotificationsTable({
                                   background: 'var(--accent-primary)',
                                   boxShadow: '0 0 8px var(--accent-primary)',
                                 }}
-                                title="Unread"
+                                title={t('notifications_page.badges.unread')}
                               />
                             )}
 
@@ -1353,7 +1298,7 @@ export default function NotificationsTable({
                                   border: '1px solid rgba(245, 158, 11, 0.3)',
                                 }}
                               >
-                                Archived
+                                {t('notifications_page.badges.archived')}
                               </span>
                             )}
                           </div>
@@ -1389,7 +1334,7 @@ export default function NotificationsTable({
                             }}
                           >
                             <Clock size={11} color="var(--text-muted)" />
-                            {formatTimeAgo(notification.created_at)}
+                            {formatTimeAgo(notification.created_at, t)}
                           </span>
                           <span
                             style={{
@@ -1428,16 +1373,8 @@ export default function NotificationsTable({
                               transition: 'all 0.15s ease',
                               whiteSpace: 'nowrap',
                             }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = 'rgba(167, 139, 250, 0.25)';
-                              e.currentTarget.style.color = '#ffffff';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = 'rgba(167, 139, 250, 0.12)';
-                              e.currentTarget.style.color = '#c4b5fd';
-                            }}
                           >
-                            <span>Open Link</span>
+                            <span>{t('notifications_page.actions.open_link')}</span>
                             <ArrowUpRight size={12} />
                           </button>
                         ) : (
@@ -1459,31 +1396,27 @@ export default function NotificationsTable({
                             gap: '0.35rem',
                           }}
                         >
-                          {/* Read / Unread Toggle */}
-
                           {notification.read_at === null && (
-
-                          <button
-                            type="button"
-                            onClick={() => handleToggleRead(notification)}
-                            className="btn-icon"
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              padding: 0,
-                              color: isRead ? 'var(--text-muted)' : 'var(--accent-primary)',
-                              background: isRead ? 'transparent' : 'rgba(16, 185, 129, 0.12)',
-                              border: isRead
-                                ? '1px solid var(--border-subtle)'
-                                : '1px solid rgba(16, 185, 129, 0.3)',
-                            }}
-                            title={isRead ? 'Mark as unread' : 'Mark as read'}
-                          >
-                            <Check size={14} />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleRead(notification)}
+                              className="btn-icon"
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                padding: 0,
+                                color: isRead ? 'var(--text-muted)' : 'var(--accent-primary)',
+                                background: isRead ? 'transparent' : 'rgba(16, 185, 129, 0.12)',
+                                border: isRead
+                                  ? '1px solid var(--border-subtle)'
+                                  : '1px solid rgba(16, 185, 129, 0.3)',
+                              }}
+                              title={isRead ? t('notifications_page.actions.mark_as_unread') : t('notifications_page.actions.mark_as_read')}
+                            >
+                              <Check size={14} />
+                            </button>
                           )}
 
-                          {/* Archive / Restore Toggle */}
                           <button
                             type="button"
                             onClick={() => handleToggleArchive(notification)}
@@ -1494,12 +1427,11 @@ export default function NotificationsTable({
                               padding: 0,
                               color: archived ? '#fbbf24' : 'var(--text-secondary)',
                             }}
-                            title={archived ? 'Restore from archive' : 'Archive notification'}
+                            title={archived ? t('notifications_page.actions.restore') : t('notifications_page.actions.archive')}
                           >
                             {archived ? <ArchiveRestore size={14} /> : <Archive size={14} />}
                           </button>
 
-                          {/* Delete Button */}
                           <button
                             type="button"
                             onClick={() => setDeleteTarget(notification)}
@@ -1510,7 +1442,7 @@ export default function NotificationsTable({
                               padding: 0,
                               color: '#fb7185',
                             }}
-                            title="Delete notification"
+                            title={t('notifications_page.actions.delete')}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -1541,25 +1473,26 @@ export default function NotificationsTable({
             }}
           >
             <div>
-              Showing{' '}
+              {t('notifications_page.pagination.showing')}{' '}
               <span style={{ fontWeight: 700, color: '#ffffff' }}>
                 {(currentPage - 1) * itemsPerPage + 1}
               </span>{' '}
-              to{' '}
+              {t('notifications_page.pagination.to')}{' '}
               <span style={{ fontWeight: 700, color: '#ffffff' }}>
                 {Math.min(currentPage * itemsPerPage, processedNotifications.length)}
               </span>{' '}
-              of{' '}
+              {t('notifications_page.pagination.of')}{' '}
               <span style={{ fontWeight: 700, color: '#ffffff' }}>
                 {processedNotifications.length}
               </span>{' '}
-              notifications
+              {t('notifications_page.pagination.notifications')}
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {/* Items Per Page */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Per page:</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  {t('notifications_page.pagination.per_page')}
+                </span>
                 <select
                   value={itemsPerPage}
                   onChange={(e) => {
@@ -1600,12 +1533,11 @@ export default function NotificationsTable({
                     display: 'flex',
                     alignItems: 'center',
                   }}
-                  title="Previous page"
+                  title={t('notifications_page.pagination.prev')}
                 >
                   <ChevronLeft size={14} />
                 </button>
 
-                {/* Page Number Chips */}
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                   .filter((p) => {
                     if (totalPages <= 5) return true;
@@ -1617,7 +1549,7 @@ export default function NotificationsTable({
                     const showEllipsis = prevP && p - prevP > 1;
 
                     return (
-                      <>
+                      <React.Fragment key={p}>
                         {showEllipsis && (
                           <span style={{ color: 'var(--text-muted)', padding: '0 0.2rem' }}>
                             ...
@@ -1637,7 +1569,7 @@ export default function NotificationsTable({
                               currentPage === p
                                 ? '1px solid var(--accent-primary)'
                                 : '1px solid var(--border-subtle)',
-                            color: currentPage === p ? '#ffffff' : 'var(--text-secondary)',
+                            color: currentPage === p ? '#000000' : 'var(--text-secondary)',
                             fontWeight: currentPage === p ? 700 : 500,
                             fontSize: '0.75rem',
                             cursor: 'pointer',
@@ -1645,7 +1577,7 @@ export default function NotificationsTable({
                         >
                           {p}
                         </button>
-                      </>
+                      </React.Fragment>
                     );
                   })}
 
@@ -1663,7 +1595,7 @@ export default function NotificationsTable({
                     display: 'flex',
                     alignItems: 'center',
                   }}
-                  title="Next page"
+                  title={t('notifications_page.pagination.next')}
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -1724,7 +1656,7 @@ export default function NotificationsTable({
                     letterSpacing: '0.04em',
                   }}
                 >
-                  Notification Details
+                  {t('notifications_page.detail_modal.details_label')}
                 </span>
                 <h3
                   style={{
@@ -1734,7 +1666,7 @@ export default function NotificationsTable({
                     margin: '0.2rem 0 0 0',
                   }}
                 >
-                  {detailModal.title || detailModal?.title || 'Notification'}
+                  {detailModal.title || t('notifications_page.badges.notification')}
                 </h3>
               </div>
 
@@ -1766,8 +1698,7 @@ export default function NotificationsTable({
                 overflowY: 'auto',
               }}
             >
-              {detailModal?.message ??
-                'No message content provided.'}
+              {detailModal?.message ?? t('notifications_page.detail_modal.no_message')}
             </div>
 
             {/* Metadata Grid */}
@@ -1780,20 +1711,26 @@ export default function NotificationsTable({
               }}
             >
               <div>
-                <span style={{ color: 'var(--text-muted)', display: 'block' }}>Date Received:</span>
+                <span style={{ color: 'var(--text-muted)', display: 'block' }}>
+                  {t('notifications_page.detail_modal.date_received')}
+                </span>
                 <span style={{ color: '#ffffff', fontWeight: 600 }}>
                   {formatFullDate(detailModal.created_at)}
                 </span>
               </div>
               <div>
-                <span style={{ color: 'var(--text-muted)', display: 'block' }}>Read Status:</span>
+                <span style={{ color: 'var(--text-muted)', display: 'block' }}>
+                  {t('notifications_page.detail_modal.read_status')}
+                </span>
                 <span
                   style={{
                     color: detailModal.read_at ? '#34d399' : '#fbbf24',
                     fontWeight: 600,
                   }}
                 >
-                  {detailModal.read_at ? 'Read' : 'Unread'}
+                  {detailModal.read_at
+                    ? t('notifications_page.detail_modal.read')
+                    : t('notifications_page.detail_modal.unread')}
                 </span>
               </div>
             </div>
@@ -1821,7 +1758,7 @@ export default function NotificationsTable({
                       fontWeight: 700,
                     }}
                   >
-                    ATTACHED ACTION LINK
+                    {t('notifications_page.detail_modal.attached_action')}
                   </span>
                   <span
                     style={{
@@ -1851,7 +1788,7 @@ export default function NotificationsTable({
                     flexShrink: 0,
                   }}
                 >
-                  <span>Visit Link</span>
+                  <span>{t('notifications_page.detail_modal.visit_link')}</span>
                   <ArrowUpRight size={13} />
                 </button>
               </div>
@@ -1877,7 +1814,9 @@ export default function NotificationsTable({
                 className="btn btn-secondary"
                 style={{ fontSize: '0.78rem', padding: '0.45rem 0.85rem' }}
               >
-                {isArchived(detailModal) ? 'Restore from Archive' : 'Archive'}
+                {isArchived(detailModal)
+                  ? t('notifications_page.detail_modal.restore_archive')
+                  : t('notifications_page.detail_modal.archive')}
               </button>
 
               <button
@@ -1889,7 +1828,9 @@ export default function NotificationsTable({
                 className="btn btn-secondary"
                 style={{ fontSize: '0.78rem', padding: '0.45rem 0.85rem' }}
               >
-                {detailModal.read_at ? 'Mark as Unread' : 'Mark as Read'}
+                {detailModal.read_at
+                  ? t('notifications_page.detail_modal.mark_unread')
+                  : t('notifications_page.detail_modal.mark_read')}
               </button>
 
               <button
@@ -1910,7 +1851,7 @@ export default function NotificationsTable({
                   cursor: 'pointer',
                 }}
               >
-                Delete
+                {t('notifications_page.detail_modal.delete')}
               </button>
             </div>
           </div>
@@ -1945,7 +1886,7 @@ export default function NotificationsTable({
               display: 'flex',
               flexDirection: 'column',
               gap: '1rem',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.8)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -1967,19 +1908,18 @@ export default function NotificationsTable({
               </div>
               <div>
                 <h4 style={{ margin: 0, color: '#ffffff', fontSize: '1rem', fontWeight: 700 }}>
-                  Confirm Deletion
+                  {t('notifications_page.delete_modal.title')}
                 </h4>
                 <p style={{ margin: '0.15rem 0 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                   {deleteTarget === 'BULK'
-                    ? `Are you sure you want to delete ${selectedIds.size} notifications?`
-                    : 'Are you sure you want to permanently delete this notification?'}
+                    ? t('notifications_page.delete_modal.msg_bulk', { count: selectedIds.size })
+                    : t('notifications_page.delete_modal.msg_single')}
                 </p>
               </div>
             </div>
 
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: 0 }}>
-              This action cannot be undone. The notification will be removed from your activity
-              history.
+              {t('notifications_page.delete_modal.warning')}
             </p>
 
             <div
@@ -1998,7 +1938,7 @@ export default function NotificationsTable({
                 className="btn btn-secondary"
                 style={{ fontSize: '0.8rem', padding: '0.45rem 0.9rem' }}
               >
-                Cancel
+                {t('notifications_page.delete_modal.cancel')}
               </button>
               <button
                 type="button"
@@ -2019,7 +1959,11 @@ export default function NotificationsTable({
                 }}
               >
                 {isDeleting && <RefreshCw size={12} className="animate-spin" />}
-                <span>{isDeleting ? 'Deleting...' : 'Delete Permanently'}</span>
+                <span>
+                  {isDeleting
+                    ? t('notifications_page.delete_modal.deleting')
+                    : t('notifications_page.delete_modal.delete_btn')}
+                </span>
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
-
 'use client';
+
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Mail,
   Clock,
@@ -13,6 +14,7 @@ import {
 import { toast } from 'sonner';
 
 export function ContactUI() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -29,7 +31,7 @@ export function ContactUI() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName || !formData.email || !formData.message) {
-      toast.error('Please fill in all required fields.');
+      toast.error(t('contact.form.required_error'));
       return;
     }
 
@@ -39,7 +41,7 @@ export function ContactUI() {
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-      toast.success('Thank you! Your message has been sent successfully.');
+      toast.success(t('contact.form.toast_success'));
       setFormData({ fullName: '', email: '', subject: '', message: '' });
     }, 900);
   };
@@ -88,7 +90,7 @@ export function ContactUI() {
             }}
           >
             <MessageSquare size={14} />
-            <span>Contact & Support</span>
+            <span>{t('contact.hero.badge')}</span>
           </div>
 
           <h1
@@ -101,7 +103,8 @@ export function ContactUI() {
               marginBottom: '1.25rem',
             }}
           >
-            Get in <span style={{ color: 'var(--accent-primary)' }}>Touch</span>
+            {t('contact.hero.title_part1')}{' '}
+            <span style={{ color: 'var(--accent-primary)' }}>{t('contact.hero.title_part2')}</span>
           </h1>
 
           <p
@@ -113,7 +116,7 @@ export function ContactUI() {
               margin: '0 auto',
             }}
           >
-            Have a question, need help, or want to share feedback? Our team is here to help you every step of the way.
+            {t('contact.hero.description')}
           </p>
         </div>
       </section>
@@ -129,13 +132,13 @@ export function ContactUI() {
           }}
         >
           {/* Left Column: Contact Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'start' }}>
             <div>
               <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.75rem' }}>
-                Contact Information
+                {t('contact.info.title')}
               </h2>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                Whether you're troubleshooting an issue, inquiring about feature partnerships, or providing user feedback, we are eager to assist.
+                {t('contact.info.description')}
               </p>
             </div>
 
@@ -170,7 +173,7 @@ export function ContactUI() {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>
-                    Email Support
+                    {t('contact.info.email_title')}
                   </div>
                   <a
                     href="mailto:support@spendora.com"
@@ -219,10 +222,10 @@ export function ContactUI() {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>
-                    Response Time
+                    {t('contact.info.response_time_title')}
                   </div>
                   <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff' }}>
-                    Usually within 24 hours
+                    {t('contact.info.response_time_value')}
                   </div>
                 </div>
               </div>
@@ -257,10 +260,10 @@ export function ContactUI() {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: '700' }}>
-                    Availability
+                    {t('contact.info.availability_title')}
                   </div>
                   <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff' }}>
-                    Available Monday–Friday
+                    {t('contact.info.availability_value')}
                   </div>
                 </div>
               </div>
@@ -280,7 +283,7 @@ export function ContactUI() {
             >
               <ShieldCheck size={22} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
               <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                Your email and message details are kept strictly private and never shared with third parties.
+                {t('contact.info.privacy_notice')}
               </span>
             </div>
           </div>
@@ -293,13 +296,14 @@ export function ContactUI() {
               background: '#0e0e0e',
               borderRadius: 'var(--radius-lg)',
               border: '1px solid var(--border-hover)',
+              textAlign: 'start',
             }}
           >
             <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.4rem' }}>
-              Send Us a Message
+              {t('contact.form.title')}
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.75rem' }}>
-              Fill in the form below and our team will get back to you promptly.
+              {t('contact.form.subtitle')}
             </p>
 
             {submitted ? (
@@ -328,28 +332,28 @@ export function ContactUI() {
                   <CheckCircle2 size={24} />
                 </div>
                 <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.4rem' }}>
-                  Message Received!
+                  {t('contact.form.success_title')}
                 </h4>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                  Thank you for reaching out. We will review your inquiry and respond within 24 hours.
+                  {t('contact.form.success_message')}
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="btn btn-secondary"
                   style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}
                 >
-                  Send Another Message
+                  {t('contact.form.send_another')}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Full Name *</label>
+                  <label className="form-label">{t('contact.form.full_name_label')}</label>
                   <input
                     type="text"
                     name="fullName"
                     required
-                    placeholder="e.g. Yassine El Amrani"
+                    placeholder={t('contact.form.full_name_placeholder')}
                     value={formData.fullName}
                     onChange={handleChange}
                     className="form-input"
@@ -357,12 +361,12 @@ export function ContactUI() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Email Address *</label>
+                  <label className="form-label">{t('contact.form.email_label')}</label>
                   <input
                     type="email"
                     name="email"
                     required
-                    placeholder="you@example.com"
+                    placeholder={t('contact.form.email_placeholder')}
                     value={formData.email}
                     onChange={handleChange}
                     className="form-input"
@@ -370,11 +374,11 @@ export function ContactUI() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Subject</label>
+                  <label className="form-label">{t('contact.form.subject_label')}</label>
                   <input
                     type="text"
                     name="subject"
-                    placeholder="e.g. Question about Multi-Account Tracking"
+                    placeholder={t('contact.form.subject_placeholder')}
                     value={formData.subject}
                     onChange={handleChange}
                     className="form-input"
@@ -382,12 +386,12 @@ export function ContactUI() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">Message *</label>
+                  <label className="form-label">{t('contact.form.message_label')}</label>
                   <textarea
                     name="message"
                     required
                     rows={4}
-                    placeholder="Write your message or question here..."
+                    placeholder={t('contact.form.message_placeholder')}
                     value={formData.message}
                     onChange={handleChange}
                     className="form-input"
@@ -409,10 +413,10 @@ export function ContactUI() {
                   }}
                 >
                   {isSubmitting ? (
-                    <span>Sending...</span>
+                    <span>{t('contact.form.sending_button')}</span>
                   ) : (
                     <>
-                      <span>Send Message</span>
+                      <span>{t('contact.form.send_button')}</span>
                       <Send size={16} />
                     </>
                   )}
@@ -453,13 +457,13 @@ export function ContactUI() {
 
           <div style={{ position: 'relative', zIndex: 1 }}>
             <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: '800', color: '#ffffff', marginBottom: '0.75rem' }}>
-              We're happy to hear from you.
+              {t('contact.cta.title')}
             </h3>
             <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '520px', margin: '0 auto 1.75rem auto', lineHeight: '1.6' }}>
-              Send us a message and we'll get back to you as soon as possible. Your feedback helps make Spnedora better every day.
+              {t('contact.cta.description')}
             </p>
             <div style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>
-              Spnedora Support Team · Available Monday–Friday
+              {t('contact.cta.footer')}
             </div>
           </div>
         </div>
@@ -469,4 +473,3 @@ export function ContactUI() {
 }
 
 export default ContactUI;
-

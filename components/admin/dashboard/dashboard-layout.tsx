@@ -1,72 +1,80 @@
-"use client"
-import { useState, ReactNode, useEffect } from 'react';
+"use client";
+
+import { useState, ReactNode, useEffect,CSSProperties } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Wallet,
-  LayoutDashboard,
-  ArrowUpDown,
-  Target,
-  BarChart3,
-  Settings,
   LogOut,
-  Bell,
-  Search,
   Menu,
-  Sparkles,
   ChevronDown,
   ChevronRight,
-  Layers,
-  Tag,
-  CreditCard
+ PanelLeft
 } from 'lucide-react';
+import { NavLinks } from '@/config/dashboard-link';
 import { toast } from 'sonner';
-import { User } from '@/types';
-import {Notification} from '@/components/notifications/notification';
+import { User, Notification as NotificationType } from '@/types';
+import { Notification } from '@/components/notifications/notification';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '@/components/i18n/btn-switch'
 interface DashboardLayoutProps {
   children?: ReactNode;
   user: User;
-  token:string;
-  loadingNotifications?:boolean;
+  token: string;
+  loadingNotifications?: boolean;
 }
 
-export default function DashboardLayout({ children, user, token}: DashboardLayoutProps) {
+export default function DashboardLayout({ children, user, token }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const {t}=useTranslation()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [collapsed] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [collapsed,setCollapsed] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     Management: true,
   });
-  const [notifications, setNotifications] = useState<[]>([]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
-  const fetchNotifications = async () => {
-    try {
-      setLoadingNotifications(true)
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/notifications`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      setNotifications(data.data);
-      setLoadingNotifications(false)
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    }
-  };
+  const [lang,setlang]=useState('en')
   useEffect(() => {
-    fetchNotifications();
+    const lang = localStorage.getItem('spendora-language');
+    setlang(lang??'en')
+    let cancelled = false;
+
+    const loadNotifications = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/notifications`,
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!cancelled) {
+          setNotifications(data.data ?? []);
+          setLoadingNotifications(false);
+        }
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+        if (!cancelled) {
+          setLoadingNotifications(false);
+        }
+      }
+    };
+
+    loadNotifications();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
+
   const toggleDropdown = (label: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
@@ -83,34 +91,46 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
       if (data.status === 200) {
         toast.success(data.message);
       }
-    } catch (error) {
+    } catch {
       toast.error('Logout failed');
     }
     router.push('/login');
   };
 
-  const navLinks = [
-    { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, badge: null },
-    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: null },
-    {
-      label: 'Management',
-      path: null,
-      icon: Layers,
-      badge: null,
-      children: [
-        { label: 'Categories', path: '/categories', icon: Tag, badge: null },
-        { label: 'Payment Methods', path: '/payment-method', icon: CreditCard, badge: null },
-      ],
-    },
-    { label: 'Budgets', path: '/budgets', icon: Target, badge: null },
-    { label: 'Analytics & Reports', path: '/reports', icon: BarChart3, badge: '21' },
-    { label: 'Settings', path: '/setting', icon: Settings, badge: null },
-  ];
+  const navLinks = NavLinks;
 
-  const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : 'U');
+ const getNavLabel = (label: string) => {
+    
+    switch (label) {
+      case 'Overview':
+        return t('admin_dashboard.sidebar.overview');
+      case 'Transactions':
+        return t('admin_dashboard.sidebar.transactions');
+      case 'Management':
+        return t('admin_dashboard.sidebar.management');
+      case 'Categories':
+        return t('admin_dashboard.sidebar.categories');
+      case 'Payment Methods':
+        return t('admin_dashboard.sidebar.payment_methods');
+      case 'Budgets':
+        return t('admin_dashboard.sidebar.budgets');
+      case 'Notifications':
+        return t('admin_dashboard.sidebar.notifications');
+      case 'Reports':
+        return t('admin_dashboard.sidebar.reports');
+      case 'Settings':
+        return t('admin_dashboard.sidebar.settings');
+      default:
+        return label;
+    }
+  }; 
+  const userInitial = user?.name
+    ? user.name.charAt(0).toUpperCase()
+    : user?.email
+    ? user.email.charAt(0).toUpperCase()
+    : 'U';
   const userName = user?.name || '';
   const userEmail = user?.email || '';
- 
   return (
     <div style={{
       display: 'flex',
@@ -153,8 +173,8 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
         className={`dashboard-sidebar ${mobileSidebarOpen ? 'open' : ''}`}
       >
         {/* Top brand header */}
-        <div>
-          <div style={{
+        {!collapsed?(
+        <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: collapsed ? 'center' : 'space-between',
@@ -164,6 +184,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
             <Link
               href="/"
               style={{
+                position:'relative',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -188,35 +209,63 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
               {!collapsed && (
                 <div>
                   <div style={{ fontSize: '1.2rem', fontWeight: '800', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Fin<span style={{ color: 'var(--accent-primary)' }}>ora</span>
-                    <span style={{
-                      fontSize: '0.65rem',
-                      background: 'rgba(16, 185, 129, 0.15)',
-                      color: 'var(--accent-primary)',
-                      padding: '1px 6px',
-                      borderRadius: '4px',
-                      fontWeight: '700',
-                      border: '1px solid rgba(16, 185, 129, 0.3)'
-                    }}>PRO</span>
+                    Spend<span style={{ color: 'var(--accent-primary)' }}>ora</span>
                   </div>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0 }}>Smart Wealth Tracker</p>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0 }}>
+                    {t('admin_dashboard.sidebar.brand_subtitle')}
+                  </p>
                 </div>
               )}
-            </Link>
+            </Link> 
+        {!collapsed && (
+          <div
+            onClick={() => setCollapsed(!collapsed)}
+            className="              
+              flex items-center justify-center
+              w-8 h-8
+              rounded-lg
+              cursor-pointer
+              text-gray-400
+              hover:text-emerald-400
+              border border-transparent
+              transition-all duration-200
+              active:scale-95">    
+             <PanelLeft size={20} strokeWidth={1.8} />
           </div>
+        )}
 
-          {/* Nav Items */}
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+        </div>
+        ):(
+              <div 
+              onClick={()=>setCollapsed(!collapsed)}
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#000000',
+                boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)',
+                flexShrink: 0,
+                cursor:'pointer'
+              }}>
+                <Wallet size={20} strokeWidth={2.5} />
+              </div>
+        )}
+        {/* Nav Items */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap:'0.1rem',marginTop:'2px', position:'absolute',top:'100px'}}>
             {navLinks.map((link) => {
               const Icon = link.icon;
               const hasChildren = Boolean(link.children && link.children.length > 0);
               const isChildActive = Boolean(
                 link.children?.some(
-                  (child) => pathname === child.path || (child.path && pathname.startsWith(child.path + '/'))
+                  (child) => pathname === child.href || (child.href && pathname.startsWith(child.href + '/'))
                 )
               );
-              const isActive = link.path
-                ? (pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/'))
+              const isActive = link.href
+                ? (pathname === link.href || (link.href === '/dashboard' && pathname === '/dashboard/'))
                 : isChildActive;
 
               if (hasChildren && link.children) {
@@ -224,7 +273,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                   <div key={link.label} style={{ display: 'flex', flexDirection: 'column' }}>
                     <button
                       type="button"
-                      onClick={() => toggleDropdown(link.label)}
+                      onClick={() => {toggleDropdown(link.label),setCollapsed(false)}}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -239,7 +288,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                         border: isChildActive ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
                         transition: 'all 0.15s ease',
                         cursor: 'pointer',
-                        textAlign: 'left',
+                        textAlign: 'start',
                       }}
                       onMouseEnter={(e) => {
                         if (!isChildActive) {
@@ -253,11 +302,11 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                           e.currentTarget.style.color = 'var(--text-secondary)';
                         }
                       }}
-                      title={collapsed ? link.label : undefined}
+                      title={collapsed ? getNavLabel(link.label) : undefined}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                         <Icon size={19} color={isChildActive ? 'var(--accent-primary)' : 'currentColor'} />
-                        {!collapsed && <span>{link.label}</span>}
+                        {!collapsed && <span>{getNavLabel(link.label)}</span>}
                       </div>
                       {!collapsed && (
                         openDropdowns[link.label] ? (
@@ -275,22 +324,22 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '0.25rem',
-                          marginLeft: '1.25rem',
-                          paddingLeft: '0.75rem',
+                          marginInlineStart: '1.25rem',
+                          paddingInlineStart: '0.75rem',
                           marginTop: '0.35rem',
                           marginBottom: '0.35rem',
-                          borderLeft: '2px solid rgba(255, 255, 255, 0.08)',
+                          borderInlineStart: '2px solid rgba(255, 255, 255, 0.08)',
                         }}
                       >
                         {link.children.map((child) => {
                           const ChildIcon = child.icon;
                           const isCurrentChildActive =
-                            pathname === child.path || (child.path && pathname.startsWith(child.path + '/'));
+                            pathname === child.href || (child.href && pathname.startsWith(child.href + '/'));
 
                           return (
                             <Link
                               key={child.label}
-                              href={child.path}
+                              href={child.href || '#'}
                               onClick={() => setMobileSidebarOpen(false)}
                               style={{
                                 display: 'flex',
@@ -321,7 +370,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
                                 <ChildIcon size={16} color={isCurrentChildActive ? 'var(--accent-primary)' : 'currentColor'} />
-                                <span>{child.label}</span>
+                                <span>{getNavLabel(child.label)}</span>
                               </div>
                               {child.badge && child.badge !== '0' && (
                                 <span
@@ -349,7 +398,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
               return (
                 <Link
                   key={link.label}
-                  href={link.path || '#'}
+                  href={link.href || '#'}
                   onClick={() => setMobileSidebarOpen(false)}
                   style={{
                     display: 'flex',
@@ -377,11 +426,11 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                       e.currentTarget.style.color = 'var(--text-secondary)';
                     }
                   }}
-                  title={collapsed ? link.label : undefined}
+                  title={collapsed ? getNavLabel(link.label) : undefined}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                     <Icon size={19} color={isActive ? 'var(--accent-primary)' : 'currentColor'} />
-                    {!collapsed && <span>{link.label}</span>}
+                    {!collapsed && <span>{getNavLabel(link.label)}</span>}
                   </div>
                   {!collapsed && link.badge && link.badge !== '0' && (
                     <span
@@ -401,9 +450,6 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
               );
             })}
           </nav>
-
-        </div>
-
         {/* User Card & Logout */}
         <div style={{
           borderTop: '1px solid var(--border-subtle)',
@@ -416,6 +462,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
+            flexDirection:collapsed?'column':'row',
             padding: collapsed ? '0' : '0.4rem',
             justifyContent: collapsed ? 'center' : 'flex-start',
           }}>
@@ -445,17 +492,12 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                 </div>
               </div>
             )}
-          </div>
-
-          <button
+            <div
             onClick={handleLogout}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: collapsed ? 'center' : 'flex-start',
               gap: '0.75rem',
-              width: '100%',
-              padding: '0.65rem 0.85rem',
+              width:collapsed? '76%':'15%',
+              padding: '0.65rem 0.65rem',
               background: 'rgba(239, 68, 68, 0.08)',
               border: '1px solid rgba(239, 68, 68, 0.2)',
               borderRadius: 'var(--radius-md)',
@@ -475,9 +517,12 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
             }}
             title="Sign Out"
           >
-            <LogOut size={16} />
-            {!collapsed && <span>Sign Out</span>}
-          </button>
+            <LogOut size={14} />
+            
+            </div>
+          </div>
+
+          
         </div>
       </aside>
 
@@ -528,10 +573,14 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
 
           {/* Right Topbar Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <LanguageSwitcher />
             {/* Notifications toggle */}
-          <div style={{ position: 'relative' }}>
-            <Notification token={token} notifications={notifications} loadingNotifications={loadingNotifications} closeNotifications={showNotifications} />
-          </div>
+            <Notification
+              token={token}
+              notifications={notifications}
+              setNotifications={setNotifications}
+              loadingNotifications={loadingNotifications}
+            />
           </div>
         </header> 
 
@@ -555,14 +604,14 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
         @media (max-width: 860px) {
           .dashboard-sidebar {
             position: fixed !important;
-            left: -300px;
+            inset-inline-start: -300px;
             top: 0;
             bottom: 0;
             z-index: 100 !important;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: inset-inline-start 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
           }
           .dashboard-sidebar.open {
-            left: 0 !important;
+            inset-inline-start: 0 !important;
           }
           .mobile-menu-btn {
             display: inline-flex !important;
@@ -575,4 +624,3 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
     </div>
   );
 }
-

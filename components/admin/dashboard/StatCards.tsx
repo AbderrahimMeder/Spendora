@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Wallet,
   TrendingUp,
@@ -33,6 +34,7 @@ interface StatCardConfig {
 }
 
 export default function StatCards({ stats, currency }: StatCardsProps) {
+  const { t } = useTranslation();
   const {
     totalBalance = 0,
     totalIncome = 0,
@@ -45,8 +47,8 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
   const cards: StatCardConfig[] = [
     {
       id: 'balance',
-      title: 'in your wallet',
-      subtitle: 'Available Net Worth',
+      title: t('admin_dashboard.stats.wallet_title'),
+      subtitle: t('admin_dashboard.stats.wallet_subtitle'),
       amount: totalBalance,
       formattedAmount: `${Number(totalBalance).toFixed(2)} ${currency} `,
       icon: Wallet,
@@ -54,15 +56,15 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
       iconBg: 'rgba(16, 185, 129, 0.15)',
       borderColor: 'rgba(16, 185, 129, 0.3)',
       badge: {
-        text: `${totalbalancerate.toFixed(2)}% up from last month`,
+        text: t('admin_dashboard.stats.wallet_badge', { rate: totalbalancerate.toFixed(2) }),
         type: 'positive',
       },
       gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(20, 20, 20, 0.6) 100%)',
     },
     {
       id: 'income',
-      title: 'This month Income',
-      subtitle: 'Revenue & Inflows',
+      title: t('admin_dashboard.stats.income_title'),
+      subtitle: t('admin_dashboard.stats.income_subtitle'),
       amount: totalIncome,
       formattedAmount: `${Number(totalIncome).toFixed(2)} ${currency} `,
       icon: TrendingUp,
@@ -70,15 +72,15 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
       iconBg: 'rgba(59, 130, 246, 0.15)',
       borderColor: 'rgba(59, 130, 246, 0.3)',
       badge: {
-        text: `${Incomerate.toFixed(2)}% inflow`,
+        text: t('admin_dashboard.stats.income_badge', { rate: Incomerate.toFixed(2) }),
         type: 'positive',
       },
       gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(20, 20, 20, 0.6) 100%)',
     },
     {
       id: 'expenses',
-      title: 'This Month Expense',
-      subtitle: 'Outflows & Bills',
+      title: t('admin_dashboard.stats.expense_title'),
+      subtitle: t('admin_dashboard.stats.expense_subtitle'),
       amount: totalExpenses,
       formattedAmount: ` ${Number(totalExpenses).toFixed(2)} ${currency} `,
       icon: TrendingDown,
@@ -86,15 +88,15 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
       iconBg: 'rgba(239, 68, 68, 0.15)',
       borderColor: 'rgba(239, 68, 68, 0.3)',
       badge: {
-        text: '-3.1% spent vs target',
+        text: t('admin_dashboard.stats.expense_badge'),
         type: 'neutral',
       },
       gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(20, 20, 20, 0.6) 100%)',
     },
     {
       id: 'savings',
-      title: 'Savings & Buffer',
-      subtitle: 'Net Stash Rate',
+      title: t('admin_dashboard.stats.savings_title'),
+      subtitle: t('admin_dashboard.stats.savings_subtitle'),
       amount: savings,
       formattedAmount: `${Number(savings).toFixed(2)} ${currency} `,
       icon: PiggyBank,
@@ -102,7 +104,7 @@ export default function StatCards({ stats, currency }: StatCardsProps) {
       iconBg: 'rgba(139, 92, 246, 0.15)',
       borderColor: 'rgba(139, 92, 246, 0.3)',
       badge: {
-        text: `${savingsRate}% savings rate`,
+        text: t('admin_dashboard.stats.savings_badge', { rate: savingsRate }),
         type: 'highlight',
       },
       gradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(20, 20, 20, 0.6) 100%)',

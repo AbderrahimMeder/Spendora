@@ -1,14 +1,20 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { Wallet } from 'lucide-react';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer style={{
       background: '#050505',
       borderTop: '1px solid var(--border-subtle)',
       padding: '4rem 1.5rem 2.5rem 1.5rem',
       color: 'var(--text-secondary)',
+      textAlign: 'start',
     }}>
       <div style={{
         maxWidth: '1100px',
@@ -38,49 +44,57 @@ export default function Footer() {
             </span>
           </Link>
           <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-            A clearer way to understand your money. Track spending, manage accounts, and take control of your financial life.
+            {t('footer.description')}
           </p>
         </div>
 
-        {/* Spnedora Navigation */}
+        {/* Spendora Navigation */}
         <div>
-          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Spendora</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
-            <li><Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Home</Link></li>
-            <li><a href="/#accounts" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Features</a></li>
-            <li><Link href="/about" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>About</Link></li>
-            <li><a href="/#faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>FAQ</a></li>
+          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>
+            {t('footer.section_spendora')}
+          </h4>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem', padding: 0 }}>
+            <li><Link href="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.home')}</Link></li>
+            <li><Link href="/features" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.features')}</Link></li>
+            <li><Link href="/about" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.about')}</Link></li>
+            <li><Link href="/faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.faq')}</Link></li>
           </ul>
         </div>
 
         {/* Product Areas */}
         <div>
-          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Product</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
-            <li><a href="/#accounts" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Accounts</a></li>
-            <li><a href="/#expenses" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Expenses</a></li>
-            <li><a href="/#budgets" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Budgets</a></li>
-            <li><a href="/#subscriptions" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Subscriptions</a></li>
-            <li><a href="/#reports" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Reports</a></li>
+          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>
+            {t('footer.section_product')}
+          </h4>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem', padding: 0 }}>
+            <li><Link href="/#accounts" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.accounts')}</Link></li>
+            <li><Link href="/#expenses" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.expenses')}</Link></li>
+            <li><Link href="/#budgets" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.budgets')}</Link></li>
+            <li><Link href="/#subscriptions" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.subscriptions')}</Link></li>
+            <li><Link href="/reports" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.reports')}</Link></li>
           </ul>
         </div>
 
         {/* Support */}
         <div>
-          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Support</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
-            <li><a href="/#faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Help Center</a></li>
-            <li><a href="mailto:support@Spnedora.app" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Contact Us</a></li>
-            <li><a href="/#faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>FAQ</a></li>
+          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>
+            {t('footer.section_support')}
+          </h4>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem', padding: 0 }}>
+            <li><Link href="/faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.help_center')}</Link></li>
+            <li><Link href="/contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.contact_us')}</Link></li>
+            <li><Link href="/faq" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.faq')}</Link></li>
           </ul>
         </div>
 
         {/* Legal */}
         <div>
-          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>Legal</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem' }}>
-            <li><a href="#privacy" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Privacy Policy</a></li>
-            <li><a href="#terms" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Terms of Service</a></li>
+          <h4 style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>
+            {t('footer.section_legal')}
+          </h4>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.825rem', padding: 0 }}>
+            <li><a href="#privacy" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.privacy_policy')}</a></li>
+            <li><a href="#terms" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{t('footer.terms_of_service')}</a></li>
           </ul>
         </div>
       </div>
@@ -100,13 +114,12 @@ export default function Footer() {
         color: 'var(--text-muted)',
       }}>
         <div>
-          © 2026 Spendora. All rights reserved.
+          {t('footer.copyright')}
         </div>
         <div style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
-          Know your money. Own your decisions.
+          {t('footer.tagline')}
         </div>
       </div>
     </footer>
   );
 }
-

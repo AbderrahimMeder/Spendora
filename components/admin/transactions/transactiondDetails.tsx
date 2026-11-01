@@ -1,7 +1,7 @@
 'use client';
+
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import type { Transaction, User } from '@/types';
 import { getExchangeRate } from '@/utils/exchange';
 import { toast } from 'sonner';
@@ -9,8 +9,6 @@ import {
   ArrowLeft,
   ArrowUpRight,
   ArrowDownLeft,
-  Calendar,
-  Clock,
   CreditCard,
   Building2,
   Wallet,
@@ -20,51 +18,19 @@ import {
   Check,
   Printer,
   Share2,
-  CheckCircle2,
   AlertCircle,
-  Clock3,
   ShieldCheck,
   Tag,
   FileText,
-  Hash,
-  Sparkles,
   ExternalLink,
-  ChevronRight,
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  CircleEllipsis,
-  RefreshCw
 } from 'lucide-react';
 import { LoadingTransaction } from '@/components/ui/loading';
+import { useTranslation } from 'react-i18next';
 
-const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
-};
-
-export default function TransactionDetails({ user, token }: { user: User, token: string }) {
+export default function TransactionDetails({ user, token }: { user: User; token: string }) {
   const router = useRouter();
-  const id = useParams().id as string;
+  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [rate, setRate] = useState<number>(1);
@@ -91,7 +57,6 @@ export default function TransactionDetails({ user, token }: { user: User, token:
   // Fetch transaction details
   useEffect(() => {
     let isMounted = true;
-    setLoading(true);
     const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
 
     const fetchTransaction = async () => {
@@ -105,8 +70,9 @@ export default function TransactionDetails({ user, token }: { user: User, token:
         });
 
         if (!res.ok) {
-          toast.error("Unauthorized");
+          toast.error('Unauthorized');
           router.push('/login');
+          return;
         }
 
         const data = await res.json();
@@ -136,43 +102,63 @@ export default function TransactionDetails({ user, token }: { user: User, token:
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [id, token, router]);
 
   // Category resolution
   const categoryMeta = useMemo(() => {
     if (!transaction) {
       return {
-        name: 'General',
+        name: t('transaction_details.general_expense'),
         icon: Tag,
         color: '#10b981',
         bg: 'rgba(16, 185, 129, 0.15)',
       };
     }
     return {
-      name: transaction?.categories?.name || 'General Expense',
+      name: transaction?.categories?.name || t('transaction_details.general_expense'),
       icon: Tag,
       color: '#10b981',
       bg: 'rgba(16, 185, 129, 0.15)',
     };
-  }, [transaction]);
+  }, [transaction, t]);
 
   // Payment Method icon & label
   const paymentMethodInfo = useMemo(() => {
     const rawMethod = (transaction?.payment_methods?.type || 'Credit Card').toLowerCase();
-    if (rawMethod.includes('BANK') || rawMethod.includes('transfer') || rawMethod.includes('wire')) {
-      return { icon: Building2, label: transaction?.payment_methods?.type || 'Bank Transfer', badge: 'ACH / Direct Wire' };
+    if (rawMethod.includes('bank') || rawMethod.includes('transfer') || rawMethod.includes('wire')) {
+      return {
+        icon: Building2,
+        label: transaction?.payment_methods?.type || 'Bank Transfer',
+        badge: t('transaction_details.badge_wire'),
+      };
     }
-    if (rawMethod.includes('ONLINE')) {
-      return { icon: Wallet, label: 'PayPal Account', badge: 'Digital Wallet' };
+    if (rawMethod.includes('online') || rawMethod.includes('paypal')) {
+      return {
+        icon: Wallet,
+        label: 'PayPal Account',
+        badge: t('transaction_details.badge_wallet'),
+      };
     }
     if (rawMethod.includes('crypto') || rawMethod.includes('usdt') || rawMethod.includes('btc')) {
-      return { icon: Coins, label: transaction?.payment_methods?.type || 'Crypto Wallet', badge: 'Decentralized' };
+      return {
+        icon: Coins,
+        label: transaction?.payment_methods?.type || 'Crypto Wallet',
+        badge: t('transaction_details.badge_crypto'),
+      };
     }
-    if (rawMethod.includes('CASH')) {
-      return { icon: DollarSign, label: 'Physical Cash', badge: 'Direct Settlement' };
+    if (rawMethod.includes('cash')) {
+      return {
+        icon: DollarSign,
+        label: 'Physical Cash',
+        badge: t('transaction_details.badge_cash'),
+      };
     }
-    return { icon: CreditCard, label: transaction?.payment_methods?.type || 'Credit Card', badge: 'Encrypted Token' };
-  }, [transaction]);
+    return {
+      icon: CreditCard,
+      label: transaction?.payment_methods?.type || 'Credit Card',
+      badge: t('transaction_details.badge_card'),
+    };
+  }, [transaction, t]);
 
   const isIncome = (transaction?.type || '').toUpperCase() === 'INCOME';
   const currencyCode = user?.currency || 'USD';
@@ -183,16 +169,22 @@ export default function TransactionDetails({ user, token }: { user: User, token:
     if (!transaction) return;
     navigator.clipboard.writeText(String(transaction.id));
     setCopiedId(true);
-    toast.success('Transaction reference copied!');
+    toast.success(t('transaction_details.copy_id_success'));
     setTimeout(() => setCopiedId(false), 2000);
   };
 
   const handleCopySummary = () => {
     if (!transaction) return;
-    const summary = `Spnedora Transaction Receipt\nID: #${transaction.id}\nTitle: ${transaction.title || transaction.description}\nType: ${isIncome ? 'Income' : 'Expense'}\nAmount: ${isIncome ? '+' : '-'}${convertedAmount} ${currencyCode}\nDate: ${transaction.date} ${transaction.time || ''}\nCategory: ${categoryMeta.name}\nStatus: ${transaction.status || 'Completed'}`;
+    const summary = `Spendora Transaction Receipt\nID: #${transaction.id}\nTitle: ${
+      transaction.title || transaction.description
+    }\nType: ${isIncome ? t('transaction_details.income_received') : t('transaction_details.expense_payment')}\nAmount: ${
+      isIncome ? '+' : '-'
+    }${convertedAmount} ${currencyCode}\nDate: ${transaction.date} ${transaction.time || ''}\nCategory: ${
+      categoryMeta.name
+    }\nStatus: ${transaction.status || t('transaction_details.status_completed')}`;
     navigator.clipboard.writeText(summary);
     setCopiedSummary(true);
-    toast.success('Summary copied to clipboard!');
+    toast.success(t('transaction_details.copy_summary_success'));
     setTimeout(() => setCopiedSummary(false), 2000);
   };
 
@@ -202,7 +194,6 @@ export default function TransactionDetails({ user, token }: { user: User, token:
 
   return (
     <>
-      {/* Printable Receipt Container Styles */}
       <style>{`
         @media print {
           body * {
@@ -256,7 +247,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
               title="Return to Transactions List"
             >
               <ArrowLeft size={16} />
-              <span>Back to Transactions</span>
+              <span>{t('transaction_details.back')}</span>
             </button>
           </div>
 
@@ -270,7 +261,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 title="Copy Transaction ID"
               >
                 {copiedId ? <Check size={14} color="var(--accent-primary)" /> : <Copy size={14} />}
-                <span>{copiedId ? 'Copied' : 'Copy ID'}</span>
+                <span>{copiedId ? t('transaction_details.copied') : t('transaction_details.copy_id')}</span>
               </button>
 
               <button
@@ -280,7 +271,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 title="Copy Shareable Text Summary"
               >
                 {copiedSummary ? <Check size={14} color="var(--accent-primary)" /> : <Share2 size={14} />}
-                <span>{copiedSummary ? 'Copied' : 'Share'}</span>
+                <span>{copiedSummary ? t('transaction_details.copied') : t('transaction_details.share')}</span>
               </button>
 
               <button
@@ -290,16 +281,14 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 title="Print or Save PDF Receipt"
               >
                 <Printer size={15} />
-                <span>Print Receipt</span>
+                <span>{t('transaction_details.print_receipt')}</span>
               </button>
             </div>
           )}
         </div>
 
         {/* Loading State */}
-        {loading && (
-          <LoadingTransaction hight={130} />
-        )}
+        {loading && <LoadingTransaction hight={130} />}
 
         {/* Error / Not Found State */}
         {!loading && !transaction && (
@@ -332,17 +321,17 @@ export default function TransactionDetails({ user, token }: { user: User, token:
               <AlertCircle size={28} />
             </div>
             <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.5rem' }}>
-              Transaction Not Found
+              {t('transaction_details.not_found_title')}
             </h2>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.75rem', lineHeight: 1.5 }}>
-              We couldn't locate a transaction with ID <strong style={{ color: '#ffffff' }}>#{id}</strong>. It might have been deleted or the identifier is invalid.
+              {t('transaction_details.not_found_desc', { id })}
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
               <button onClick={() => router.push('/transactions')} className="btn btn-primary">
-                Go back
+                {t('transaction_details.go_back')}
               </button>
               <button onClick={() => router.push(`/transactions/${id}/edit`)} className="btn btn-secondary">
-                Edit
+                {t('transaction_details.edit')}
               </button>
             </div>
           </div>
@@ -414,11 +403,11 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                         letterSpacing: '0.05em',
                       }}
                     >
-                      Official Receipt
+                      {t('transaction_details.official_receipt')}
                     </span>
                   </div>
                   <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
-                    Transaction Reference #{transaction.id}
+                    {t('transaction_details.ref_prefix', { id: transaction.id })}
                   </p>
                 </div>
 
@@ -434,10 +423,11 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                       transaction.status === 'Pending'
                         ? 'rgba(234, 179, 8, 0.12)'
                         : 'rgba(16, 185, 129, 0.12)',
-                    border: `1px solid ${transaction.status === 'Pending'
-                      ? 'rgba(234, 179, 8, 0.3)'
-                      : 'rgba(16, 185, 129, 0.3)'
-                      }`,
+                    border: `1px solid ${
+                      transaction.status === 'Pending'
+                        ? 'rgba(234, 179, 8, 0.3)'
+                        : 'rgba(16, 185, 129, 0.3)'
+                    }`,
                   }}
                 >
                   <span
@@ -461,7 +451,9 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                       letterSpacing: '0.04em',
                     }}
                   >
-                    {transaction.status || 'Completed'}
+                    {transaction.status === 'Pending'
+                      ? t('transaction_details.status_pending')
+                      : t('transaction_details.status_completed')}
                   </span>
                 </div>
               </div>
@@ -500,7 +492,9 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {isIncome ? 'Income Received' : 'Expense Payment'}
+                    {isIncome
+                      ? t('transaction_details.income_received')
+                      : t('transaction_details.expense_payment')}
                   </span>
                 </div>
 
@@ -519,11 +513,17 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 >
                   <span>{isIncome ? '+' : '-'}</span>
                   <span>{convertedAmount}</span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-secondary)', marginLeft: '4px' }}>
+                  <span
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: '700',
+                      color: 'var(--text-secondary)',
+                      marginInlineStart: '4px',
+                    }}
+                  >
                     {currencyCode}
                   </span>
                 </div>
-
               </div>
 
               {/* Perforated Divider */}
@@ -541,7 +541,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                     height: '18px',
                     borderRadius: '50%',
                     background: 'var(--bg-primary)',
-                    marginLeft: '-9px',
+                    marginInlineStart: '-9px',
                   }}
                 />
                 <div
@@ -557,28 +557,40 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                     height: '18px',
                     borderRadius: '50%',
                     background: 'var(--bg-primary)',
-                    marginRight: '-9px',
+                    marginInlineEnd: '-9px',
                   }}
                 />
               </div>
 
               {/* Detailed Breakdown List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Transaction Specification
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    color: 'var(--text-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  {t('transaction_details.specification')}
                 </div>
 
                 {/* Merchant / Description */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Merchant / Title</span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff', textAlign: 'right' }}>
-                    {transaction.title || transaction.description || 'Standard Transaction'}
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    {t('transaction_details.merchant_title')}
+                  </span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff', textAlign: 'end' }}>
+                    {transaction.title || transaction.description || t('transaction_details.standard_tx')}
                   </span>
                 </div>
 
                 {/* Category Item */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Category</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    {t('transaction_details.category')}
+                  </span>
                   <div
                     style={{
                       display: 'inline-flex',
@@ -599,8 +611,10 @@ export default function TransactionDetails({ user, token }: { user: User, token:
 
                 {/* Date & Time */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Transaction Timestamp</span>
-                  <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    {t('transaction_details.timestamp')}
+                  </span>
+                  <div style={{ textAlign: 'end' }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#ffffff' }}>
                       {new Date(transaction.date).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -614,7 +628,8 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',
-                        })} (UTC)
+                        })}{' '}
+                        (UTC)
                       </div>
                     )}
                   </div>
@@ -622,8 +637,10 @@ export default function TransactionDetails({ user, token }: { user: User, token:
 
                 {/* Payment Method */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Payment Method</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', textAlign: 'right' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    {t('transaction_details.payment_method')}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', textAlign: 'end' }}>
                     <paymentMethodInfo.icon size={15} color="var(--accent-primary)" />
                     <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#ffffff' }}>
                       {paymentMethodInfo.label}
@@ -633,7 +650,9 @@ export default function TransactionDetails({ user, token }: { user: User, token:
 
                 {/* Reference ID with quick copy */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Reference Number</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    {t('transaction_details.reference_number')}
+                  </span>
                   <div
                     onClick={handleCopyId}
                     style={{
@@ -670,19 +689,21 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <span>Gross Amount</span>
+                    <span>{t('transaction_details.gross_amount')}</span>
                     <span style={{ color: '#ffffff', fontWeight: '600' }}>
                       {convertedAmount} {currencyCode}
                     </span>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <span>Processing Fee</span>
-                    <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>$0.00 (Waived)</span>
+                    <span>{t('transaction_details.processing_fee')}</span>
+                    <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>
+                      {t('transaction_details.fee_waived')}
+                    </span>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <span>Applicable Tax</span>
+                    <span>{t('transaction_details.applicable_tax')}</span>
                     <span style={{ color: '#ffffff', fontWeight: '600' }}>$0.00</span>
                   </div>
 
@@ -696,7 +717,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                     }}
                   >
                     <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>
-                      Net Settled Total
+                      {t('transaction_details.net_total')}
                     </span>
                     <span
                       style={{
@@ -724,8 +745,16 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <ShieldCheck size={14} color="var(--accent-primary)" />
-                    <span style={{ fontSize: '0.675rem', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                      Spnedora Cryptographic Ledger Verified
+                    <span
+                      style={{
+                        fontSize: '0.675rem',
+                        fontWeight: '700',
+                        color: 'var(--text-muted)',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {t('transaction_details.verified_ledger')}
                     </span>
                   </div>
                   {/* Decorative Barcode Lines */}
@@ -763,7 +792,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 gap: '1.5rem',
               }}
             >
-              {/* 2. Virtual Payment Instrument Card */}
+              {/* Virtual Payment Instrument Card */}
               <div
                 className="glass-card"
                 style={{
@@ -779,7 +808,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <paymentMethodInfo.icon size={18} color="var(--accent-primary)" />
                     <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                      Payment Instrument
+                      {t('transaction_details.payment_instrument')}
                     </h3>
                   </div>
                   <span
@@ -825,20 +854,20 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                   </div>
 
                   <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.7)' }}>
-                    •••• •••• •••• {transaction.id.slice(-4) || '8842'}
+                    •••• •••• •••• {String(transaction.id).slice(-4) || '8842'}
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.725rem', color: 'var(--text-muted)' }}>
-                    <span>CARDHOLDER: {user?.name?.toUpperCase() || 'Spnedora USER'}</span>
+                    <span>{t('transaction_details.cardholder', { name: user?.name?.toUpperCase() || 'Spendora USER' })}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: 'var(--accent-primary)' }}>
                       <ShieldCheck size={12} />
-                      <span>256-Bit SSL</span>
+                      <span>{t('transaction_details.ssl_secured')}</span>
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* 3. Notes & Additional Memo Section */}
+              {/* Notes & Additional Memo Section */}
               <div
                 className="glass-card"
                 style={{
@@ -850,7 +879,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
                   <FileText size={18} color="var(--accent-primary)" />
                   <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                    Notes & Ledger Memo
+                    {t('transaction_details.notes_memo')}
                   </h3>
                 </div>
 
@@ -866,14 +895,14 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                   }}
                 >
                   {transaction.description || transaction.title ? (
-                    <span>"{transaction.description || transaction.title}"</span>
+                    <span>&quot;{transaction.description || transaction.title}&quot;</span>
                   ) : (
-                    <span>No additional memo or receipts attached to this record.</span>
+                    <span>{t('transaction_details.no_notes')}</span>
                   )}
                 </div>
               </div>
 
-              {/* 4. Navigation & Ledger Shortcuts */}
+              {/* Navigation & Ledger Shortcuts */}
               <div
                 style={{
                   display: 'grid',
@@ -894,7 +923,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                   }}
                 >
                   <ArrowLeft size={14} />
-                  <span>View All Records</span>
+                  <span>{t('transaction_details.view_all_records')}</span>
                 </button>
 
                 <button
@@ -909,7 +938,7 @@ export default function TransactionDetails({ user, token }: { user: User, token:
                     gap: '0.4rem',
                   }}
                 >
-                  <span>Edit </span>
+                  <span>{t('transaction_details.edit')}</span>
                   <ExternalLink size={13} />
                 </button>
               </div>

@@ -1,0 +1,1118 @@
+{
+  "dashboard": "Tableau de bord",
+  "welcome": "Bon retour",
+  "settings": "Paramètres",
+  "logout": "Déconnexion",
+  "home": {
+    "hero": {
+      "badge": "Clarté des finances personnelles",
+      "title_part1": "Où va votre",
+      "title_part2": "argent ?",
+      "description": "Comprenez vos dépenses, suivez vos sorties d'argent et visualisez clairement votre vie financière — tout en un seul endroit.",
+      "start_free": "Commencer gratuitement",
+      "see_how_it_works": "Voir comment ça marche",
+      "preview": {
+        "url": "spendora.app/dashboard",
+        "badge": "Aperçu financier en direct",
+        "total_balance": "Solde total",
+        "currency": "MAD",
+        "balance_sources": "CIH Bank + Attijariwafa + Espèces",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_monitored": "4 services surveillés"
+      }
+    },
+    "accounts": {
+      "badge": "Comptes multiples",
+      "title_part1": "Tout votre argent,",
+      "title_part2": "au même endroit.",
+      "description": "L'argent est souvent réparti entre différents comptes bancaires et de l'argent liquide. Spendora regroupe toutes ces sources afin que vous puissiez comprendre votre situation financière globale sans vous connecter à plusieurs portails bancaires.",
+      "linked_accounts": "Comptes financiers associés",
+      "cih_bank": "CIH Bank",
+      "cih_type": "Compte courant principal",
+      "attijari_bank": "Attijariwafa Bank",
+      "attijari_type": "Compte d'épargne",
+      "cash": "Espèces",
+      "cash_type": "Portefeuille physique",
+      "total_balance": "Solde total"
+    },
+    "testimonials": {
+      "badge": "Expériences utilisateurs",
+      "title": "Ce que nos utilisateurs vivent avec Spendora",
+      "prev_aria": "Témoignage précédent",
+      "next_aria": "Témoignage suivant",
+      "item1": {
+        "quote": "Spendora m'a enfin aidé à comprendre où va mon argent chaque mois. Aucune complexité, juste une clarté instantanée.",
+        "name": "Yassine E.",
+        "role": "Jeune salarié",
+        "city": "Casablanca"
+      },
+      "item2": {
+        "quote": "Gérer mon allocation mensuelle et mes dépenses en espèces était un vrai casse-tête. Maintenant, je connais exactement mon budget restant.",
+        "name": "Salma K.",
+        "role": "Étudiante universitaire",
+        "city": "Rabat"
+      },
+      "item3": {
+        "quote": "Suivre plusieurs virements bancaires et dépenses de projets en MAD sans tableaux complexes est un véritable soulagement.",
+        "name": "Amine B.",
+        "role": "Designer indépendant",
+        "city": "Marrakech"
+      },
+      "item4": {
+        "quote": "Le suivi des abonnements à lui seul m'a fait économiser des centaines de dirhams sur des services inutilisés que j'avais oubliés.",
+        "name": "Noura T.",
+        "role": "Responsable marketing produit",
+        "city": "Tanger"
+      }
+    },
+    "faq": {
+      "badge": "Des questions ?",
+      "title": "Foire aux questions",
+      "q1": "Qu'est-ce que Spendora ?",
+      "a1": "Spendora est une plateforme qui vous aide à comprendre et à gérer vos activités financières personnelles en un seul endroit unifié.",
+      "q2": "Spendora est-il gratuit ?",
+      "a2": "Oui. Spendora est actuellement entièrement gratuit.",
+      "q3": "Puis-je gérer plusieurs comptes ?",
+      "a3": "Oui. Vous pouvez gérer plusieurs comptes bancaires et suivre vos liquidités dans une vue combinée.",
+      "q4": "Puis-je suivre mes dépenses ?",
+      "a4": "Oui. Vous pouvez organiser et analyser vos dépenses par catégorie, commerçant et date.",
+      "q5": "Puis-je suivre mes abonnements ?",
+      "a5": "Oui. Spendora vous aide à garder le contrôle sur vos paiements récurrents, dates de renouvellement et coûts totaux d'abonnement.",
+      "q6": "Puis-je créer des budgets ?",
+      "a6": "Oui. Vous pouvez définir des limites de dépenses par catégorie et suivre vos montants restants en temps réel.",
+      "q7": "Puis-je utiliser Spendora sur mobile ?",
+      "a7": "La première version est disponible sur le Web avec une interface adaptée aux mobiles. Des applications natives Android, iOS et Windows sont prévues pour l'avenir.",
+      "q8": "Mes informations financières sont-elles confidentielles ?",
+      "a8": "Spendora est conçu avec un souci constant de confidentialité et de sécurité, vous laissant le contrôle total de vos informations personnelles."
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "Bienvenue sur Spendora · Clarté financière",
+      "title_part1": "Bienvenue sur Spendora.",
+      "title_part2": "Une façon plus claire de comprendre votre argent.",
+      "description": "Spendora vous aide à comprendre où va votre argent, à suivre vos dépenses, à gérer vos comptes et abonnements et à obtenir une vue claire de votre activité financière.",
+      "get_started": "Commencer",
+      "explore": "Découvrir Spendora",
+      "preview": {
+        "url": "spendora.app/overview",
+        "badge": "Espace financier en direct",
+        "total_balance": "Solde net total",
+        "currency": "MAD",
+        "balance_breakdown": "Banque (11 700 MAD) + Espèces (700 MAD)",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_monitored": "4 services (Netflix, Spotify, Gym, Cloud)"
+      }
+    },
+    "problem": {
+      "badge": "Le problème que nous résolvons",
+      "title_part1": "Vous savez combien vous avez.",
+      "title_part2": "Mais savez-vous où cela va ?",
+      "description": "La plupart des gens consultent leur application bancaire tous les jours, mais le solde bancaire n'indique que le montant restant — jamais l'histoire qui se cache derrière vos habitudes de dépenses."
+    },
+    "principles": {
+      "title": "Nos principes directeurs",
+      "subtitle": "Les convictions fondamentales qui façonnent chaque détail et algorithme de Spendora.",
+      "simplicity": {
+        "title": "Simplicité",
+        "quote": "La gestion d'argent ne devrait pas sembler compliquée.",
+        "desc": "Nous éliminons le superflu, les menus sans fin et les feuilles de calcul lourdes pour que vous puissiez enregistrer une dépense en moins de 5 secondes."
+      },
+      "transparency": {
+        "title": "Transparence",
+        "quote": "Sachez exactement où va votre argent.",
+        "desc": "Une répartition limpide de chaque dirham dépensé entre commerçants, comptes et catégories, sans aucune supposition."
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "quote": "Vos informations financières vous appartiennent.",
+        "desc": "Nous ne vendons jamais vos données, n'intégrons aucun traceur publicitaire tiers et ne transigeons jamais sur la confidentialité de vos dossiers."
+      },
+      "security": {
+        "title": "Sécurité",
+        "quote": "Votre argent mérite une protection rigoureuse.",
+        "desc": "Conçu avec des jetons de session chiffrés, des politiques d'API strictes et des normes d'infrastructure renforcées."
+      },
+      "control": {
+        "title": "Contrôle",
+        "quote": "Votre argent. Vos décisions.",
+        "desc": "Définissez des limites personnalisées par catégorie, organisez vos portefeuilles d'espèces aux côtés de vos comptes bancaires et maîtrisez le rythme de votre budget."
+      },
+      "clarity": {
+        "title": "Clarté",
+        "quote": "Transformez vos activités financières en données compréhensibles.",
+        "desc": "Transformez les relevés bancaires bruts et indéchiffrables en superbes rapports visuels qui révèlent votre comportement réel de dépense."
+      }
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "features": {
+    "hero": {
+      "badge": "Suite de fonctionnalités Spendora",
+      "title_part1": "Tout ce dont vous avez besoin pour",
+      "title_part2": "comprendre votre argent.",
+      "description": "Des dépenses quotidiennes aux comptes, abonnements, budgets et rapports — Spendora réunit toute votre activité financière en un seul endroit clair.",
+      "start_free": "Commencer gratuitement",
+      "explore": "Découvrir les fonctionnalités",
+      "preview": {
+        "url": "spendora.com/overview",
+        "badge": "Un espace de travail unifié",
+        "total_balance": "Solde net total",
+        "currency": "MAD",
+        "balance_sources": "CIH Bank + Attijariwafa + Espèces",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_tracked": "4 services récurrents suivis"
+      }
+    },
+    "accounts": {
+      "badge": "Agrégation multi-comptes",
+      "title_part1": "Tout votre argent,",
+      "title_part2": "au même endroit.",
+      "description": "Ne perdez plus de temps à consulter différents supports. Regroupez vos comptes bancaires, votre épargne et votre argent liquide avec Spendora.",
+      "check1": "Comptes et banques multiples",
+      "check2": "Suivi des espèces et liquidités",
+      "check3": "Soldes individuels et cumulés",
+      "check4": "Flux d'activité filtré par compte",
+      "cih_bank": "CIH Bank",
+      "attijari_bank": "Attijariwafa Bank",
+      "cash": "Espèces",
+      "total_combined": "Solde cumulé total"
+    },
+    "expenses": {
+      "badge": "Intelligence des dépenses",
+      "title_part1": "Voyez chaque dépense.",
+      "title_part2": "Comprenez chaque habitude.",
+      "description": "Chaque achat raconte une histoire. Spendora vous aide à comprendre la vôtre avec un contexte complet : montant, catégorie, commerçant, date, compte et notes.",
+      "items": {
+        "restaurant": "Restaurant",
+        "food": "Alimentation",
+        "uber": "Uber",
+        "transport": "Transport",
+        "amazon": "Amazon",
+        "shopping": "Shopping",
+        "netflix": "Netflix",
+        "subscription": "Abonnement"
+      }
+    },
+    "categories": {
+      "badge": "Habitudes et commerces",
+      "title": "Sachez ce que vous dépensez — et où.",
+      "description": "Comprenez les habitudes qui motivent vos dépenses. Regroupez vos achats en catégories claires et visualisez les commerçants qui perçoivent votre argent.",
+      "food_title": "Alimentation",
+      "restaurant_a": "Restaurant A",
+      "restaurant_b": "Restaurant B",
+      "shopping_title": "Shopping",
+      "amazon": "Amazon",
+      "local_store": "Magasin de proximité",
+      "tags": {
+        "food": "Alimentation",
+        "transport": "Transport",
+        "shopping": "Shopping",
+        "bills": "Factures",
+        "entertainment": "Divertissement",
+        "travel": "Voyages",
+        "health": "Santé",
+        "education": "Éducation",
+        "custom": "+ Catégories personnalisées"
+      }
+    },
+    "reports": {
+      "badge": "Analytique visuelle",
+      "title": "Ayez une vue d'ensemble.",
+      "description": "Transformez des centaines de transactions en données immédiatement compréhensibles sur des périodes quotidiennes, hebdomadaires, mensuelles et annuelles.",
+      "top_category_label": "Catégorie principale",
+      "top_category_value": "Restauration (38%)",
+      "top_merchant_label": "Commerçant principal",
+      "top_merchant_value": "Marjane (850 MAD)",
+      "primary_source_label": "Source principale",
+      "primary_source_value": "CIH Bank (68%)",
+      "charts_footer": "Graphiques : Histogrammes · Courbes · Graphiques en anneau · Cartes récapitulatives"
+    },
+    "budgets": {
+      "badge": "Limites et contrôles",
+      "title_part1": "Gardez le cap sur",
+      "title_part2": "vos dépenses.",
+      "description": "Fixez vos limites. Suivez votre progression. Gardez le contrôle. Planifiez vos dépenses à l'avance et comparez votre budget prévu et réel chaque mois.",
+      "food_budget": "Budget Alimentation",
+      "used_badge": "74,6 % utilisé",
+      "budget_label": "Budget",
+      "spent_label": "Dépensé",
+      "remaining_label": "Restant"
+    },
+    "subscriptions": {
+      "badge": "Suivi des récurrences",
+      "title": "Ne perdez plus jamais la trace de vos prélèvements.",
+      "description": "Les petits montants s'accumulent vite. Spendora vous montre le coût réel de l'ensemble de vos abonnements récurrents.",
+      "netflix": "Netflix",
+      "spotify": "Spotify",
+      "gym": "Salle de sport",
+      "cloud": "Stockage Cloud",
+      "per_month": "MAD / mois",
+      "monthly_label": "Abonnements mensuels",
+      "monthly_value": "350 MAD / mois",
+      "yearly_label": "Coût annuel",
+      "yearly_value": "4 200 MAD / an"
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent, organisez vos dépenses et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "reports": {
+    "hero": {
+      "badge": "Intelligence financière et rapports Spendora",
+      "title_part1": "Ayez une",
+      "title_part2": "vue d'ensemble.",
+      "description": "Transformez des centaines de transactions en intelligence financière claire et visuelle. Découvrez vos habitudes de dépenses, comparez les périodes et comprenez où va votre argent.",
+      "studio_label": "Studio d'analyse",
+      "studio_title": "Vélocité et trajectoire financière",
+      "timeframes": {
+        "daily": "quotidien",
+        "weekly": "hebdomadaire",
+        "monthly": "mensuel",
+        "quarterly": "trimestriel",
+        "yearly": "annuel"
+      },
+      "kpis": {
+        "cash_inflow": "Flux total entrant",
+        "cash_inflow_change": "+3,4 % par rapport au mois dernier",
+        "monthly_spend": "Dépense mensuelle totale",
+        "monthly_spend_change": "-18,9 % par rapport à juillet",
+        "savings_rate": "Taux d'épargne net",
+        "savings_rate_sub": "(+11 880 MAD)",
+        "savings_goal": "Au-dessus de l'objectif mensuel de 65 %",
+        "daily_burn": "Dépense quotidienne moyenne",
+        "daily_burn_unit": "MAD / jour",
+        "budget_zone": "Zone budgétaire saine"
+      },
+      "chart": {
+        "title": "Évolution du flux de trésorerie et tendance mensuelle (MAD)",
+        "legend": "🟢 Flux d'épargne  |  ⚪ Sorties de dépenses"
+      }
+    },
+    "pipeline": {
+      "badge": "Pipeline de transformation des données",
+      "title": "Des transactions brutes à la compréhension",
+      "description": "Les relevés bancaires bruts créent de la confusion. Spendora transforme les lignes de débit désordonnées en une clarté comportementale structurée.",
+      "before_title": "Avant : Données brutes et cryptiques",
+      "before_badge": "Bruit non filtré",
+      "after_title": "Après : Intelligence Spendora",
+      "after_badge": "Clarté significative",
+      "food_category": "Alimentation et restaurants · CIH Bank",
+      "household_category": "Courses du foyer · Attijariwafa",
+      "subscriptions_title": "4 abonnements actifs",
+      "subscriptions_category": "Tech et médias récurrents"
+    },
+    "cta": {
+      "title_part1": "Voyez votre argent",
+      "title_part2": "autrement.",
+      "description": "Obtenez la clarté financière et la confiance dont vous avez toujours rêvé. Commencez à explorer vos rapports dès aujourd'hui.",
+      "button": "Commencer gratuitement — Découvrir Spendora",
+      "guarantee": "100 % gratuit · Aucune carte de crédit requise"
+    }
+  },
+  "contact": {
+    "hero": {
+      "badge": "Contact et assistance",
+      "title_part1": "Contactez-",
+      "title_part2": "nous",
+      "description": "Une question, besoin d'aide ou un commentaire à partager ? Notre équipe est là pour vous accompagner à chaque étape."
+    },
+    "info": {
+      "title": "Nos coordonnées",
+      "description": "Que vous ayez besoin d'aide, d'un partenariat ou de nous donner votre avis, nous sommes ravis de vous aider.",
+      "email_title": "Support par e-mail",
+      "response_time_title": "Délai de réponse",
+      "response_time_value": "Généralement sous 24 heures",
+      "availability_title": "Disponibilité",
+      "availability_value": "Disponible du lundi au vendredi",
+      "privacy_notice": "Votre adresse e-mail et vos messages sont strictement confidentiels et ne sont jamais partagés avec des tiers."
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "subtitle": "Remplissez le formulaire ci-dessous et notre équipe vous répondra rapidement.",
+      "full_name_label": "Nom complet *",
+      "full_name_placeholder": "ex. Yassine El Amrani",
+      "email_label": "Adresse e-mail *",
+      "email_placeholder": "vous@example.com",
+      "subject_label": "Sujet",
+      "subject_placeholder": "ex. Question sur le suivi multi-comptes",
+      "message_label": "Message *",
+      "message_placeholder": "Écrivez votre message ou votre question ici...",
+      "send_button": "Envoyer le message",
+      "sending_button": "Envoi en cours...",
+      "success_title": "Message reçu !",
+      "success_message": "Merci de nous avoir contactés. Nous examinerons votre demande et vous répondrons sous 24 heures.",
+      "send_another": "Envoyer un autre message",
+      "required_error": "Veuillez remplir tous les champs obligatoires.",
+      "toast_success": "Merci ! Votre message a été envoyé avec succès."
+    },
+    "cta": {
+      "title": "Nous sommes ravis d'échanger avec vous.",
+      "description": "Envoyez-nous un message et nous vous répondrons dès que possible. Vos retours nous aident à améliorer Spendora chaque jour.",
+      "footer": "Équipe support Spendora · Disponible du lundi au vendredi"
+    }
+  },
+  "faq_page": {
+    "hero": {
+      "badge": "Centre d'aide et FAQ",
+      "title_part1": "Foire aux",
+      "title_part2": "questions",
+      "description": "Trouvez des réponses rapides aux questions courantes sur l'utilisation de Spendora, la confidentialité des données, l'accès multi-appareils et la facturation.",
+      "search_placeholder": "Rechercher une question (ex. 'gratuit', 'appareils', 'sécurité')..."
+    },
+    "categories": {
+      "all": "Toutes les questions",
+      "general": "Général",
+      "platform": "Plateforme et appareils",
+      "security": "Confidentialité et sécurité",
+      "account": "Compte et accès"
+    },
+    "items": {
+      "q1": "Qu'est-ce que Spendora ?",
+      "a1": "Spendora est une plateforme simple et intelligente qui vous aide à organiser vos finances, gérer vos dépenses et vos comptes, et rester concentré sur votre santé financière.",
+      "q2": "L'utilisation de Spendora est-elle gratuite ?",
+      "a2": "Oui, vous pouvez commencer à utiliser Spendora gratuitement. Des fonctionnalités d'intelligence et d'automatisation avancées peuvent être disponibles selon votre formule.",
+      "q3": "Puis-je accéder à mes données depuis plusieurs appareils ?",
+      "a3": "Oui. Vos données sont stockées en toute sécurité en ligne avec synchronisation cloud chiffrée, vous permettant d'accéder à votre tableau de bord sur ordinateur, tablette et mobile.",
+      "q4": "Mes données sont-elles sécurisées ?",
+      "a4": "Oui. Nous appliquons des protocoles de sécurité modernes, des sessions sécurisées chiffrées et une isolation stricte des données pour protéger votre compte et vos données financières.",
+      "q5": "Puis-je créer un compte sans payer ?",
+      "a5": "Oui. Vous pouvez créer un compte et commencer à utiliser la plateforme immédiatement sans saisir de carte de crédit ni d'informations de paiement.",
+      "q6": "Puis-je supprimer mon compte ?",
+      "a6": "Oui. Vous restez totalement maître de vos données. Vous pouvez demander la suppression définitive de votre compte et de tous vos historiques financiers à tout moment.",
+      "q7": "Que se passe-t-il si j'oublie mon mot de passe ?",
+      "a7": "Vous pouvez utiliser l'option de récupération de mot de passe sur la page de connexion pour recevoir un lien sécurisé et réinitialiser votre accès instantanément.",
+      "q8": "Comment puis-je contacter le support ?",
+      "a8": "Vous pouvez contacter notre équipe à tout moment via notre page Contact ou directement par e-mail à support@spendora.com. Nous répondons généralement en moins de 24 heures."
+    },
+    "not_found": {
+      "title": "Aucune question trouvée",
+      "description": "Essayez de rechercher un autre mot-clé ou contactez notre équipe support."
+    },
+    "banner": {
+      "title": "Vous avez encore des questions ?",
+      "description": "Vous ne trouvez pas la réponse souhaitée ? N'hésitez pas à solliciter notre équipe support.",
+      "button": "Nous contacter"
+    }
+  },
+  "navbar": {
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "reports": "Rapports",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "sign_in": "Connexion",
+    "start_free": "Commencer gratuitement",
+    "my_account": "Mon compte",
+    "logged_in": "Connecté",
+    "logout": "Déconnexion",
+    "menu_toggle": "Ouvrir le menu"
+  },
+  "footer": {
+    "description": "Une façon plus claire de comprendre votre argent. Suivez vos dépenses, gérez vos comptes et prenez le contrôle de votre vie financière.",
+    "section_spendora": "Spendora",
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "about": "À propos",
+    "faq": "FAQ",
+    "section_product": "Produit",
+    "accounts": "Comptes",
+    "expenses": "Dépenses",
+    "budgets": "Budgets",
+    "subscriptions": "Abonnements",
+    "reports": "Rapports",
+    "section_support": "Assistance",
+    "help_center": "Centre d'aide",
+    "contact_us": "Contactez-nous",
+    "section_legal": "Légal",
+    "privacy_policy": "Politique de confidentialité",
+    "terms_of_service": "Conditions d'utilisation",
+    "copyright": "© 2026 Spendora. Tous droits réservés.",
+    "tagline": "Maîtrisez votre argent. Prenez les bonnes décisions."
+  },
+  "admin_dashboard": {
+    "header": {
+      "welcome": "Bon retour",
+      "refresh_title": "Actualiser les statistiques",
+      "refresh_success": "Indicateurs du tableau de bord actualisés avec succès !",
+      "fetch_error": "Échec de la récupération des transactions",
+      "session_expired": "Session expirée. Veuillez vous reconnecter."
+    },
+    "stats": {
+      "wallet_title": "dans votre portefeuille",
+      "wallet_subtitle": "Valeur nette disponible",
+      "wallet_badge": "{{rate}}% par rapport au mois dernier",
+      "income_title": "Revenus de ce mois",
+      "income_subtitle": "Recettes et rentrées",
+      "income_badge": "{{rate}}% de rentrées",
+      "expense_title": "Dépenses de ce mois",
+      "expense_subtitle": "Sorties et factures",
+      "expense_badge": "-3,1 % dépensé par rapport à l'objectif",
+      "savings_title": "Épargne et réserve",
+      "savings_subtitle": "Taux d'épargne net",
+      "savings_badge": "{{rate}}% de taux d'épargne"
+    },
+    "transactions": {
+      "title": "Transactions récentes",
+      "subtitle": "Activité financière et flux de trésorerie en temps réel",
+      "filter_all": "Tout",
+      "filter_expense": "Dépenses",
+      "filter_income": "Revenus",
+      "view_all": "Voir tout",
+      "empty": "Aucune transaction ne correspond à votre filtre.",
+      "type_income": "Revenu",
+      "type_expense": "Dépense",
+      "status_completed": "Terminé",
+      "status_pending": "En attente",
+      "view_details_tooltip": "Cliquer pour voir le détail et le reçu",
+      "default_title": "Transaction"
+    },
+    "budget": {
+      "title": "Suivi du budget mensuel",
+      "subtitle": "Suivez les plafonds de dépenses et la marge restante",
+      "spent_so_far": "Dépensé jusqu'ici",
+      "remaining": "restant",
+      "status_on_track": "En bonne voie",
+      "status_approaching": "Limite proche",
+      "status_critical": "Limite critique",
+      "status_over": "Budget dépassé",
+      "top_categories": "Plafonds par catégorie principale",
+      "cap": "Plafond :"
+    },
+    "budget_modal": {
+      "title": "Ajuster le budget mensuel",
+      "subtitle": "Définir le plafond global et les limites par catégorie",
+      "total_limit": "Plafond mensuel total",
+      "category_ceilings": "Plafonds par catégorie",
+      "cancel": "Annuler",
+      "save": "Enregistrer le budget",
+      "error_invalid": "Veuillez entrer un budget mensuel total valide",
+      "success_updated": "Paramètres du budget mis à jour avec succès !"
+    },
+    "categories": {
+      "food": "Alimentation et courses",
+      "housing": "Logement et loyer",
+      "transport": "Transport et carburant",
+      "shopping": "Shopping et achats",
+      "entertainment": "Divertissement",
+      "health": "Santé et bien-être",
+      "utilities": "Factures et services",
+      "other": "Autre"
+    },
+    "sidebar": {
+      "brand_subtitle": "Gestionnaire de patrimoine intelligent",
+      "overview": "Vue d'ensemble",
+      "transactions": "Transactions",
+      "management": "Gestion",
+      "categories": "Catégories",
+      "payment_methods": "Moyens de paiement",
+      "budgets": "Budgets",
+      "notifications": "Notifications",
+      "reports": "Analyses et rapports",
+      "settings": "Paramètres",
+      "sign_out": "Déconnexion",
+      "logout_success": "Déconnexion réussie",
+      "logout_error": "Échec de la déconnexion"
+    },
+    "notifications_popover": {
+      "button_aria": "Notifications ({{count}} non lues)",
+      "title": "Notifications ({{count}})",
+      "mark_all_read": "Tout marquer comme lu",
+      "empty": "Aucune notification pour l'instant.",
+      "default_title": "Notification",
+      "mark_as_read": "Marquer comme lu",
+      "delete": "Supprimer la notification",
+      "view_all": "Voir tout",
+      "loading": "Chargement des notifications"
+    }
+  },
+  "transactions_page": {
+    "title": "Transactions",
+    "records_count": "{{count}} enregistrements",
+    "subtitle": "Journal d'audit en temps réel des entrées, reçus de dépenses, classifications et relevés.",
+    "refresh": "Actualiser",
+    "refresh_seconds": "{{count}}s",
+    "refresh_tooltip": "Actualiser le grand livre",
+    "create_transaction": "Créer une transaction",
+    "fetch_error": "Échec de la récupération des transactions",
+    "tabs": {
+      "all": "Tous les enregistrements",
+      "expenses": "Dépenses",
+      "income": "Revenus"
+    },
+    "export_csv": "Exporter en CSV",
+    "export_csv_title": "Télécharger le relevé CSV",
+    "export_success": "CSV exporté avec succès",
+    "filters": "Filtres :",
+    "all_categories": "Toutes les catégories",
+    "all_methods": "Toutes les méthodes",
+    "date_range": {
+      "all": "Toutes les périodes",
+      "24h": "24h",
+      "7d": "7j",
+      "30d": "30j",
+      "1y": "1 an"
+    },
+    "search_placeholder": "Rechercher par titre, catégorie, méthode, montant...",
+    "visibility": {
+      "all": "Tout",
+      "hide": "Masquer",
+      "show": "Afficher"
+    },
+    "sort": {
+      "newest": "Plus récentes d'abord",
+      "oldest": "Plus anciennes d'abord",
+      "highest": "Montant le plus élevé",
+      "lowest": "Montant le plus bas",
+      "alphabetical": "Alphabétique (A-Z)"
+    },
+    "reset": "Réinitialiser",
+    "headers": {
+      "payee": "Transaction / Bénéficiaire",
+      "category": "Catégorie",
+      "datetime": "Date et heure",
+      "payment_method": "Moyen de paiement",
+      "amount": "Montant ({{currency}})",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "Aucune transaction trouvée",
+      "desc_filtered": "Aucune transaction ne correspond à vos filtres ou à votre recherche.",
+      "desc_empty": "Commencez à enregistrer vos dépenses et revenus pour les voir apparaître ici.",
+      "clear_filters": "Effacer tous les filtres",
+      "create_first": "Créer la première transaction"
+    },
+    "status": {
+      "pending": "En attente",
+      "completed": "Terminée"
+    },
+    "actions": {
+      "menu_tooltip": "Actions",
+      "delete": "Supprimer",
+      "edit": "Modifier"
+    },
+    "delete_modal": {
+      "title": "Supprimer la transaction",
+      "confirm_msg": "Êtes-vous sûr de vouloir supprimer cette transaction ?",
+      "yes": "Oui",
+      "no": "Non",
+      "success": "Transaction supprimée avec succès !",
+      "error": "Échec de la suppression de la transaction"
+    },
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "entries": "entrées",
+      "per_page": "Par page :"
+    }
+  },
+  "transaction_form": {
+    "back": "Retour aux transactions",
+    "new_title": "Nouvelle transaction",
+    "edit_title": "Modifier la transaction",
+    "new_subtitle": "Remplissez les champs ci-dessous pour enregistrer une nouvelle transaction.",
+    "edit_subtitle": "Mettez à jour les détails et classifications de la transaction.",
+    "type_label": "Type de transaction",
+    "expense": "Dépense",
+    "income": "Revenu",
+    "title_label": "Titre / Commerçant",
+    "placeholder_expense": "ex. Supermarché, Netflix, Électricité",
+    "placeholder_income": "ex. Salaire, Projet freelance",
+    "amount_label": "Montant et devise",
+    "add_label": "Ajouter :",
+    "clear": "Effacer",
+    "category_label": "Catégorie",
+    "select_category": "Sélectionner une catégorie",
+    "payment_method_label": "Moyen de paiement",
+    "select_payment_method": "Sélectionner un moyen de paiement",
+    "date_label": "Date",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "notes_label": "Notes / Mémo (Optionnel)",
+    "notes_placeholder": "Ajouter des notes ou une référence supplémentaire...",
+    "saving": "Enregistrement...",
+    "save_income": "Enregistrer le revenu",
+    "save_expense": "Enregistrer la dépense",
+    "save_changes": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "validation": {
+      "valid_amount": "Veuillez entrer un montant valide supérieur à 0",
+      "enter_title": "Veuillez entrer un titre",
+      "session_expired": "Session expirée. Veuillez vous reconnecter.",
+      "create_success": "{{type}} enregistré(e) avec succès",
+      "create_error": "Échec de l'enregistrement de la transaction",
+      "update_success": "Transaction mise à jour avec succès",
+      "update_error": "Échec de la mise à jour de la transaction",
+      "network_error": "Erreur réseau. Veuillez réessayer."
+    }
+  },
+  "transaction_details": {
+    "back": "Retour aux transactions",
+    "copy_id": "Copier l'ID",
+    "copied": "Copié",
+    "share": "Partager",
+    "print_receipt": "Imprimer le reçu",
+    "copy_id_success": "Référence de transaction copiée !",
+    "copy_summary_success": "Résumé copié dans le presse-papiers !",
+    "not_found_title": "Transaction introuvable",
+    "not_found_desc": "Impossible de trouver une transaction avec l'ID #{{id}}. Elle a peut-être été supprimée ou l'identifiant est invalide.",
+    "go_back": "Retour",
+    "edit": "Modifier",
+    "official_receipt": "Reçu officiel",
+    "ref_prefix": "Référence de transaction #{{id}}",
+    "status_pending": "En attente",
+    "status_completed": "Terminée",
+    "income_received": "Revenu reçu",
+    "expense_payment": "Paiement de dépense",
+    "specification": "Spécification de la transaction",
+    "merchant_title": "Commerçant / Titre",
+    "standard_tx": "Transaction standard",
+    "category": "Catégorie",
+    "general_expense": "Dépense générale",
+    "timestamp": "Horodatage de la transaction",
+    "payment_method": "Moyen de paiement",
+    "reference_number": "Numéro de référence",
+    "gross_amount": "Montant brut",
+    "processing_fee": "Frais de traitement",
+    "fee_waived": "0,00 $ (Offert)",
+    "applicable_tax": "Taxe applicable",
+    "net_total": "Total net réglé",
+    "verified_ledger": "Vérifié sur le grand livre cryptographique Spendora",
+    "payment_instrument": "Instrument de paiement",
+    "badge_wire": "ACH / Virement direct",
+    "badge_wallet": "Portefeuille numérique",
+    "badge_crypto": "Décentralisé",
+    "badge_cash": "Règlement direct",
+    "badge_card": "Jeton chiffré",
+    "cardholder": "TITULAIRE : {{name}}",
+    "ssl_secured": "SSL 256 bits",
+    "notes_memo": "Notes et mémo",
+    "no_notes": "Aucune note ou reçu joint à cet enregistrement.",
+    "view_all_records": "Voir tous les enregistrements"
+  },
+  "categories_page": {
+    "title": "Catégories",
+    "total_count": "{{count}} au total",
+    "subtitle": "Gérez et organisez votre classification financière pour le suivi des dépenses et flux de revenus.",
+    "refresh_tooltip": "Actualiser les catégories",
+    "create_category": "Créer une catégorie",
+    "search_placeholder": "Rechercher des catégories par nom ou slug...",
+    "filter_all": "Tout",
+    "filter_expenses": "Dépenses",
+    "filter_income": "Revenus",
+    "sort_az": "(A-Z)",
+    "sort_za": "(Z-A)",
+    "sort_type": "Type",
+    "empty_title": "Aucune catégorie trouvée",
+    "empty_search": "Aucune catégorie ne correspond à « {{query}} ». Essayez avec un autre mot-clé.",
+    "empty_desc": "Vous n'avez pas encore ajouté de catégorie. Créez votre première catégorie pour commencer.",
+    "create_first": "Créer une nouvelle catégorie",
+    "copy_slug_success": "Slug de la catégorie copié dans le presse-papiers",
+    "click_to_copy": "Cliquer pour copier le slug",
+    "edit_tooltip": "Modifier la catégorie",
+    "delete_tooltip": "Supprimer la catégorie",
+    "badge_income": "REVENU",
+    "badge_expense": "DÉPENSE",
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "entries": "entrées",
+      "per_page": "Par page :"
+    },
+    "delete_modal": {
+      "title": "Supprimer la catégorie",
+      "confirm_msg": "Êtes-vous sûr de vouloir supprimer la catégorie « {{name}} » ? Les transactions existantes associées à cette catégorie resteront dans votre base de données.",
+      "cancel": "Annuler",
+      "delete": "Supprimer la catégorie",
+      "deleting": "Suppression...",
+      "success": "Catégorie « {{name}} » supprimée",
+      "error": "Échec de la suppression de la catégorie"
+    }
+  },
+  "category_form": {
+    "modal_create_title": "Créer une nouvelle catégorie",
+    "modal_edit_title": "Modifier la catégorie",
+    "live_preview": "Aperçu en direct",
+    "default_name": "Nom de la catégorie",
+    "default_slug": "slug-categorie",
+    "classification_type": "Type de classification",
+    "expense": "Dépense",
+    "income": "Revenu",
+    "name_label": "Nom de la catégorie",
+    "name_placeholder": "ex. Alimentation & Restaurant, Salaire freelance",
+    "slug_label": "Slug / Identifiant",
+    "slug_placeholder": "ex. alimentation-restaurant",
+    "icon_label": "Icône de la catégorie",
+    "color_label": "Thème de couleur",
+    "cancel": "Annuler",
+    "save_changes": "Enregistrer les modifications",
+    "create_category": "Créer la catégorie",
+    "saving": "Enregistrement...",
+    "validation_name": "Veuillez entrer un nom de catégorie",
+    "save_error": "Échec de l'enregistrement de la catégorie"
+  },
+  "notifications_page": {
+    "title": "Notifications et alertes",
+    "subtitle": "Consultez, recherchez, archivez et gérez vos alertes de compte et de budget.",
+    "refresh_tooltip": "Actualiser les notifications",
+    "tabs": {
+      "all": "Toutes",
+      "unread": "Non lues",
+      "read": "Lues",
+      "archived": "Archivées"
+    },
+    "search_placeholder": "Rechercher des notifications...",
+    "clear_search": "Effacer la recherche",
+    "sort": {
+      "newest": "Plus récentes d'abord",
+      "oldest": "Plus anciennes d'abord",
+      "unread_first": "Non lues d'abord",
+      "title_asc": "Titre (A-Z)"
+    },
+    "reset": "Réinitialiser",
+    "reset_tooltip": "Réinitialiser tous les filtres",
+    "bulk": {
+      "selected_single": "{{count}} notification sélectionnée",
+      "selected_plural": "{{count}} notifications sélectionnées",
+      "mark_read": "Marquer comme lue",
+      "restore": "Restaurer",
+      "archive": "Archiver",
+      "delete": "Supprimer"
+    },
+    "headers": {
+      "select_all": "Tout sélectionner sur cette page",
+      "type": "Type",
+      "notification": "Notification",
+      "time": "Heure",
+      "action_link": "Lien d'action",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "Aucune notification trouvée",
+      "search": "Aucune notification ne correspond à « {{query}} ». Essayez avec un autre terme.",
+      "archived": "Vos archives sont vides. Les notifications archivées apparaîtront ici.",
+      "unread": "Vous êtes à jour ! Aucune notification non lue.",
+      "actionable": "Aucune notification ne contient de lien direct actuellement.",
+      "default": "Vous n'avez pas encore de notifications enregistrées.",
+      "view_all": "Voir toutes les notifications"
+    },
+    "badges": {
+      "budget": "Alerte budget",
+      "finance": "Finances",
+      "system": "Système",
+      "notification": "Notification",
+      "archived": "Archivée",
+      "unread": "Non lue"
+    },
+    "time": {
+      "just_now": "À l'instant",
+      "minutes_ago": "Il y a {{count}} min",
+      "hours_ago": "Il y a {{count}} h",
+      "days_ago": "Il y a {{count}} j"
+    },
+    "actions": {
+      "open_link": "Ouvrir le lien",
+      "mark_as_read": "Marquer comme lu",
+      "mark_as_unread": "Marquer comme non lu",
+      "archive": "Archiver la notification",
+      "restore": "Restaurer des archives",
+      "delete": "Supprimer la notification"
+    },
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "notifications": "notifications",
+      "per_page": "Par page :",
+      "prev": "Page précédente",
+      "next": "Page suivante"
+    },
+    "detail_modal": {
+      "details_label": "Détails de la notification",
+      "date_received": "Date de réception :",
+      "read_status": "Statut de lecture :",
+      "read": "Lue",
+      "unread": "Non lue",
+      "attached_action": "LIEN D'ACTION ASSOCIÉ",
+      "visit_link": "Visiter le lien",
+      "restore_archive": "Restaurer des archives",
+      "archive": "Archiver",
+      "mark_unread": "Marquer comme non lue",
+      "mark_read": "Marquer comme lue",
+      "delete": "Supprimer",
+      "no_message": "Aucun contenu de message fourni."
+    },
+    "delete_modal": {
+      "title": "Confirmer la suppression",
+      "msg_bulk": "Êtes-vous sûr de vouloir supprimer {{count}} notifications ?",
+      "msg_single": "Êtes-vous sûr de vouloir supprimer définitivement cette notification ?",
+      "warning": "Cette action est irréversible. La notification sera supprimée de votre historique.",
+      "cancel": "Annuler",
+      "delete_btn": "Supprimer définitivement",
+      "deleting": "Suppression..."
+    },
+    "toasts": {
+      "marked_read": "Marquée comme lue",
+      "marked_unread": "Marquée comme non lue",
+      "all_read": "Toutes les notifications ont été marquées comme lues",
+      "restored": "Notification restaurée des archives",
+      "archived": "Notification déplacée vers les archives",
+      "deleted_bulk": "{{count}} notifications supprimées",
+      "deleted_single": "Notification supprimée",
+      "bulk_read": "{{count}} notifications marquées comme lues",
+      "bulk_archived": "{{count}} notifications archivées",
+      "bulk_restored": "{{count}} notifications restaurées",
+      "server_error": "Erreur interne du serveur"
+    }
+  },
+  "settings_page": {
+    "breadcrumbs": {
+      "admin": "Administration",
+      "settings": "Paramètres"
+    },
+    "header": {
+      "title": "Paramètres et préférences",
+      "subtitle": "Gérez votre profil, vos préférences financières, vos devises, vos accès de sécurité et l'interface.",
+      "unsaved_changes": "Modifications non enregistrées",
+      "up_to_date": "À jour",
+      "save_all": "Tout enregistrer",
+      "saving": "Enregistrement...",
+      "success_save": "Paramètres et préférences enregistrés avec succès !",
+      "error_save": "Échec de l'enregistrement des paramètres. Veuillez réessayer."
+    },
+    "hero": {
+      "verified": "VÉRIFIÉ",
+      "unverified": "NON VÉRIFIÉ",
+      "default_currency": "Devise par défaut :",
+      "customize_ui": "Personnaliser l'UI",
+      "change_avatar": "Changer l'avatar"
+    },
+    "tabs": {
+      "profile": "Profil et compte",
+      "financial": "Finances et devise",
+      "security": "Sécurité et accès",
+      "notifications": "Notifications et alertes",
+      "appearance": "Thème et interface",
+      "data": "Données et confidentialité"
+    },
+    "profile": {
+      "personal_info": "Informations personnelles",
+      "personal_info_desc": "Mettez à jour vos coordonnées et identifiants publics",
+      "full_name": "Nom complet",
+      "full_name_placeholder": "ex. Alex Morgan",
+      "email": "Adresse e-mail",
+      "email_placeholder": "nom@exemple.com",
+      "phone": "Numéro de téléphone",
+      "phone_placeholder": "+33 6 12 34 56 78",
+      "country": "Pays / Région",
+      "bio": "Biographie financière et objectifs",
+      "bio_placeholder": "Parlez-nous de vos objectifs financiers...",
+      "save_changes": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "validation": {
+        "cannot_edit": "Vous ne pouvez pas modifier ce profil",
+        "name_required": "Le nom est obligatoire",
+        "email_required": "L'e-mail est obligatoire",
+        "email_invalid": "Veuillez entrer une adresse e-mail valide",
+        "phone_required": "Le numéro de téléphone est obligatoire",
+        "country_required": "Le pays est obligatoire",
+        "update_failed": "Échec de la mise à jour du profil",
+        "something_wrong": "Une erreur est survenue"
+      },
+      "tier": {
+        "active_plan": "Formule active",
+        "inactive_plan": "Formule inactive",
+        "plan_pro": "Spendora PRO Entreprise",
+        "plan_free": "Spendora Gratuit",
+        "pro_desc": "Comptes multidevises illimités, synchronisation bancaire automatisée, assistant financier IA.",
+        "free_desc": "Fonctionnalités de base avec accès limité.",
+        "billing_cycle": "Cycle de facturation",
+        "yearly_price": "Annuel (99 $/an)",
+        "free_price": "Gratuit",
+        "next_renewal": "Prochain renouvellement"
+      }
+    },
+    "financial": {
+      "title": "Finances et devise",
+      "subtitle": "Gérez la devise de référence et les règles comptables",
+      "base_currency": "Devise de référence par défaut",
+      "base_currency_hint": "Tous les indicateurs globaux, rapports et budgets sont calculés dans cette devise.",
+      "fiscal_day": "Jour de début du mois fiscal",
+      "fiscal_options": {
+        "day_1": "1er du mois (Standard)",
+        "day_15": "15 du mois",
+        "day_25": "25 du mois (Jour de paie)",
+        "day_last": "Dernier jour ouvré du mois"
+      },
+      "auto_fx": "Synchronisation automatique des taux de change",
+      "auto_fx_desc": "Récupère automatiquement les taux de change via l'API Frankfurter lors de la saisie.",
+      "save_changes": "Enregistrer les modifications",
+      "saving": "Enregistrement des préférences...",
+      "hero": {
+        "active_base": "Devise de référence active",
+        "active_desc": "Tous les graphiques et allocations de budget sont automatiquement formatés en {{currency}}.",
+        "accounting_cycle": "Cycle comptable",
+        "day_of_month": "Jour {{day}} du mois",
+        "auto_fx_status": "Sync auto taux de change",
+        "enabled": "Activé",
+        "disabled": "Désactivé"
+      },
+      "toasts": {
+        "error": "Une erreur est survenue",
+        "failed_save": "Impossible de modifier les paramètres financiers pour le moment."
+      }
+    },
+    "security": {
+      "title": "Mot de passe et identifiants",
+      "subtitle": "Assurez-vous que votre compte utilise un mot de passe fort et unique",
+      "current_password": "Mot de passe actuel",
+      "new_password": "Nouveau mot de passe",
+      "new_password_placeholder": "8 caractères minimum",
+      "confirm_password": "Confirmer le nouveau mot de passe",
+      "confirm_password_placeholder": "Répétez le nouveau mot de passe",
+      "strength_label": "Robustesse :",
+      "strength": {
+        "empty": "Vide",
+        "weak": "Faible",
+        "good": "Moyen",
+        "strong": "Très fort"
+      },
+      "update_btn": "Mettre à jour le mot de passe",
+      "validation": {
+        "enter_current": "Veuillez entrer votre mot de passe actuel",
+        "min_length": "Le nouveau mot de passe doit contenir au moins 8 caractères",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas",
+        "success": "Mot de passe mis à jour avec succès",
+        "error": "Échec de la mise à jour du mot de passe"
+      },
+      "logout_modal": {
+        "security_action": "Action de sécurité",
+        "title": "Se déconnecter de tous les appareils ?",
+        "desc": "Êtes-vous sûr de vouloir fermer toutes vos sessions actives sur vos ordinateurs, téléphones et navigateurs ?",
+        "warning_note": "Remarque :",
+        "warning_text": "Votre session actuelle sera également fermée. Vous devrez vous reconnecter avec votre mot de passe.",
+        "cancel": "Annuler",
+        "confirm": "Déconnecter partout",
+        "signing_out": "Déconnexion..."
+      }
+    },
+    "notifications_tab": {
+      "title": "Système d'alertes financières",
+      "subtitle": "Automatisez les notifications push et e-mails en cas de dépassement de budget",
+      "budget_alert": "Alerte de plafond de budget",
+      "budget_alert_desc": "Recevoir une alerte lorsque les dépenses d'une catégorie dépassent {{threshold}} % du budget mensuel alloué.",
+      "trigger_threshold": "Seuil de déclenchement :",
+      "threshold_labels": {
+        "cautious": "50 % (Prudent)",
+        "recommended": "80 % (Recommandé)",
+        "strict": "100 % (Strict)"
+      },
+      "large_tx_alert": "Alerte de dépense importante",
+      "large_tx_desc": "Déclencher une alerte instantanée pour toute transaction unique dépassant un montant défini.",
+      "alert_over": "M'alerter pour les montants supérieurs à :",
+      "weekly_digest": "Synthèse financière hebdomadaire",
+      "weekly_digest_desc": "Recevez chaque lundi un récapitulatif des revenus, des dépenses par catégorie et du rythme d'épargne.",
+      "bill_reminders": "Rappels d'abonnements et factures",
+      "bill_reminders_desc": "Recevez une notification 48 heures avant l'échéance des abonnements et factures récurrents.",
+      "push_notifications": "Notifications push du navigateur",
+      "push_notifications_desc": "Afficher les alertes de bureau pour la synchronisation en direct."
+    },
+    "appearance": {
+      "themes_title": "Thèmes sombres Finora",
+      "themes_subtitle": "Sélectionnez une palette sombre optimisée pour de longues sessions d'analyse financière",
+      "themes": {
+        "midnight": "Noir Minuit",
+        "midnight_desc": "Arrière-plan sombre #080808 avec accents vert émeraude",
+        "cyber_emerald": "Cyber Émeraude",
+        "cyber_emerald_desc": "Accents vert vif avec des couches de carbone sombre",
+        "deep_obsidian": "Obsidienne Profonde",
+        "deep_obsidian_desc": "Ardoise monochrome ultra sombre avec touches bleu électrique",
+        "purple_aura": "Aura Améthyste",
+        "purple_aura_desc": "Esthétique violette futuriste et élégante"
+      },
+      "theme_set_toast": "Thème appliqué : {{name}}",
+      "privacy_title": "Fonctionnalités d'affichage et de confidentialité",
+      "privacy_blur": "Mode de flou de confidentialité",
+      "privacy_blur_desc": "Masque tous les chiffres de solde bancaire avec un flou subtil en public.",
+      "compact_mode": "Densité compacte",
+      "compact_mode_desc": "Réduit l'espacement dans les tableaux et cartes pour afficher plus de transactions.",
+      "live_preview_title": "Aperçu en direct du mode confidentialité",
+      "preview_active": "🔒 Actif : Les montants sont masqués en toute sécurité.",
+      "preview_inactive": "👁️ Inactif : Les soldes sont entièrement visibles.",
+      "checking_balance": "Solde du compte courant",
+      "concealed": "Masqué",
+      "visible": "Visible"
+    },
+    "data": {
+      "export_title": "Exporter vos données financières",
+      "export_subtitle": "Téléchargez à tout moment l'intégralité de vos transactions, catégories et relevés",
+      "csv_title": "Feuille de calcul CSV",
+      "csv_desc": "Fichier CSV standard compatible avec Microsoft Excel, Google Sheets et vos logiciels comptables.",
+      "download_csv": "Télécharger le relevé CSV",
+      "json_title": "Sauvegarde complète JSON",
+      "json_desc": "Copie intégrale de la base de données incluant métadonnées, catégories, comptes et préférences.",
+      "download_json": "Télécharger la sauvegarde JSON",
+      "export_toast": "Export téléchargé sous {{filename}}",
+      "danger_title": "Zone de danger",
+      "danger_subtitle": "Actions irréversibles concernant votre compte et vos archives financières",
+      "clear_cache_title": "Effacer les données d'analyse en cache",
+      "clear_cache_desc": "Recalcule les écarts budgétaires, le rythme d'épargne et rafraîchit les graphiques.",
+      "clear_cache_btn": "Vider le cache",
+      "clear_cache_toast": "Cache des analyses vidé et rafraîchi",
+      "delete_acc_title": "Supprimer le compte",
+      "delete_acc_desc": "Supprimer définitivement votre profil, vos catégories, vos transactions et vos moyens de paiement.",
+      "delete_acc_btn": "Supprimer le compte",
+      "delete_modal": {
+        "title": "Supprimer le compte Finora",
+        "desc": "Cette action supprimera définitivement votre compte, résiliera vos abonnements et effacera toutes vos transactions et budgets. Cette action est irréversible.",
+        "type_confirm": "Tapez DELETE pour confirmer :",
+        "cancel": "Annuler",
+        "confirm_btn": "Confirmer la suppression",
+        "deleting": "Suppression...",
+        "deleted_toast": "Compte supprimé. Redirection vers l'accueil..."
+      }
+    },
+    "avatar_modal": {
+      "title": "Choisir une photo de profil",
+      "desc": "Choisissez parmi notre collection d'avatars ou entrez l'URL directe d'une image.",
+      "custom_url": "Ou URL d'image personnalisée :",
+      "done": "Terminé"
+    },
+    "two_factor": {
+      "title": "Configurer l'authentification à deux facteurs",
+      "desc": "Scannez ce code QR à l'aide de Google Authenticator, Authy ou 1Password pour associer votre appareil.",
+      "secret_key": "Clé de configuration secrète (saisie manuelle) :",
+      "key_copied": "Clé secrète copiée !",
+      "enter_code": "Entrez le code à 6 chiffres de l'application",
+      "cancel": "Annuler",
+      "verify_btn": "Vérifier et activer",
+      "invalid_code": "Veuillez entrer un code de vérification valide à 6 chiffres",
+      "enabled_toast": "L'authentification à deux facteurs est maintenant activée !"
+    }
+  }
+}

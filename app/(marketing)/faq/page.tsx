@@ -1,5 +1,4 @@
-import Navbar from '@/components/marketing/home/Navbar';
-import Footer from '@/components/marketing/home/Footer';
+import React from 'react';
 import FaqUI from '@/components/marketing/faq-ui';
 
 export default function FaqPage() {
@@ -11,4 +10,3 @@ export default function FaqPage() {
     </div>
   );
 }
-

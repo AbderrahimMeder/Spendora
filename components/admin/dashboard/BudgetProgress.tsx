@@ -1,5 +1,8 @@
+"use client";
+
 import React from 'react';
 import { Target, AlertTriangle, CheckCircle2, SlidersHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatCurrency, getCategoryDetails } from '@/utils/dashboardUtils';
 import type { Budget, CategorySpending } from '@/types';
 
@@ -8,7 +11,7 @@ interface BudgetProgressProps {
   totalExpenses?: number;
   categorySpending?: CategorySpending[];
   currency?: string;
-  rate:number;
+  rate: number;
   onOpenBudgetModal?: () => void;
 }
 
@@ -17,28 +20,29 @@ export default function BudgetProgress({
   totalExpenses = 0,
   categorySpending = [],
   currency = 'USD',
-  rate=1,
-  onOpenBudgetModal
+  rate = 1,
+  onOpenBudgetModal,
 }: BudgetProgressProps) {
-  const totalBudget = (budget.totalBudget || 4500)*rate;
+  const { t } = useTranslation();
+  const totalBudget = (budget.totalBudget || 4500) * rate;
   const spent = totalExpenses;
   const remaining = Math.max(0, totalBudget - spent);
   const percentage = Math.min(100, Math.round((spent / (totalBudget || 1)) * 100));
 
   // Determine health status and color
   let statusColor = '#10b981';
-  let statusLabel = 'On Track';
+  let statusLabel = t('admin_dashboard.budget.status_on_track');
   let statusBg = 'rgba(16, 185, 129, 0.15)';
   let statusBorder = 'rgba(16, 185, 129, 0.3)';
 
   if (percentage >= 90) {
     statusColor = '#ef4444';
-    statusLabel = percentage >= 100 ? 'Over Budget' : 'Critical Limit';
+    statusLabel = percentage >= 100 ? t('admin_dashboard.budget.status_over') : t('admin_dashboard.budget.status_critical');
     statusBg = 'rgba(239, 68, 68, 0.15)';
     statusBorder = 'rgba(239, 68, 68, 0.3)';
   } else if (percentage >= 70) {
     statusColor = '#eab308';
-    statusLabel = 'Approaching Limit';
+    statusLabel = t('admin_dashboard.budget.status_approaching');
     statusBg = 'rgba(234, 179, 8, 0.15)';
     statusBorder = 'rgba(234, 179, 8, 0.3)';
   }
@@ -47,12 +51,12 @@ export default function BudgetProgress({
   const keyCategoryKeys = ['cat-food', 'cat-housing', 'cat-transport', 'cat-shopping'];
   const categoryItems = keyCategoryKeys.map((catKey) => {
     const details = getCategoryDetails(catKey);
-    const catSpend = categorySpending.find(c => c.id === catKey)?.amount || 0;
+    const catSpend = categorySpending.find((c) => c.id === catKey)?.amount || 0;
     const catCap = budget.categoryBudgets?.[catKey] || 500;
     const catPercent = Math.min(100, Math.round((catSpend / (catCap || 1)) * 100));
     return {
       id: catKey,
-      name: details.name,
+      name: t(`admin_dashboard.categories.${catKey.replace('cat-', '')}`, details.name),
       spent: catSpend,
       cap: catCap,
       percent: catPercent,
@@ -76,14 +80,35 @@ export default function BudgetProgress({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <Target size={18} color="var(--accent-primary)" />
             <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-              Monthly Budget Progress
+              {t('admin_dashboard.budget.title')}
             </h2>
           </div>
           <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', margin: 0 }}>
-            Track monthly expense limits and remaining headroom
+            {t('admin_dashboard.budget.subtitle')}
           </p>
         </div>
 
+        {onOpenBudgetModal && (
+          <button
+            type="button"
+            onClick={onOpenBudgetModal}
+            className="btn-icon"
+            style={{
+              padding: '0.45rem',
+              borderRadius: 'var(--radius-md)',
+              background: '#161616',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            title={t('admin_dashboard.budget_modal.title')}
+          >
+            <SlidersHorizontal size={15} />
+          </button>
+        )}
       </div>
 
       {/* Main Budget Bar Card */}
@@ -98,16 +123,18 @@ export default function BudgetProgress({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Spent so far</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              {t('admin_dashboard.budget.spent_so_far')}
+            </span>
             <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em' }}>
               {(spent).toFixed(2)}{currency}
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500', marginLeft: '6px' }}>
-              / {(totalBudget*rate).toFixed(2)}{currency}
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500', marginInlineStart: '6px' }}>
+                / {(totalBudget * rate).toFixed(2)}{currency}
               </span>
             </div>
           </div>
 
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'end' }}>
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -124,7 +151,7 @@ export default function BudgetProgress({
               <span>{statusLabel} ({percentage}%)</span>
             </div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-              {formatCurrency(remaining, currency)} remaining
+              {formatCurrency(remaining, currency)} {t('admin_dashboard.budget.remaining')}
             </div>
           </div>
         </div>
@@ -152,7 +179,7 @@ export default function BudgetProgress({
       {/* Sub-Category Budgets Breakdown */}
       <div>
         <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
-          Top Category Budgets
+          {t('admin_dashboard.budget.top_categories')}
         </div>
         <div style={{
           display: 'grid',
@@ -177,7 +204,7 @@ export default function BudgetProgress({
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                 <span>{formatCurrency(cat.spent, currency)}</span>
-                <span>Cap: {formatCurrency(cat.cap, currency)}</span>
+                <span>{t('admin_dashboard.budget.cap')} {formatCurrency(cat.cap, currency)}</span>
               </div>
               <div style={{ height: '4px', background: '#222222', borderRadius: '2px', overflow: 'hidden' }}>
                 <div style={{
@@ -195,4 +222,3 @@ export default function BudgetProgress({
     </div>
   );
 }
-

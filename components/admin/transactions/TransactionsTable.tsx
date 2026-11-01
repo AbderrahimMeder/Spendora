@@ -1,28 +1,9 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-
+import React, { useState, useMemo } from 'react';
 import {
   Search,
   Plus,
-  Edit2,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
-  CheckCircle2,
-  Clock,
   ChevronRight,
   ChevronLeft,
   Download,
@@ -31,6 +12,9 @@ import {
   Building2,
   Wallet,
   DollarSign,
+  Coins,
+  CheckCircle2,
+  Clock,
   Trash2,
   Receipt,
   X,
@@ -39,18 +23,18 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import type { Transaction, User } from '@/types';
+import type { Transaction } from '@/types';
 import { toast } from 'sonner';
 import { LoadingTransaction } from '@/components/ui/loading';
+import { useTranslation } from 'react-i18next';
 
 type TransactionstableProps = {
-  transactions: Transaction[],
-  token : string | null
-  currency : string
-  fetchAgain : boolean
-  rate : number
-}
-
+  transactions: Transaction[];
+  token: string | null;
+  currency: string;
+  fetchAgain: boolean;
+  rate: number;
+};
 
 export default function Transactionstable({
   transactions,
@@ -59,22 +43,24 @@ export default function Transactionstable({
   fetchAgain,
   rate
 }: TransactionstableProps) {
-      const [filterType, setFilterType] = useState<string>('ALL');
-      const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-      const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('ALL');
-      const [dateRange, setDateRange] = useState<string>('ALL');
-      const [sortBy, setSortBy] = useState<string>('date-desc');
-      const [showHidden, setShowHidden] = useState<string>('ALL');
-      const [searchQuery, setSearchQuery] = useState<string>('');
-      const [currentPage, setCurrentPage] = useState<number>(1);
-      const [itemsPerPage, setItemsPerPage] = useState<number>(10);
-      const [actionId, setActionId] = useState<string | null>(null);
-      const [checkdelete, setcheckdelete] = useState<boolean>(false);
-      const [loadingTrash, setLoadingTrash] = useState<boolean>(false);
-      const router = useRouter();
+  const { t } = useTranslation();
+  const [filterType, setFilterType] = useState<string>('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('ALL');
+  const [dateRange, setDateRange] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<string>('date-desc');
+  const [showHidden, setShowHidden] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const [actionId, setActionId] = useState<string | null>(null);
+  const [checkdelete, setcheckdelete] = useState<boolean>(false);
+  const [loadingTrash, setLoadingTrash] = useState<boolean>(false);
+  const router = useRouter();
+
   const handleDeleteTrasaction = async (id: string) => {
     try {
-      setLoadingTrash(true)
+      setLoadingTrash(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/transactions/${id}/delete`, {
         method: 'DELETE',
         headers: {
@@ -85,21 +71,20 @@ export default function Transactionstable({
       const data = await res.json();
 
       if (data.status == 200) {
-        toast.success('Transaction deleted successfully!');
-
+        toast.success(t('transactions_page.delete_modal.success'));
+        setcheckdelete(false);
       }
-    } catch (error) {
-      toast.error('Failed to delete transaction');
-
+    } catch {
+      toast.error(t('transactions_page.delete_modal.error'));
     } finally {
-      setLoadingTrash(false)
+      setLoadingTrash(false);
     }
   };
-  //handleEdit 
+
   const handleEditTrasaction = (id: string) => {
     router.push(`/transactions/${id}/edit`);
   };
-  // Category Helper
+
   const paymentMethods = [
     'ALL',
     ...new Set(
@@ -108,6 +93,7 @@ export default function Transactionstable({
         .filter(Boolean)
     ),
   ];
+
   const categories = [
     'ALL',
     ...new Set(
@@ -117,7 +103,6 @@ export default function Transactionstable({
     ),
   ];
 
-  // Payment Method Helper
   const getPaymentIcon = (method?: string) => {
     const m = (method || '').toLowerCase();
     if (m.includes('bank') || m.includes('wire') || m.includes('ach')) return Building2;
@@ -127,25 +112,19 @@ export default function Transactionstable({
     return CreditCard;
   };
 
-  // Filtered and sorted transactions
   const processedTransactions = useMemo(() => {
     return (transactions ?? [])
       .filter((tx) => {
-        // Type filter
         const matchesType =
           filterType === 'ALL' || (tx.type || '').toUpperCase() === filterType.toUpperCase();
-        // Category filter
         const matchesCategory =
           selectedCategory === 'ALL' ||
           (tx.categories?.name || '').toLowerCase() === selectedCategory.toLowerCase();
-        // Show/Hide hidden transactions
         const matchesHidden =
-          showHidden === 'ALL' || !tx.is_hidden===(showHidden ==="FALSE");
-        // Payment method filter
+          showHidden === 'ALL' || !tx.is_hidden === (showHidden === 'FALSE');
         const matchesPayment =
           selectedPaymentMethod === 'ALL' ||
           (tx.payment_methods?.name || '').toLowerCase().replace(/_/g, ' ') === selectedPaymentMethod.toLowerCase();
-        // Date range filter
         let matchesDate = true;
         if (dateRange !== 'ALL' && tx.date) {
           const txDate = new Date(tx.date);
@@ -156,18 +135,15 @@ export default function Transactionstable({
               txDate.getFullYear() === now.getFullYear() &&
               txDate.getMonth() === now.getMonth() &&
               txDate.getDate() === now.getDate();
-
           } else if (dateRange === '30d') {
             matchesDate =
               txDate.getFullYear() === now.getFullYear() &&
               txDate.getMonth() === now.getMonth();
-
           } else if (dateRange === '1y') {
             matchesDate =
               txDate.getFullYear() === now.getFullYear();
           }
         }
-        // Search query
         const query = searchQuery.trim().toLowerCase();
         const matchesSearch =
           !query ||
@@ -209,7 +185,6 @@ export default function Transactionstable({
     showHidden,
   ]);
 
-  // Pagination calculation
   const totalPages = Math.max(1, Math.ceil(processedTransactions.length / itemsPerPage));
   const paginatedTransactions = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -223,6 +198,7 @@ export default function Transactionstable({
     dateRange !== 'ALL' ||
     searchQuery.trim().length > 0 ||
     showHidden !== 'ALL';
+
   const handleResetFilters = () => {
     setFilterType('ALL');
     setSelectedCategory('ALL');
@@ -234,7 +210,6 @@ export default function Transactionstable({
     setShowHidden('ALL');
   };
 
-  // CSV Export
   const handleExportCSV = () => {
     if (processedTransactions.length === 0) {
       toast.error('No transactions available to export');
@@ -265,13 +240,11 @@ export default function Transactionstable({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    toast.success('Transactions CSV exported successfully!');
+    toast.success(t('transactions_page.export_success'));
   };
 
-
   return (
-        <>
-                
+    <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {/* Search & Filter Toolbar */}
         <div
@@ -307,15 +280,15 @@ export default function Transactionstable({
               }}
             >
               {[
-                { id: 'ALL', label: 'All Records', count: transactions.length },
+                { id: 'ALL', label: t('transactions_page.tabs.all'), count: transactions.length },
                 {
                   id: 'EXPENSE',
-                  label: 'Expenses',
+                  label: t('transactions_page.tabs.expenses'),
                   count: transactions.filter((t) => (t.type || '').toUpperCase() === 'EXPENSE').length,
                 },
                 {
                   id: 'INCOME',
-                  label: 'Income',
+                  label: t('transactions_page.tabs.income'),
                   count: transactions.filter((t) => (t.type || '').toUpperCase() === 'INCOME').length,
                 },
               ].map((tab) => {
@@ -360,9 +333,6 @@ export default function Transactionstable({
               })}
             </div>
 
-            {/* Quick Search */}
-
-
             {/* Export Action */}
             <button
               onClick={handleExportCSV}
@@ -372,10 +342,10 @@ export default function Transactionstable({
                 padding: '0.5rem 0.85rem',
                 gap: '0.4rem',
               }}
-              title="Download CSV Statement"
+              title={t('transactions_page.export_csv_title')}
             >
               <Download size={14} />
-              <span>Export CSV</span>
+              <span>{t('transactions_page.export_csv')}</span>
             </button>
           </div>
 
@@ -392,7 +362,7 @@ export default function Transactionstable({
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
               <SlidersHorizontal size={13} />
-              <span>Filters:</span>
+              <span>{t('transactions_page.filters')}</span>
             </div>
 
             {/* Category Dropdown */}
@@ -413,8 +383,8 @@ export default function Transactionstable({
                 cursor: 'pointer',
               }}
             >
-              <option value="ALL">All Categories</option>
-              {categories?.map((cat) => (
+              <option value="ALL">{t('transactions_page.all_categories')}</option>
+              {categories?.filter(c => c !== 'ALL').map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -439,11 +409,12 @@ export default function Transactionstable({
                 cursor: 'pointer',
               }}
             >
-              {paymentMethods.map((t) => {
-                return (<option key={t} value={t}>
-                  {t}
-                </option>)
-              })}
+              <option value="ALL">{t('transactions_page.all_methods')}</option>
+              {paymentMethods.filter(p => p !== 'ALL').map((tMethod) => (
+                <option key={tMethod} value={tMethod}>
+                  {tMethod}
+                </option>
+              ))}
             </select>
 
             {/* Date Range Dropdown */}
@@ -464,26 +435,27 @@ export default function Transactionstable({
                 cursor: 'pointer',
               }}
             >
-              <option value="ALL">All Time</option>
-              <option value="24h">24h</option>
-              <option value="7d">7d</option>
-              <option value="30d">30d</option>
-              <option value="1y">1y</option>
+              <option value="ALL">{t('transactions_page.date_range.all')}</option>
+              <option value="24h">{t('transactions_page.date_range.24h')}</option>
+              <option value="7d">{t('transactions_page.date_range.7d')}</option>
+              <option value="30d">{t('transactions_page.date_range.30d')}</option>
+              <option value="1y">{t('transactions_page.date_range.1y')}</option>
             </select>
+
             <div style={{ position: 'relative', flex: '1 1 260px', maxWidth: '400px' }}>
               <Search
                 size={15}
                 color="var(--text-muted)"
                 style={{
                   position: 'absolute',
-                  left: '0.85rem',
+                  insetInlineStart: '0.85rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
                 }}
               />
               <input
                 type="text"
-                placeholder="Search by title, category, method, amount..."
+                placeholder={t('transactions_page.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -508,7 +480,7 @@ export default function Transactionstable({
                   onClick={() => setSearchQuery('')}
                   style={{
                     position: 'absolute',
-                    right: '0.65rem',
+                    insetInlineEnd: '0.65rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     background: 'none',
@@ -522,8 +494,9 @@ export default function Transactionstable({
                 </button>
               )}
             </div>
+
             {/* Sort By Dropdown */}
-            <div className='flex items-end justify-between gap-2'>
+            <div className="flex items-end justify-between gap-2">
               <select
                 value={showHidden}
                 onChange={(e) => setShowHidden(e.target.value)}
@@ -536,12 +509,12 @@ export default function Transactionstable({
                   fontSize: '0.775rem',
                   outline: 'none',
                   cursor: 'pointer',
-                  marginLeft: 'auto',
+                  marginInlineStart: 'auto',
                 }}
               >
-                <option value="ALL">All</option>
-                <option value="FALSE">Hide </option>
-                <option value="TRUE">Show </option>
+                <option value="ALL">{t('transactions_page.visibility.all')}</option>
+                <option value="FALSE">{t('transactions_page.visibility.hide')}</option>
+                <option value="TRUE">{t('transactions_page.visibility.show')}</option>
               </select>
               <select
                 value={sortBy}
@@ -555,14 +528,14 @@ export default function Transactionstable({
                   fontSize: '0.775rem',
                   outline: 'none',
                   cursor: 'pointer',
-                  marginLeft: 'auto',
+                  marginInlineStart: 'auto',
                 }}
               >
-                <option value="date-desc">Newest First</option>
-                <option value="date-asc">Oldest First</option>
-                <option value="amount-desc">Highest Amount</option>
-                <option value="amount-asc">Lowest Amount</option>
-                <option value="title-asc">Alphabetical (A-Z)</option>
+                <option value="date-desc">{t('transactions_page.sort.newest')}</option>
+                <option value="date-asc">{t('transactions_page.sort.oldest')}</option>
+                <option value="amount-desc">{t('transactions_page.sort.highest')}</option>
+                <option value="amount-asc">{t('transactions_page.sort.lowest')}</option>
+                <option value="title-asc">{t('transactions_page.sort.alphabetical')}</option>
               </select>
             </div>
 
@@ -585,7 +558,7 @@ export default function Transactionstable({
                 }}
               >
                 <X size={12} />
-                <span>Reset</span>
+                <span>{t('transactions_page.reset')}</span>
               </button>
             )}
           </div>
@@ -595,42 +568,41 @@ export default function Transactionstable({
         {fetchAgain ? (
           <LoadingTransaction hight={50} />
         ) : (
-        <div
-          className="glass-card"
-          style={{
-            background: '#121212',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Table Header */}
           <div
+            className="glass-card"
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(200px, 2fr) 1.2fr 1fr 1fr 1.2fr 100px',
-              padding: '0.85rem 1.25rem',
-              background: '#0a0a0a',
-              borderBottom: '1px solid var(--border-subtle)',
-              fontSize: '0.75rem',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              color: 'var(--text-muted)',
-              alignItems: 'center',
+              background: '#121212',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-lg)',
+              overflow: 'hidden',
             }}
-            className="tx-table-header"
           >
-            <div>Transaction / Payee</div>
-            <div>Category</div>
-            <div>Date & Time</div>
-            <div style={{ textAlign: 'right' }}>Payment Method</div>
-            <div style={{ textAlign: 'right' }}>Amount ({currency})</div>
-            <div style={{ textAlign: 'center' }}>Actions</div>
-          </div>
-          {fetchAgain ?
-            (<LoadingTransaction hight={50} />)
-            : (<div style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* Table Header */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(200px, 2fr) 1.2fr 1fr 1fr 1.2fr 100px',
+                padding: '0.85rem 1.25rem',
+                background: '#0a0a0a',
+                borderBottom: '1px solid var(--border-subtle)',
+                fontSize: '0.75rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'var(--text-muted)',
+                alignItems: 'center',
+              }}
+              className="tx-table-header"
+            >
+              <div>{t('transactions_page.headers.payee')}</div>
+              <div>{t('transactions_page.headers.category')}</div>
+              <div>{t('transactions_page.headers.datetime')}</div>
+              <div style={{ textAlign: 'end' }}>{t('transactions_page.headers.payment_method')}</div>
+              <div style={{ textAlign: 'end' }}>{t('transactions_page.headers.amount', { currency })}</div>
+              <div style={{ textAlign: 'center' }}>{t('transactions_page.headers.actions')}</div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               {paginatedTransactions.length === 0 ? (
                 <div
                   style={{
@@ -655,7 +627,7 @@ export default function Transactionstable({
                     <Receipt size={24} />
                   </div>
                   <h3 style={{ fontSize: '1.05rem', fontWeight: '700', color: '#ffffff', margin: '0 0 0.4rem' }}>
-                    No Transactions Found
+                    {t('transactions_page.empty.title')}
                   </h3>
                   <p
                     style={{
@@ -666,8 +638,8 @@ export default function Transactionstable({
                     }}
                   >
                     {hasActiveFilters
-                      ? 'No transaction matches your active filters or search query.'
-                      : 'Start recording your expenses and income to see them listed in your ledger.'}
+                      ? t('transactions_page.empty.desc_filtered')
+                      : t('transactions_page.empty.desc_empty')}
                   </p>
 
                   {hasActiveFilters ? (
@@ -676,7 +648,7 @@ export default function Transactionstable({
                       className="btn btn-secondary"
                       style={{ fontSize: '0.825rem', padding: '0.5rem 1.25rem' }}
                     >
-                      Clear All Filters
+                      {t('transactions_page.empty.clear_filters')}
                     </button>
                   ) : (
                     <Link
@@ -685,7 +657,7 @@ export default function Transactionstable({
                       style={{ fontSize: '0.825rem', padding: '0.5rem 1.25rem', gap: '0.4rem' }}
                     >
                       <Plus size={15} />
-                      <span>Create First Transaction</span>
+                      <span>{t('transactions_page.empty.create_first')}</span>
                     </Link>
                   )}
                 </div>
@@ -731,9 +703,7 @@ export default function Transactionstable({
                             justifyContent: 'center',
                             flexShrink: 0,
                           }}
-                        >
-
-                        </div>
+                        />
 
                         <div style={{ minWidth: 0, overflow: 'hidden' }}>
                           <div
@@ -778,7 +748,7 @@ export default function Transactionstable({
                             padding: '0.2rem 0.6rem',
                             borderRadius: '6px',
                             background: tx.type === 'EXPENSE' ? 'rgba(223, 14, 14, 0.3)' : 'rgba(38, 203, 93, 0.3)',
-                            color: tx.type === 'EXPENSE' ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 1)',
+                            color: 'rgba(255, 255, 255, 1)',
                             fontSize: '0.75rem',
                             fontWeight: '600',
                           }}
@@ -791,7 +761,7 @@ export default function Transactionstable({
                               background: tx.type === 'EXPENSE' ? 'red' : 'green',
                             }}
                           />
-                          <span> {tx?.categories?.name}</span>
+                          <span>{tx?.categories?.name}</span>
                         </span>
                       </div>
 
@@ -799,11 +769,13 @@ export default function Transactionstable({
                       <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                           <Calendar size={12} color="var(--text-muted)" />
-                          <span>{new Date(tx.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                          }) || 'N/A'}</span>
+                          <span>
+                            {new Date(tx.date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit',
+                            }) || 'N/A'}
+                          </span>
                         </div>
                         {tx.time && (
                           <div
@@ -817,16 +789,18 @@ export default function Transactionstable({
                             }}
                           >
                             <Clock size={11} />
-                            <span>{new Date(tx.time).toLocaleTimeString('en-US', {
-                              year: 'numeric',
-                              month: '2-digit',
-                            })}</span>
+                            <span>
+                              {new Date(tx.time).toLocaleTimeString('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                              })}
+                            </span>
                           </div>
                         )}
                       </div>
 
                       {/* Column 4: Payment Method */}
-                      <div style={{ textAlign: 'right' }}>
+                      <div style={{ textAlign: 'end' }}>
                         <span
                           style={{
                             display: 'inline-flex',
@@ -838,16 +812,15 @@ export default function Transactionstable({
                             padding: '0.2rem 0.55rem',
                             borderRadius: '5px',
                             border: '1px solid var(--border-subtle)',
-
                           }}
                         >
                           <MethodIcon size={12} color="var(--text-muted)" />
-                          <span>{tx.payment_methods?.name?.toLocaleLowerCase().replace(/_/g, ' ') || '******'}</span>
+                          <span>{tx.payment_methods?.name?.toLowerCase().replace(/_/g, ' ') || '******'}</span>
                         </span>
                       </div>
 
                       {/* Column 5: Amount */}
-                      <div style={{ textAlign: 'right' }}>
+                      <div style={{ textAlign: 'end' }}>
                         <div
                           style={{
                             fontSize: '0.95rem',
@@ -869,7 +842,7 @@ export default function Transactionstable({
                           }}
                         >
                           {tx.status === 'Pending' ? <Clock size={10} /> : <CheckCircle2 size={10} />}
-                          <span>{tx.status || 'Completed'}</span>
+                          <span>{tx.status === 'Pending' ? t('transactions_page.status.pending') : t('transactions_page.status.completed')}</span>
                         </div>
                       </div>
 
@@ -897,7 +870,7 @@ export default function Transactionstable({
                             color: 'var(--text-secondary)',
                             cursor: 'pointer',
                           }}
-                          title="Actions"
+                          title={t('transactions_page.actions.menu_tooltip')}
                         >
                           <ChevronRight size={14} />
                         </button>
@@ -907,7 +880,7 @@ export default function Transactionstable({
                             style={{
                               position: 'absolute',
                               top: 'calc(100% + 6px)',
-                              right: 0,
+                              insetInlineEnd: 0,
                               minWidth: '100px',
                               background: '#141414',
                               border: '1px solid var(--border-subtle)',
@@ -919,8 +892,7 @@ export default function Transactionstable({
                           >
                             <button
                               onClick={() => {
-                                setcheckdelete(true)
-                                // View voucher logic
+                                setcheckdelete(true);
                               }}
                               disabled={loadingTrash}
                               style={{
@@ -934,17 +906,16 @@ export default function Transactionstable({
                                 borderRadius: '6px',
                                 color: '#f87171',
                                 cursor: loadingTrash ? 'not-allowed' : 'pointer',
-                                textAlign: 'left',
+                                textAlign: 'start',
                               }}
                             >
                               {loadingTrash ? <RefreshCw size={12} color="#f87171" className="animate-spin" /> : <Trash2 size={12} color="#f87171" />}
-                              delete
+                              <span>{t('transactions_page.actions.delete')}</span>
                             </button>
 
                             <button
                               onClick={() => {
                                 handleEditTrasaction(tx.id);
-                                // Edit logic
                               }}
                               style={{
                                 width: '100%',
@@ -954,199 +925,203 @@ export default function Transactionstable({
                                 borderRadius: '6px',
                                 color: 'var(--text-primary)',
                                 cursor: 'pointer',
-                                textAlign: 'left',
+                                textAlign: 'start',
                               }}
                             >
-                              Edit
+                              <span>{t('transactions_page.actions.edit')}</span>
                             </button>
                           </div>
-
                         )}
+
                         {checkdelete && (
-                          <>
+                          <div
+                            style={{
+                              position: 'fixed',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              background: 'rgba(0, 0, 0, 0.5)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              zIndex: 1000,
+                            }}
+                          >
                             <div
                               style={{
-                                position: 'fixed',
-                                top: '0',
-                                left: '0',
-                                width: '100%',
-                                height: '100%',
-                                background: 'rgba(0, 0, 0, 0.5)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                zIndex: '1000',
+                                background: 'var(--bg-primary)',
+                                padding: '1.5rem',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                                maxWidth: '380px',
                               }}
                             >
-                              <div
-                                style={{
-                                  background: 'var(--bg-primary)',
-                                  padding: '1.5rem',
-                                  borderRadius: '8px',
-                                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-                                }}
-                              >
-                                <p>Are you sure you want to delete this transaction?</p>
-                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                  <button
-                                    onClick={() => handleDeleteTrasaction(tx.id)}
-                                    style={{
-                                      padding: '0.5rem 1rem',
-                                      background: '#f87171',
-                                      border: 'none',
-                                      borderRadius: '6px',
-                                      color: 'white',
-                                      cursor: 'pointer',
-                                    }}
-                                  >
-                                    Yes
-                                  </button>
-                                  <button
-                                    onClick={() => setcheckdelete(false)}
-                                    style={{
-                                      padding: '0.5rem 1rem',
-                                      background: 'var(--bg-secondary)',
-                                      border: 'none',
-                                      borderRadius: '6px',
-                                      color: 'var(--text-primary)',
-                                      cursor: 'pointer',
-                                    }}
-                                  >
-                                    No
-                                  </button>
-                                </div>
+                              <p style={{ margin: '0 0 1rem 0', color: '#ffffff', fontSize: '0.9rem' }}>
+                                {t('transactions_page.delete_modal.confirm_msg')}
+                              </p>
+                              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                <button
+                                  onClick={() => handleDeleteTrasaction(tx.id)}
+                                  style={{
+                                    padding: '0.5rem 1rem',
+                                    background: '#f87171',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.85rem',
+                                  }}
+                                >
+                                  {t('transactions_page.delete_modal.yes')}
+                                </button>
+                                <button
+                                  onClick={() => setcheckdelete(false)}
+                                  style={{
+                                    padding: '0.5rem 1rem',
+                                    background: 'var(--bg-secondary)',
+                                    border: '1px solid var(--border-subtle)',
+                                    borderRadius: '6px',
+                                    color: 'var(--text-primary)',
+                                    cursor: 'pointer',
+                                    fontWeight: '600',
+                                    fontSize: '0.85rem',
+                                  }}
+                                >
+                                  {t('transactions_page.delete_modal.no')}
+                                </button>
                               </div>
                             </div>
-                          </>
+                          </div>
                         )}
                       </div>
-
                     </div>
                   );
                 })
               )}
-            </div>)}
-          {/* List Content */}
-
-
-          {/* Footer with Pagination */}
-          {processedTransactions.length > 0 && (
-            <div
-              style={{
-                padding: '0.85rem 1.25rem',
-                background: '#0a0a0a',
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
-              }}
-            >
-              <div>
-                Showing{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {(currentPage - 1) * itemsPerPage + 1}
-                </span>{' '}
-                to{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {Math.min(currentPage * itemsPerPage, processedTransactions.length)}
-                </span>{' '}
-                of{' '}
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
-                  {processedTransactions.length}
-                </span>{' '}
-                entries
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                {/* Items Per Page */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Per page:</span>
-                  <select
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                      setItemsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    style={{
-                      background: '#121212',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: '4px',
-                      padding: '0.2rem 0.4rem',
-                      color: '#ffffff',
-                      fontSize: '0.75rem',
-                      outline: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </div>
-
-                {/* Prev / Next Pagination */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <button
-                    disabled={currentPage <= 1}
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    style={{
-                      padding: '0.3rem 0.5rem',
-                      borderRadius: '4px',
-                      background: '#141414',
-                      border: '1px solid var(--border-subtle)',
-                      color: currentPage <= 1 ? 'var(--text-muted)' : '#ffffff',
-                      cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <ChevronLeft size={14} />
-                  </button>
-
-                  <span style={{ fontSize: '0.75rem', padding: '0 0.4rem' }}>
-                    {currentPage} / {totalPages}
-                  </span>
-
-                  <button
-                    disabled={currentPage >= totalPages}
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    style={{
-                      padding: '0.3rem 0.5rem',
-                      borderRadius: '4px',
-                      background: '#141414',
-                      border: '1px solid var(--border-subtle)',
-                      color: currentPage >= totalPages ? 'var(--text-muted)' : '#ffffff',
-                      cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <ChevronRight size={14} />
-                  </button>
-                </div>
-              </div>
             </div>
-          )}
-        </div>
+
+            {/* Footer with Pagination */}
+            {processedTransactions.length > 0 && (
+              <div
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  background: '#0a0a0a',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                  fontSize: '0.8rem',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                <div>
+                  {t('transactions_page.pagination.showing')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {(currentPage - 1) * itemsPerPage + 1}
+                  </span>{' '}
+                  {t('transactions_page.pagination.to')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {Math.min(currentPage * itemsPerPage, processedTransactions.length)}
+                  </span>{' '}
+                  {t('transactions_page.pagination.of')}{' '}
+                  <span style={{ fontWeight: '700', color: '#ffffff' }}>
+                    {processedTransactions.length}
+                  </span>{' '}
+                  {t('transactions_page.pagination.entries')}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  {/* Items Per Page */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {t('transactions_page.pagination.per_page')}
+                    </span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => {
+                        setItemsPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      style={{
+                        background: '#121212',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0.4rem',
+                        color: '#ffffff',
+                        fontSize: '0.75rem',
+                        outline: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+
+                  {/* Prev / Next Pagination */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <button
+                      disabled={currentPage <= 1}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      style={{
+                        padding: '0.3rem 0.5rem',
+                        borderRadius: '4px',
+                        background: '#141414',
+                        border: '1px solid var(--border-subtle)',
+                        color: currentPage <= 1 ? 'var(--text-muted)' : '#ffffff',
+                        cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <ChevronLeft size={14} />
+                    </button>
+
+                    <span style={{ fontSize: '0.75rem', padding: '0 0.4rem' }}>
+                      {currentPage} / {totalPages}
+                    </span>
+
+                    <button
+                      disabled={currentPage >= totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      style={{
+                        padding: '0.3rem 0.5rem',
+                        borderRadius: '4px',
+                        background: '#141414',
+                        border: '1px solid var(--border-subtle)',
+                        color: currentPage >= totalPages ? 'var(--text-muted)' : '#ffffff',
+                        cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Responsive table styles */}
         <style>{`
-        @media (max-width: 860px) {
-          .tx-table-header {
-            display: none !important;
+          @media (max-width: 860px) {
+            .tx-table-header {
+              display: none !important;
+            }
+            .tx-table-row {
+              grid-template-columns: 1fr !important;
+              gap: 0.75rem !important;
+              padding: 1rem !important;
+            }
           }
-          .tx-table-row {
-            grid-template-columns: 1fr !important;
-            gap: 0.75rem !important;
-            padding: 1rem !important;
-          }
-        }
-      `}</style>
+        `}</style>
       </div>
-        </>
-    )
+    </>
+  );
 }

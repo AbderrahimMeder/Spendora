@@ -1,8 +1,9 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useParams,useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {toast} from 'sonner';
+import { toast } from 'sonner';
 import {
   ArrowLeft,
   ArrowDownLeft,
@@ -10,9 +11,11 @@ import {
   CheckCircle2,
   Loader2,
 } from 'lucide-react';
-import type { Category, payment_methods, Transaction, TransactionCreate,User } from '@/types';
+import type { Category, payment_methods, Transaction, TransactionCreate, User } from '@/types';
 import { LoadingTransaction } from '@/components/ui/loading';
 import { getExchangeRate } from '@/utils/exchange';
+import { useTranslation } from 'react-i18next';
+
 const QUICK_AMOUNTS = [10, 25, 50, 100, 250];
 
 interface TransactionProps {
@@ -20,196 +23,194 @@ interface TransactionProps {
   paymentMethods?: payment_methods[];
   mode?: 'create' | 'edit';
   transaction?: Transaction;
-  user?:User;
-  token?:string;
+  user?: User;
+  token?: string;
 }
-export default function TransactionAction(
-  { mode = 'create',transaction,user,token }: TransactionProps
-) {
-  const {id} = useParams<{id: string}>(); 
+
+export default function TransactionAction({
+  mode = 'create',
+  transaction,
+  user,
+  token,
+}: TransactionProps) {
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
   const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!;
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<payment_methods[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(false);
-  const [transactionData, setTransactionData] = useState<TransactionCreate>(
-    {
-      amount: transaction?.amount??0,
-      title:transaction?.title??"",
-      type: transaction?.type??'EXPENSE',
-      currency: transaction?.currency??user?.currency??'USD',
-      category_id: transaction?.categories?.id??'',
-      date:transaction?.date??new Date().toISOString().split('T')[0],
-      payment_method_id: transaction?.payment_methods?.id??'',
-      description: transaction?.description??'',
-      status: transaction?.status??'PENDING',
-    }
-  );
+  const [isLoadingFetch, setIsLoadingFetch] = useState<boolean>(true);
+  const [transactionData, setTransactionData] = useState<TransactionCreate>({
+    amount: transaction?.amount ?? 0,
+    title: transaction?.title ?? '',
+    type: transaction?.type ?? 'EXPENSE',
+    currency: transaction?.currency ?? user?.currency ?? 'USD',
+    category_id: transaction?.categories?.id ?? '',
+    date: transaction?.date ?? new Date().toISOString().split('T')[0],
+    payment_method_id: transaction?.payment_methods?.id ?? '',
+    description: transaction?.description ?? '',
+    status: transaction?.status ?? 'PENDING',
+  });
+
   useEffect(() => {
-    const fetchdata = async () => {
-        setIsLoadingFetch(true);
-        if(mode === 'edit') await fetchTransaction();
-        await fetchCategories();
-        await fetchPaymentMethods();
-        setIsLoadingFetch(false);
-        
-      }
-      fetchdata();
-  }, []);
-  const fetchTransaction = async () => {
-      try{
+    let isMounted = true;
+
+    const fetchAllData = async () => {
+      try {
         if (!token) {
-          toast.error('Session expired. Please log in again.');
+          toast.error(t('transaction_form.validation.session_expired'));
           router.push('/login');
           return;
         }
 
-        const response = await fetch(`${APP_URL}/api/transactions/${id}`, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setTransactionData(data.transaction);
+        const headers = {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        };
+
+        const promises: Promise<Response>[] = [
+          fetch(`${APP_URL}/api/categories`, { method: 'GET', headers }),
+          fetch(`${APP_URL}/api/payment-methods`, { method: 'GET', headers }),
+        ];
+
+        if (mode === 'edit' && id) {
+          promises.push(fetch(`${APP_URL}/api/transactions/${id}`, { method: 'GET', headers }));
         }
-      }catch(error){
-        console.error('Error fetching transaction:', error);
+
+        const responses = await Promise.all(promises);
+
+        if (responses[0]?.ok) {
+          const catData = await responses[0].json();
+          if (isMounted) setCategories(catData.categories || []);
+        }
+
+        if (responses[1]?.ok) {
+          const pmData = await responses[1].json();
+          if (isMounted) setPaymentMethods(pmData.payment_methods || []);
+        }
+
+        if (mode === 'edit' && responses[2]?.ok) {
+          const txData = await responses[2].json();
+          if (isMounted && txData.transaction) {
+            setTransactionData(txData.transaction);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching transaction form data:', err);
+      } finally {
+        if (isMounted) setIsLoadingFetch(false);
       }
-  };
+    };
 
+    fetchAllData();
 
-  const fetchCategories = async () => {
-    try{
-    if (!token) {
-      toast.error('Session expired. Please log in again.');
-      router.push('/login');
-      return;
-    }
+    return () => {
+      isMounted = false;
+    };
+  }, [id, mode, token, APP_URL, router, t]);
 
-    const response = await fetch(`${APP_URL}/api/categories`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setCategories(data.categories);
-    }
-  }catch(error){
-    console.error('Error fetching categories:', error);
-  }
-  };
-  const fetchPaymentMethods = async () => {
-    if (!token) {
-      toast.error('Session expired. Please log in again.');
-      router.push('/login');
-      return;
-    }
-    const response = await fetch(`${APP_URL}/api/payment-methods`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setPaymentMethods(data.payment_methods);
-    }
-  };
   const handleAddQuickAmount = (val: number) => {
     const current = parseFloat(transactionData.amount.toString()) || 0;
-    setTransactionData({...transactionData,amount:(current + val)});
+    setTransactionData({ ...transactionData, amount: current + val });
   };
 
   const setQuickDate = (daysAgo: number) => {
     const d = new Date();
     d.setDate(d.getDate() - daysAgo);
-    setTransactionData({...transactionData,date:d.toISOString().split('T')[0]});
+    setTransactionData({ ...transactionData, date: d.toISOString().split('T')[0] });
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!transactionData.amount || isNaN(parseFloat(transactionData.amount.toString())) || parseFloat(transactionData.amount.toString()) <= 0) {
-      toast.error('Please enter a valid amount greater than 0');
+    if (
+      !transactionData.amount ||
+      isNaN(parseFloat(transactionData.amount.toString())) ||
+      parseFloat(transactionData.amount.toString()) <= 0
+    ) {
+      toast.error(t('transaction_form.validation.valid_amount'));
       return;
     }
 
     if (!transactionData?.title?.trim()) {
-      toast.error('Please enter a title');
+      toast.error(t('transaction_form.validation.enter_title'));
       return;
     }
 
     if (!token) {
-      toast.error('Session expired. Please log in again.');
+      toast.error(t('transaction_form.validation.session_expired'));
       router.push('/login');
       return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    if(mode==='create'){
+    if (mode === 'create') {
       const rate = await getExchangeRate(user?.currency || 'USD');
-      const SendData = {...transactionData,amount:(transactionData.amount / (rate ?? 1)).toFixed(2)}
+      const sendData = {
+        ...transactionData,
+        amount: (transactionData.amount / (rate ?? 1)).toFixed(2),
+      };
       try {
-      const response = await fetch(`${APP_URL}/api/transactions`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(SendData),
-      });
+        const response = await fetch(`${APP_URL}/api/transactions`, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(sendData),
+        });
 
-      const data = await response.json();
-      if (response.ok || data.status === 200 || data.status === 201) {
-        toast.success(
-          `${transactionData.type === 'INCOME' ? 'Income' : 'Expense'} recorded successfully`
-        );
-        router.push('/transactions');
-      } else {
-        toast.error(data.message || 'Failed to save transaction');
+        const data = await response.json();
+        if (response.ok || data.status === 200 || data.status === 201) {
+          toast.success(
+            t('transaction_form.validation.create_success', {
+              type: transactionData.type === 'INCOME' ? t('transaction_form.income') : t('transaction_form.expense'),
+            })
+          );
+          router.push('/transactions');
+        } else {
+          toast.error(data.message || t('transaction_form.validation.create_error'));
+        }
+      } catch (error) {
+        console.error('Transaction creation error:', error);
+        toast.error(t('transaction_form.validation.network_error'));
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Transaction creation error:', error);
-      toast.error('Network error. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-    }
-    else if(mode==='edit'){
-      const response  = await fetch(`${APP_URL}/api/transactions/${id}`,{
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(transactionData),
-      });
-      const data = await response.json();
-      if(response.ok || data.status === 200 || data.status === 201){
-        toast.success('Transaction updated successfully');
-        router.push(`/transactions/${id}`);
-      }else{
-        toast.error('Failed to update transaction');
+    } else if (mode === 'edit') {
+      try {
+        const response = await fetch(`${APP_URL}/api/transactions/${id}`, {
+          method: 'PATCH',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(transactionData),
+        });
+        const data = await response.json();
+        if (response.ok || data.status === 200 || data.status === 201) {
+          toast.success(t('transaction_form.validation.update_success'));
+          router.push(`/transactions/${id}`);
+        } else {
+          toast.error(t('transaction_form.validation.update_error'));
+        }
+      } catch {
+        toast.error(t('transaction_form.validation.network_error'));
+      } finally {
+        setLoading(false);
       }
     }
-    
   };
 
-  const currencySymbol = '$';
-  if(isLoadingFetch) return (<LoadingTransaction hight={130}/>)
+  const currencySymbol = user?.currency || '$';
+
+  if (isLoadingFetch) return <LoadingTransaction hight={130} />;
+
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto', paddingBottom: '3rem' }}>
       {/* Top Header */}
@@ -243,13 +244,13 @@ export default function TransactionAction(
           }}
         >
           <ArrowLeft size={14} />
-          <span>Back to Transactions</span>
+          <span>{t('transaction_form.back')}</span>
         </Link>
         <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-          New Transaction
+          {mode === 'edit' ? t('transaction_form.edit_title') : t('transaction_form.new_title')}
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
-          Fill in the fields below to record a new transaction.
+          {mode === 'edit' ? t('transaction_form.edit_subtitle') : t('transaction_form.new_subtitle')}
         </p>
       </div>
 
@@ -280,7 +281,7 @@ export default function TransactionAction(
               marginBottom: '0.5rem',
             }}
           >
-            Transaction Type
+            {t('transaction_form.type_label')}
           </label>
           <div
             style={{
@@ -292,7 +293,7 @@ export default function TransactionAction(
             {/* Expense Button */}
             <button
               type="button"
-              onClick={() => setTransactionData({...transactionData,type:'EXPENSE'})}
+              onClick={() => setTransactionData({ ...transactionData, type: 'EXPENSE' })}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -308,7 +309,7 @@ export default function TransactionAction(
                   transactionData.type === 'EXPENSE'
                     ? 'rgba(239, 68, 68, 0.12)'
                     : '#0a0a0a',
-                color:transactionData.type === 'EXPENSE' ? '#ef4444' : 'var(--text-secondary)',
+                color: transactionData.type === 'EXPENSE' ? '#ef4444' : 'var(--text-secondary)',
                 fontSize: '0.9rem',
                 fontWeight: '700',
                 cursor: 'pointer',
@@ -316,13 +317,13 @@ export default function TransactionAction(
               }}
             >
               <ArrowDownLeft size={18} />
-              <span>Expense</span>
+              <span>{t('transaction_form.expense')}</span>
             </button>
 
             {/* Income Button */}
             <button
               type="button"
-              onClick={() => setTransactionData({...transactionData,type:'INCOME'})}
+              onClick={() => setTransactionData({ ...transactionData, type: 'INCOME' })}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -346,7 +347,7 @@ export default function TransactionAction(
               }}
             >
               <ArrowUpRight size={18} />
-              <span>Income</span>
+              <span>{t('transaction_form.income')}</span>
             </button>
           </div>
         </div>
@@ -364,17 +365,17 @@ export default function TransactionAction(
               marginBottom: '0.4rem',
             }}
           >
-            Title / Merchant
+            {t('transaction_form.title_label')}
           </label>
           <input
             type="text"
             placeholder={
               transactionData.type === 'EXPENSE'
-                ? 'e.g. Supermarket, Netflix, Electricity'
-                : 'e.g. Tech Salary, Freelance project'
+                ? t('transaction_form.placeholder_expense')
+                : t('transaction_form.placeholder_income')
             }
             value={transactionData.title}
-            onChange={(e) => setTransactionData({...transactionData,title:e.target.value})}
+            onChange={(e) => setTransactionData({ ...transactionData, title: e.target.value })}
             style={{
               width: '100%',
               padding: '0.75rem 1rem',
@@ -407,7 +408,7 @@ export default function TransactionAction(
               marginBottom: '0.4rem',
             }}
           >
-            Amount & Currency
+            {t('transaction_form.amount_label')}
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: '0.75rem' }}>
             {/* Amount Input */}
@@ -425,10 +426,10 @@ export default function TransactionAction(
             >
               <span
                 style={{
-                  fontSize: '1.1rem',
+                  fontSize: '0.9rem',
                   fontWeight: '700',
                   color: 'var(--text-muted)',
-                  marginRight: '0.5rem',
+                  marginInlineEnd: '0.5rem',
                 }}
               >
                 {currencySymbol}
@@ -438,8 +439,8 @@ export default function TransactionAction(
                 step="any"
                 min="0.01"
                 placeholder="0.00"
-                value={transactionData.amount}
-                onChange={(e) => setTransactionData({...transactionData,amount:parseFloat(e.target.value)})}
+                value={transactionData.amount || ''}
+                onChange={(e) => setTransactionData({ ...transactionData, amount: parseFloat(e.target.value) || 0 })}
                 onFocus={() => {
                   const el = document.getElementById('amount-box');
                   if (el) el.style.borderColor = 'var(--accent-primary)';
@@ -466,7 +467,7 @@ export default function TransactionAction(
             {/* Currency Select */}
             <input
               value={transactionData.currency}
-              onChange={(e) => setTransactionData({...transactionData,currency:e.target.value})}
+              onChange={(e) => setTransactionData({ ...transactionData, currency: e.target.value })}
               style={{
                 width: '100%',
                 padding: '0.75rem 0.85rem',
@@ -491,7 +492,7 @@ export default function TransactionAction(
 
           {/* Quick Amount Pill Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>Add:</span>
+            <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>{t('transaction_form.add_label')}</span>
             {QUICK_AMOUNTS.map((val) => (
               <button
                 key={val}
@@ -522,10 +523,10 @@ export default function TransactionAction(
                 +{val}
               </button>
             ))}
-            {transactionData.amount  && (
+            {Boolean(transactionData.amount) && (
               <button
                 type="button"
-                onClick={() => setTransactionData({...transactionData,amount:0})}
+                onClick={() => setTransactionData({ ...transactionData, amount: 0 })}
                 style={{
                   padding: '0.25rem 0.5rem',
                   background: 'transparent',
@@ -534,10 +535,10 @@ export default function TransactionAction(
                   fontSize: '0.725rem',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  marginLeft: 'auto',
+                  marginInlineStart: 'auto',
                 }}
               >
-                Clear
+                {t('transaction_form.clear')}
               </button>
             )}
           </div>
@@ -557,11 +558,11 @@ export default function TransactionAction(
                 marginBottom: '0.4rem',
               }}
             >
-              Category
+              {t('transaction_form.category_label')}
             </label>
             <select
               value={transactionData.category_id}
-              onChange={(e) => setTransactionData({...transactionData,category_id:e.target.value})}
+              onChange={(e) => setTransactionData({ ...transactionData, category_id: e.target.value })}
               style={{
                 width: '100%',
                 padding: '0.75rem 0.85rem',
@@ -579,7 +580,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
-              <option value="">Select Category</option>
+              <option value="">{t('transaction_form.select_category')}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id} style={{ background: '#111', color: '#fff' }}>
                   {cat.name}
@@ -600,11 +601,11 @@ export default function TransactionAction(
                 marginBottom: '0.4rem',
               }}
             >
-              Payment Method
+              {t('transaction_form.payment_method_label')}
             </label>
             <select
               value={transactionData.payment_method_id}
-              onChange={(e) => setTransactionData({...transactionData,payment_method_id:e.target.value})}
+              onChange={(e) => setTransactionData({ ...transactionData, payment_method_id: e.target.value })}
               style={{
                 width: '100%',
                 padding: '0.75rem 0.85rem',
@@ -622,7 +623,7 @@ export default function TransactionAction(
               onFocus={(e) => (e.target.style.borderColor = 'var(--accent-primary)')}
               onBlur={(e) => (e.target.style.borderColor = 'var(--border-subtle)')}
             >
-              <option value="">Select Payment Method</option>
+              <option value="">{t('transaction_form.select_payment_method')}</option>
               {paymentMethods.map((pm) => (
                 <option key={pm.id} value={pm.id} style={{ background: '#111', color: '#fff' }}>
                   {pm.name}
@@ -632,74 +633,72 @@ export default function TransactionAction(
           </div>
         </div>
 
-        {/* 5. Date & Time */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-              <label
+        {/* 5. Date */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+            <label
+              style={{
+                fontSize: '0.775rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              {t('transaction_form.date_label')}
+            </label>
+            <div style={{ display: 'flex', gap: '0.35rem' }}>
+              <button
+                type="button"
+                onClick={() => setQuickDate(0)}
                 style={{
-                  fontSize: '0.775rem',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--accent-primary)',
+                  fontSize: '0.7rem',
                   fontWeight: '700',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  padding: 0,
                 }}
               >
-                Date
-              </label>
-              <div style={{ display: 'flex', gap: '0.35rem' }}>
-                <button
-                  type="button"
-                  onClick={() => setQuickDate(0)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--accent-primary)',
-                    fontSize: '0.7rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                >
-                  Today
-                </button>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>•</span>
-                <button
-                  type="button"
-                  onClick={() => setQuickDate(1)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--text-secondary)',
-                    fontSize: '0.7rem',
-                    cursor: 'pointer',
-                    padding: 0,
-                  }}
-                >
-                  Yesterday
-                </button>
-              </div>
+                {t('transaction_form.today')}
+              </button>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>•</span>
+              <button
+                type="button"
+                onClick={() => setQuickDate(1)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.7rem',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                {t('transaction_form.yesterday')}
+              </button>
             </div>
-            <input
-              type="date"
-              value={transactionData.date?.split("T")[0] ?? ""}
-              onChange={(e) => setTransactionData({...transactionData,date:e.target.value})}
-              style={{
-                width: '100%',
-                padding: '0.75rem 0.85rem',
-                background: '#090909',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-md)',
-                color: '#ffffff',
-                fontSize: '0.85rem',
-                outline: 'none',
-                boxSizing: 'border-box',
-                fontFamily: 'inherit',
-                colorScheme: 'dark',
-              }}
-              required
-            />
           </div>
+          <input
+            type="date"
+            value={transactionData.date?.split('T')[0] ?? ''}
+            onChange={(e) => setTransactionData({ ...transactionData, date: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '0.75rem 0.85rem',
+              background: '#090909',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-md)',
+              color: '#ffffff',
+              fontSize: '0.85rem',
+              outline: 'none',
+              boxSizing: 'border-box',
+              fontFamily: 'inherit',
+              colorScheme: 'dark',
+            }}
+            required
+          />
         </div>
 
         {/* 6. Notes (Optional) */}
@@ -715,13 +714,13 @@ export default function TransactionAction(
               marginBottom: '0.4rem',
             }}
           >
-            Notes / Memo (Optional)
+            {t('transaction_form.notes_label')}
           </label>
           <textarea
             rows={3}
-            placeholder="Add any extra notes or reference..."
+            placeholder={t('transaction_form.notes_placeholder')}
             value={transactionData.description}
-            onChange={(e) => setTransactionData({...transactionData,description:e.target.value})}
+            onChange={(e) => setTransactionData({ ...transactionData, description: e.target.value })}
             style={{
               width: '100%',
               padding: '0.75rem 0.85rem',
@@ -749,8 +748,8 @@ export default function TransactionAction(
             style={{
               flex: 1,
               padding: '0.8rem 1.5rem',
-              background:transactionData.type === 'EXPENSE' ? '#ef4444' : 'var(--accent-primary)',
-              color:transactionData.type === 'EXPENSE' ? '#ffffff' : '#000000',
+              background: transactionData.type === 'EXPENSE' ? '#ef4444' : 'var(--accent-primary)',
+              color: transactionData.type === 'EXPENSE' ? '#ffffff' : '#000000',
               border: 'none',
               borderRadius: 'var(--radius-md)',
               fontSize: '0.9rem',
@@ -770,12 +769,18 @@ export default function TransactionAction(
             {loading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                <span>Saving...</span>
+                <span>{t('transaction_form.saving')}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 size={16} />
-                <span>Save {transactionData.type === 'INCOME' ? 'Income' : 'Expense'}</span>
+                <span>
+                  {mode === 'edit'
+                    ? t('transaction_form.save_changes')
+                    : transactionData.type === 'INCOME'
+                    ? t('transaction_form.save_income')
+                    : t('transaction_form.save_expense')}
+                </span>
               </>
             )}
           </button>
@@ -805,11 +810,10 @@ export default function TransactionAction(
               e.currentTarget.style.background = '#181818';
             }}
           >
-            Cancel
+            {t('transaction_form.cancel')}
           </button>
         </div>
       </form>
     </div>
   );
 }
-
