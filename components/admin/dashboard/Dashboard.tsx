@@ -73,7 +73,7 @@ export function Dashboard({ user, token }: { user: User, token: string }) {
                 console.error("Failed to fetch exchange rate:", error);
 
                 if (!cancelled) {
-                    setrate(1); // خاص state ديال rate يسمح بـ null
+                    setrate(1);
                 }
             }
         };

@@ -5,7 +5,7 @@ import { Wallet, Menu, X, ArrowRight } from 'lucide-react';
 import { NavLinks } from '@/config/dashboard-link';
 import { useAuth } from '@/hooks/auth';
 import { User } from '@/types';
-
+import LanguageSwitcher from'@/components/i18n/btn-switch'
 export default function Navbar({ user }: User) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileToggle, setProfileToggle] = useState(false);
@@ -100,7 +100,8 @@ export default function Navbar({ user }: User) {
             );
           })}
         </div>
-
+        <div style={{display:'flex',gap:'1rem'}}>
+          <LanguageSwitcher/>
         {/* Action Buttons */}
         {!user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -266,6 +267,8 @@ export default function Navbar({ user }: User) {
             )}
           </div>
         )}
+        </div>
+        
       </div>
 
       {/* Mobile Drawer */}

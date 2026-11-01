@@ -21,6 +21,7 @@ import {
   Tag,
   CreditCard
 } from 'lucide-react';
+import { NavLinks } from '@/config/dashboard-link';
 import { toast } from 'sonner';
 import { User } from '@/types';
 import {Notification} from '@/components/notifications/notification';
@@ -89,23 +90,8 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
     router.push('/login');
   };
 
-  const navLinks = [
-    { label: 'Overview', path: '/dashboard', icon: LayoutDashboard, badge: null },
-    { label: 'Transactions', path: '/transactions', icon: ArrowUpDown, badge: null },
-    {
-      label: 'Management',
-      path: null,
-      icon: Layers,
-      badge: null,
-      children: [
-        { label: 'Categories', path: '/categories', icon: Tag, badge: null },
-        { label: 'Payment Methods', path: '/payment-method', icon: CreditCard, badge: null },
-      ],
-    },
-    { label: 'Budgets', path: '/budgets', icon: Target, badge: null },
-    { label: 'Analytics & Reports', path: '/reports', icon: BarChart3, badge: '21' },
-    { label: 'Settings', path: '/setting', icon: Settings, badge: null },
-  ];
+  const navLinks = NavLinks
+
 
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : 'U');
   const userName = user?.name || '';
@@ -212,11 +198,11 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
               const hasChildren = Boolean(link.children && link.children.length > 0);
               const isChildActive = Boolean(
                 link.children?.some(
-                  (child) => pathname === child.path || (child.path && pathname.startsWith(child.path + '/'))
+                  (child) => pathname === child.href || (child.href && pathname.startsWith(child.href + '/'))
                 )
               );
-              const isActive = link.path
-                ? (pathname === link.path || (link.path === '/dashboard' && pathname === '/dashboard/'))
+              const isActive = link.href
+                ? (pathname === link.href || (link.href === '/dashboard' && pathname === '/dashboard/'))
                 : isChildActive;
 
               if (hasChildren && link.children) {
@@ -285,12 +271,12 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
                         {link.children.map((child) => {
                           const ChildIcon = child.icon;
                           const isCurrentChildActive =
-                            pathname === child.path || (child.path && pathname.startsWith(child.path + '/'));
+                            pathname === child.href || (child.href && pathname.startsWith(child.href + '/'));
 
                           return (
                             <Link
                               key={child.label}
-                              href={child.path}
+                              href={child.href||'#'}
                               onClick={() => setMobileSidebarOpen(false)}
                               style={{
                                 display: 'flex',
@@ -349,7 +335,7 @@ export default function DashboardLayout({ children, user, token}: DashboardLayou
               return (
                 <Link
                   key={link.label}
-                  href={link.path || '#'}
+                  href={link.href || '#'}
                   onClick={() => setMobileSidebarOpen(false)}
                   style={{
                     display: 'flex',

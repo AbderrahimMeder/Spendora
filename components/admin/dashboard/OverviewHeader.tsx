@@ -1,6 +1,6 @@
 'use client';
-import React from 'react';
-import { Calendar, RefreshCw, TrendingUp, TrendingDown } from 'lucide-react';
+import {  RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 
 interface OverviewHeaderProps {
@@ -20,7 +20,7 @@ export default function OverviewHeader({
   onRefresh,
   isRefreshing
 }: OverviewHeaderProps) {
-
+  const {t}=useTranslation()
   return (
     <div style={{
       display: 'flex',
@@ -42,7 +42,7 @@ export default function OverviewHeader({
             letterSpacing: '-0.03em',
             margin: 0,
           }}>
-            Welcome back <span style={{ color: 'var(--accent-primary)', marginLeft: '5px' }}>{userName || ''}</span>
+            {t('welcome')} <span style={{ color: 'var(--accent-primary)', marginLeft: '5px' }}>{userName || ''}</span>
           </h1>
         </div>
       </div>
