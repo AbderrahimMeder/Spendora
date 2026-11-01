@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { X, LogOut, AlertTriangle, Loader2, ShieldAlert } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface LogoutAlertProps {
   isOpen: boolean;
@@ -17,10 +18,15 @@ export function LogoutAlertModal({
   onClose,
   onConfirm,
   loading = false,
-  title = 'Logout of all devices?',
-  description = 'Are you sure you want to log out of all active sessions across your computers, phones, and browsers?',
+  title,
+  description,
 }: LogoutAlertProps) {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
+
+  const modalTitle = title || t('settings_page.security.logout_modal.title');
+  const modalDescription = description || t('settings_page.security.logout_modal.desc');
 
   return (
     <>
@@ -88,7 +94,7 @@ export function LogoutAlertModal({
             style={{
               position: 'absolute',
               top: '1.15rem',
-              right: '1.15rem',
+              insetInlineEnd: '1.15rem',
               width: '32px',
               height: '32px',
               borderRadius: '8px',
@@ -149,7 +155,7 @@ export function LogoutAlertModal({
               }}
             >
               <ShieldAlert size={12} />
-              Security Action
+              {t('settings_page.security.logout_modal.security_action')}
             </div>
           </div>
 
@@ -164,7 +170,7 @@ export function LogoutAlertModal({
                 letterSpacing: '-0.01em',
               }}
             >
-              {title}
+              {modalTitle}
             </h3>
             <p
               style={{
@@ -174,7 +180,7 @@ export function LogoutAlertModal({
                 margin: 0,
               }}
             >
-              {description}
+              {modalDescription}
             </p>
           </div>
 
@@ -193,8 +199,10 @@ export function LogoutAlertModal({
           >
             <AlertTriangle size={16} color="#ef4444" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div style={{ fontSize: '0.785rem', color: '#e5e7eb', lineHeight: 1.45 }}>
-              <span style={{ fontWeight: '700', color: '#f87171' }}>Note: </span>
-              Your current session will also be terminated. You will need to log back in with your password to continue.
+              <span style={{ fontWeight: '700', color: '#f87171' }}>
+                {t('settings_page.security.logout_modal.warning_note')}{' '}
+              </span>
+              {t('settings_page.security.logout_modal.warning_text')}
             </div>
           </div>
 
@@ -223,7 +231,7 @@ export function LogoutAlertModal({
                 if (!loading) e.currentTarget.style.background = '#1d1d1d';
               }}
             >
-              Cancel
+              {t('settings_page.security.logout_modal.cancel')}
             </button>
 
             <button
@@ -258,12 +266,12 @@ export function LogoutAlertModal({
               {loading ? (
                 <>
                   <Loader2 size={15} className="animate-spin" />
-                  <span>Signing out...</span>
+                  <span>{t('settings_page.security.logout_modal.signing_out')}</span>
                 </>
               ) : (
                 <>
                   <LogOut size={15} />
-                  <span>Log out everywhere</span>
+                  <span>{t('settings_page.security.logout_modal.confirm')}</span>
                 </>
               )}
             </button>

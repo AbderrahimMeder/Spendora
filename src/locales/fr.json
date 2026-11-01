@@ -775,5 +775,344 @@
     "saving": "Enregistrement...",
     "validation_name": "Veuillez entrer un nom de catégorie",
     "save_error": "Échec de l'enregistrement de la catégorie"
+  },
+  "notifications_page": {
+    "title": "Notifications et alertes",
+    "subtitle": "Consultez, recherchez, archivez et gérez vos alertes de compte et de budget.",
+    "refresh_tooltip": "Actualiser les notifications",
+    "tabs": {
+      "all": "Toutes",
+      "unread": "Non lues",
+      "read": "Lues",
+      "archived": "Archivées"
+    },
+    "search_placeholder": "Rechercher des notifications...",
+    "clear_search": "Effacer la recherche",
+    "sort": {
+      "newest": "Plus récentes d'abord",
+      "oldest": "Plus anciennes d'abord",
+      "unread_first": "Non lues d'abord",
+      "title_asc": "Titre (A-Z)"
+    },
+    "reset": "Réinitialiser",
+    "reset_tooltip": "Réinitialiser tous les filtres",
+    "bulk": {
+      "selected_single": "{{count}} notification sélectionnée",
+      "selected_plural": "{{count}} notifications sélectionnées",
+      "mark_read": "Marquer comme lue",
+      "restore": "Restaurer",
+      "archive": "Archiver",
+      "delete": "Supprimer"
+    },
+    "headers": {
+      "select_all": "Tout sélectionner sur cette page",
+      "type": "Type",
+      "notification": "Notification",
+      "time": "Heure",
+      "action_link": "Lien d'action",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "Aucune notification trouvée",
+      "search": "Aucune notification ne correspond à « {{query}} ». Essayez avec un autre terme.",
+      "archived": "Vos archives sont vides. Les notifications archivées apparaîtront ici.",
+      "unread": "Vous êtes à jour ! Aucune notification non lue.",
+      "actionable": "Aucune notification ne contient de lien direct actuellement.",
+      "default": "Vous n'avez pas encore de notifications enregistrées.",
+      "view_all": "Voir toutes les notifications"
+    },
+    "badges": {
+      "budget": "Alerte budget",
+      "finance": "Finances",
+      "system": "Système",
+      "notification": "Notification",
+      "archived": "Archivée",
+      "unread": "Non lue"
+    },
+    "time": {
+      "just_now": "À l'instant",
+      "minutes_ago": "Il y a {{count}} min",
+      "hours_ago": "Il y a {{count}} h",
+      "days_ago": "Il y a {{count}} j"
+    },
+    "actions": {
+      "open_link": "Ouvrir le lien",
+      "mark_as_read": "Marquer comme lu",
+      "mark_as_unread": "Marquer comme non lu",
+      "archive": "Archiver la notification",
+      "restore": "Restaurer des archives",
+      "delete": "Supprimer la notification"
+    },
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "notifications": "notifications",
+      "per_page": "Par page :",
+      "prev": "Page précédente",
+      "next": "Page suivante"
+    },
+    "detail_modal": {
+      "details_label": "Détails de la notification",
+      "date_received": "Date de réception :",
+      "read_status": "Statut de lecture :",
+      "read": "Lue",
+      "unread": "Non lue",
+      "attached_action": "LIEN D'ACTION ASSOCIÉ",
+      "visit_link": "Visiter le lien",
+      "restore_archive": "Restaurer des archives",
+      "archive": "Archiver",
+      "mark_unread": "Marquer comme non lue",
+      "mark_read": "Marquer comme lue",
+      "delete": "Supprimer",
+      "no_message": "Aucun contenu de message fourni."
+    },
+    "delete_modal": {
+      "title": "Confirmer la suppression",
+      "msg_bulk": "Êtes-vous sûr de vouloir supprimer {{count}} notifications ?",
+      "msg_single": "Êtes-vous sûr de vouloir supprimer définitivement cette notification ?",
+      "warning": "Cette action est irréversible. La notification sera supprimée de votre historique.",
+      "cancel": "Annuler",
+      "delete_btn": "Supprimer définitivement",
+      "deleting": "Suppression..."
+    },
+    "toasts": {
+      "marked_read": "Marquée comme lue",
+      "marked_unread": "Marquée comme non lue",
+      "all_read": "Toutes les notifications ont été marquées comme lues",
+      "restored": "Notification restaurée des archives",
+      "archived": "Notification déplacée vers les archives",
+      "deleted_bulk": "{{count}} notifications supprimées",
+      "deleted_single": "Notification supprimée",
+      "bulk_read": "{{count}} notifications marquées comme lues",
+      "bulk_archived": "{{count}} notifications archivées",
+      "bulk_restored": "{{count}} notifications restaurées",
+      "server_error": "Erreur interne du serveur"
+    }
+  },
+  "settings_page": {
+    "breadcrumbs": {
+      "admin": "Administration",
+      "settings": "Paramètres"
+    },
+    "header": {
+      "title": "Paramètres et préférences",
+      "subtitle": "Gérez votre profil, vos préférences financières, vos devises, vos accès de sécurité et l'interface.",
+      "unsaved_changes": "Modifications non enregistrées",
+      "up_to_date": "À jour",
+      "save_all": "Tout enregistrer",
+      "saving": "Enregistrement...",
+      "success_save": "Paramètres et préférences enregistrés avec succès !",
+      "error_save": "Échec de l'enregistrement des paramètres. Veuillez réessayer."
+    },
+    "hero": {
+      "verified": "VÉRIFIÉ",
+      "unverified": "NON VÉRIFIÉ",
+      "default_currency": "Devise par défaut :",
+      "customize_ui": "Personnaliser l'UI",
+      "change_avatar": "Changer l'avatar"
+    },
+    "tabs": {
+      "profile": "Profil et compte",
+      "financial": "Finances et devise",
+      "security": "Sécurité et accès",
+      "notifications": "Notifications et alertes",
+      "appearance": "Thème et interface",
+      "data": "Données et confidentialité"
+    },
+    "profile": {
+      "personal_info": "Informations personnelles",
+      "personal_info_desc": "Mettez à jour vos coordonnées et identifiants publics",
+      "full_name": "Nom complet",
+      "full_name_placeholder": "ex. Alex Morgan",
+      "email": "Adresse e-mail",
+      "email_placeholder": "nom@exemple.com",
+      "phone": "Numéro de téléphone",
+      "phone_placeholder": "+33 6 12 34 56 78",
+      "country": "Pays / Région",
+      "bio": "Biographie financière et objectifs",
+      "bio_placeholder": "Parlez-nous de vos objectifs financiers...",
+      "save_changes": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "validation": {
+        "cannot_edit": "Vous ne pouvez pas modifier ce profil",
+        "name_required": "Le nom est obligatoire",
+        "email_required": "L'e-mail est obligatoire",
+        "email_invalid": "Veuillez entrer une adresse e-mail valide",
+        "phone_required": "Le numéro de téléphone est obligatoire",
+        "country_required": "Le pays est obligatoire",
+        "update_failed": "Échec de la mise à jour du profil",
+        "something_wrong": "Une erreur est survenue"
+      },
+      "tier": {
+        "active_plan": "Formule active",
+        "inactive_plan": "Formule inactive",
+        "plan_pro": "Spendora PRO Entreprise",
+        "plan_free": "Spendora Gratuit",
+        "pro_desc": "Comptes multidevises illimités, synchronisation bancaire automatisée, assistant financier IA.",
+        "free_desc": "Fonctionnalités de base avec accès limité.",
+        "billing_cycle": "Cycle de facturation",
+        "yearly_price": "Annuel (99 $/an)",
+        "free_price": "Gratuit",
+        "next_renewal": "Prochain renouvellement"
+      }
+    },
+    "financial": {
+      "title": "Finances et devise",
+      "subtitle": "Gérez la devise de référence et les règles comptables",
+      "base_currency": "Devise de référence par défaut",
+      "base_currency_hint": "Tous les indicateurs globaux, rapports et budgets sont calculés dans cette devise.",
+      "fiscal_day": "Jour de début du mois fiscal",
+      "fiscal_options": {
+        "day_1": "1er du mois (Standard)",
+        "day_15": "15 du mois",
+        "day_25": "25 du mois (Jour de paie)",
+        "day_last": "Dernier jour ouvré du mois"
+      },
+      "auto_fx": "Synchronisation automatique des taux de change",
+      "auto_fx_desc": "Récupère automatiquement les taux de change via l'API Frankfurter lors de la saisie.",
+      "save_changes": "Enregistrer les modifications",
+      "saving": "Enregistrement des préférences...",
+      "hero": {
+        "active_base": "Devise de référence active",
+        "active_desc": "Tous les graphiques et allocations de budget sont automatiquement formatés en {{currency}}.",
+        "accounting_cycle": "Cycle comptable",
+        "day_of_month": "Jour {{day}} du mois",
+        "auto_fx_status": "Sync auto taux de change",
+        "enabled": "Activé",
+        "disabled": "Désactivé"
+      },
+      "toasts": {
+        "error": "Une erreur est survenue",
+        "failed_save": "Impossible de modifier les paramètres financiers pour le moment."
+      }
+    },
+    "security": {
+      "title": "Mot de passe et identifiants",
+      "subtitle": "Assurez-vous que votre compte utilise un mot de passe fort et unique",
+      "current_password": "Mot de passe actuel",
+      "new_password": "Nouveau mot de passe",
+      "new_password_placeholder": "8 caractères minimum",
+      "confirm_password": "Confirmer le nouveau mot de passe",
+      "confirm_password_placeholder": "Répétez le nouveau mot de passe",
+      "strength_label": "Robustesse :",
+      "strength": {
+        "empty": "Vide",
+        "weak": "Faible",
+        "good": "Moyen",
+        "strong": "Très fort"
+      },
+      "update_btn": "Mettre à jour le mot de passe",
+      "validation": {
+        "enter_current": "Veuillez entrer votre mot de passe actuel",
+        "min_length": "Le nouveau mot de passe doit contenir au moins 8 caractères",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas",
+        "success": "Mot de passe mis à jour avec succès",
+        "error": "Échec de la mise à jour du mot de passe"
+      },
+      "logout_modal": {
+        "security_action": "Action de sécurité",
+        "title": "Se déconnecter de tous les appareils ?",
+        "desc": "Êtes-vous sûr de vouloir fermer toutes vos sessions actives sur vos ordinateurs, téléphones et navigateurs ?",
+        "warning_note": "Remarque :",
+        "warning_text": "Votre session actuelle sera également fermée. Vous devrez vous reconnecter avec votre mot de passe.",
+        "cancel": "Annuler",
+        "confirm": "Déconnecter partout",
+        "signing_out": "Déconnexion..."
+      }
+    },
+    "notifications_tab": {
+      "title": "Système d'alertes financières",
+      "subtitle": "Automatisez les notifications push et e-mails en cas de dépassement de budget",
+      "budget_alert": "Alerte de plafond de budget",
+      "budget_alert_desc": "Recevoir une alerte lorsque les dépenses d'une catégorie dépassent {{threshold}} % du budget mensuel alloué.",
+      "trigger_threshold": "Seuil de déclenchement :",
+      "threshold_labels": {
+        "cautious": "50 % (Prudent)",
+        "recommended": "80 % (Recommandé)",
+        "strict": "100 % (Strict)"
+      },
+      "large_tx_alert": "Alerte de dépense importante",
+      "large_tx_desc": "Déclencher une alerte instantanée pour toute transaction unique dépassant un montant défini.",
+      "alert_over": "M'alerter pour les montants supérieurs à :",
+      "weekly_digest": "Synthèse financière hebdomadaire",
+      "weekly_digest_desc": "Recevez chaque lundi un récapitulatif des revenus, des dépenses par catégorie et du rythme d'épargne.",
+      "bill_reminders": "Rappels d'abonnements et factures",
+      "bill_reminders_desc": "Recevez une notification 48 heures avant l'échéance des abonnements et factures récurrents.",
+      "push_notifications": "Notifications push du navigateur",
+      "push_notifications_desc": "Afficher les alertes de bureau pour la synchronisation en direct."
+    },
+    "appearance": {
+      "themes_title": "Thèmes sombres Finora",
+      "themes_subtitle": "Sélectionnez une palette sombre optimisée pour de longues sessions d'analyse financière",
+      "themes": {
+        "midnight": "Noir Minuit",
+        "midnight_desc": "Arrière-plan sombre #080808 avec accents vert émeraude",
+        "cyber_emerald": "Cyber Émeraude",
+        "cyber_emerald_desc": "Accents vert vif avec des couches de carbone sombre",
+        "deep_obsidian": "Obsidienne Profonde",
+        "deep_obsidian_desc": "Ardoise monochrome ultra sombre avec touches bleu électrique",
+        "purple_aura": "Aura Améthyste",
+        "purple_aura_desc": "Esthétique violette futuriste et élégante"
+      },
+      "theme_set_toast": "Thème appliqué : {{name}}",
+      "privacy_title": "Fonctionnalités d'affichage et de confidentialité",
+      "privacy_blur": "Mode de flou de confidentialité",
+      "privacy_blur_desc": "Masque tous les chiffres de solde bancaire avec un flou subtil en public.",
+      "compact_mode": "Densité compacte",
+      "compact_mode_desc": "Réduit l'espacement dans les tableaux et cartes pour afficher plus de transactions.",
+      "live_preview_title": "Aperçu en direct du mode confidentialité",
+      "preview_active": "🔒 Actif : Les montants sont masqués en toute sécurité.",
+      "preview_inactive": "👁️ Inactif : Les soldes sont entièrement visibles.",
+      "checking_balance": "Solde du compte courant",
+      "concealed": "Masqué",
+      "visible": "Visible"
+    },
+    "data": {
+      "export_title": "Exporter vos données financières",
+      "export_subtitle": "Téléchargez à tout moment l'intégralité de vos transactions, catégories et relevés",
+      "csv_title": "Feuille de calcul CSV",
+      "csv_desc": "Fichier CSV standard compatible avec Microsoft Excel, Google Sheets et vos logiciels comptables.",
+      "download_csv": "Télécharger le relevé CSV",
+      "json_title": "Sauvegarde complète JSON",
+      "json_desc": "Copie intégrale de la base de données incluant métadonnées, catégories, comptes et préférences.",
+      "download_json": "Télécharger la sauvegarde JSON",
+      "export_toast": "Export téléchargé sous {{filename}}",
+      "danger_title": "Zone de danger",
+      "danger_subtitle": "Actions irréversibles concernant votre compte et vos archives financières",
+      "clear_cache_title": "Effacer les données d'analyse en cache",
+      "clear_cache_desc": "Recalcule les écarts budgétaires, le rythme d'épargne et rafraîchit les graphiques.",
+      "clear_cache_btn": "Vider le cache",
+      "clear_cache_toast": "Cache des analyses vidé et rafraîchi",
+      "delete_acc_title": "Supprimer le compte",
+      "delete_acc_desc": "Supprimer définitivement votre profil, vos catégories, vos transactions et vos moyens de paiement.",
+      "delete_acc_btn": "Supprimer le compte",
+      "delete_modal": {
+        "title": "Supprimer le compte Finora",
+        "desc": "Cette action supprimera définitivement votre compte, résiliera vos abonnements et effacera toutes vos transactions et budgets. Cette action est irréversible.",
+        "type_confirm": "Tapez DELETE pour confirmer :",
+        "cancel": "Annuler",
+        "confirm_btn": "Confirmer la suppression",
+        "deleting": "Suppression...",
+        "deleted_toast": "Compte supprimé. Redirection vers l'accueil..."
+      }
+    },
+    "avatar_modal": {
+      "title": "Choisir une photo de profil",
+      "desc": "Choisissez parmi notre collection d'avatars ou entrez l'URL directe d'une image.",
+      "custom_url": "Ou URL d'image personnalisée :",
+      "done": "Terminé"
+    },
+    "two_factor": {
+      "title": "Configurer l'authentification à deux facteurs",
+      "desc": "Scannez ce code QR à l'aide de Google Authenticator, Authy ou 1Password pour associer votre appareil.",
+      "secret_key": "Clé de configuration secrète (saisie manuelle) :",
+      "key_copied": "Clé secrète copiée !",
+      "enter_code": "Entrez le code à 6 chiffres de l'application",
+      "cancel": "Annuler",
+      "verify_btn": "Vérifier et activer",
+      "invalid_code": "Veuillez entrer un code de vérification valide à 6 chiffres",
+      "enabled_toast": "L'authentification à deux facteurs est maintenant activée !"
+    }
   }
 }

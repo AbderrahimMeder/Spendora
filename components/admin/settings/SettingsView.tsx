@@ -1,55 +1,38 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
   User as UserIcon,
-  Mail,
   Shield,
-  Lock,
-  Key,
   Bell,
   DollarSign,
   Palette,
   Eye,
   EyeOff,
-  Smartphone,
-  Laptop,
-  Globe,
   Check,
   CheckCircle2,
   AlertTriangle,
   Download,
-  Trash2,
   Camera,
-  Sparkles,
   RefreshCw,
-  Moon,
-  Sun,
-  Sliders,
-  CreditCard,
-  TrendingUp,
-  Coins,
-  HelpCircle,
   ChevronRight,
-  Info,
   Save,
   FileSpreadsheet,
   FileJson,
   ShieldCheck,
-  Calendar,
-  AlertCircle,
   X,
   Copy,
-  Clock,
   Layers,
-  ArrowUpRight,
 } from 'lucide-react';
 import type { User } from '@/types';
 import SettingProfiles from './SettingProfiles';
 import { SettingFaince } from './SettingFainance';
-import {SettingSecurety} from "./SettingSecurety"
+import { SettingSecurety } from './SettingSecurety';
+import { ToggleSwitch } from '@/components/ui/toggle';
+
 interface SettingsViewProps {
   user: User;
   token?: string | null;
@@ -57,36 +40,31 @@ interface SettingsViewProps {
 
 type TabType = 'profile' | 'financial' | 'security' | 'notifications' | 'appearance' | 'data';
 
-
 const THEME_OPTIONS = [
   {
     id: 'midnight',
-    name: 'Midnight Black',
-    description: 'Deep #080808 background with emerald neon accents',
+    key: 'midnight',
     bg: '#080808',
     card: '#141414',
     accent: '#10b981',
   },
   {
     id: 'cyber-emerald',
-    name: 'Cyber Emerald',
-    description: 'Vibrant green highlights with carbon dark layers',
+    key: 'cyber_emerald',
     bg: '#05130d',
     card: '#0a1f16',
     accent: '#00f59b',
   },
   {
     id: 'deep-obsidian',
-    name: 'Deep Obsidian',
-    description: 'Ultra dark monochrome slate with electric blue touches',
+    key: 'deep_obsidian',
     bg: '#0c0f17',
     card: '#131826',
     accent: '#3b82f6',
   },
   {
     id: 'purple-aura',
-    name: 'Amethyst Aura',
-    description: 'Futuristic purple luxury finance aesthetic',
+    key: 'purple_aura',
     bg: '#0f0a1a',
     card: '#19112a',
     accent: '#a855f7',
@@ -95,52 +73,13 @@ const THEME_OPTIONS = [
 
 export function SettingsView({ user, token }: SettingsViewProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Security States
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [show2FAModal, setShow2FAModal] = useState(false);
-  const [twoFactorCode, setTwoFactorCode] = useState('');
-  const [copiedKey, setCopiedKey] = useState(false);
-
-  // Active Sessions Mock Data with interactability
-  const [sessions, setSessions] = useState([
-    {
-      id: 'sess-1',
-      device: 'Windows PC · Chrome 129.0',
-      location: 'New York, US',
-      ip: '192.168.1.45',
-      current: true,
-      lastActive: 'Active now',
-      type: 'laptop',
-    },
-    {
-      id: 'sess-2',
-      device: 'iPhone 15 Pro · Spendora App',
-      location: 'New York, US',
-      ip: '172.56.21.90',
-      current: false,
-      lastActive: '2 hours ago',
-      type: 'mobile',
-    },
-    {
-      id: 'sess-3',
-      device: 'MacBook Air · Safari 17.4',
-      location: 'Casablanca, MA',
-      ip: '197.230.14.88',
-      current: false,
-      lastActive: '3 days ago',
-      type: 'laptop',
-    },
-  ]);
-  //image 
-  const [imageprofile,setimageprofile] = useState(user?.avatar || '');
+  // Profile image
+  const [imageprofile, setimageprofile] = useState(user?.avatar || '');
 
   // Notifications Settings States
   const [budgetAlerts, setBudgetAlerts] = useState(true);
@@ -150,13 +89,38 @@ export function SettingsView({ user, token }: SettingsViewProps) {
   const [largeTxAmount, setLargeTxAmount] = useState('500');
   const [billReminders, setBillReminders] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
-  const [marketingEmails, setMarketingEmails] = useState(false);
 
   // Appearance & Privacy States
-  const [selectedTheme, setSelectedTheme] = useState('midnight');
-  const [accentColor, setAccentColor] = useState('#10b981');
-  const [compactMode, setCompactMode] = useState(false);
-  const [privacyBlurMode, setPrivacyBlurMode] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('finora_theme') || 'midnight';
+      } catch {
+        return 'midnight';
+      }
+    }
+    return 'midnight';
+  });
+  const [compactMode, setCompactMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('finora_compact') === 'true';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+  const [privacyBlurMode, setPrivacyBlurMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('finora_privacy_mode') === 'true';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
 
   // Modal States
   const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -164,123 +128,46 @@ export function SettingsView({ user, token }: SettingsViewProps) {
   const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
-  // Load persisted client preferences on mount
-  useEffect(() => {
-    try {
-      const storedTheme = localStorage.getItem('finora_theme');
-      if (storedTheme) setSelectedTheme(storedTheme);
-      const storedPrivacy = localStorage.getItem('finora_privacy_mode');
-      if (storedPrivacy) setPrivacyBlurMode(storedPrivacy === 'true');
-      const storedCompact = localStorage.getItem('finora_compact');
-      if (storedCompact) setCompactMode(storedCompact === 'true');
-    } catch {
-      // Ignore local storage error
-    }
-  }, []);
+  // 2FA modal states
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [copiedKey, setCopiedKey] = useState(false);
 
   const markUnsaved = () => {
     if (!hasUnsavedChanges) setHasUnsavedChanges(true);
   };
-  //change profile imgage
-  const channgeProfileImage= async (image:string)=>{
-    console.log(image)
-    setimageprofile(image)
 
-  //  const response = await fetch(`${process.env.LARAVEL_API_URL}/api/user/profile`, {
-  //    method: 'PUT',
-  //    headers: {
-  //      'Content-Type': 'application/json',
-  //      Authorization: `Bearer ${token}`,
-  //    },
-  //    body: JSON.stringify({
-  //      avatar: image,
-  //    }),
-  //  });
-  //   const data = await response.json();
-  //   if (data.success) {
-  //     toast.success('Profile image changed successfully!');
-  //   } else {
-  //     toast.error('Failed to change profile image!');
-  //   }
+  const changeProfileImage = (image: string) => {
+    setimageprofile(image);
+  };
 
-  }
   // Save Settings Handler
   const handleSaveAll = async () => {
     setIsSaving(true);
     try {
-      // Save local preferences
       localStorage.setItem('finora_theme', selectedTheme);
       localStorage.setItem('finora_privacy_mode', String(privacyBlurMode));
       localStorage.setItem('finora_compact', String(compactMode));
 
-      // Attempt to persist cookie / api if available
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       setHasUnsavedChanges(false);
-      toast.success('Settings and preferences saved successfully!');
+      toast.success(t('settings_page.header.success_save'));
     } catch {
-      toast.error('Failed to save settings. Please try again.');
+      toast.error(t('settings_page.header.error_save'));
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Password update handler
-  const handlePasswordUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      toast.error('Please enter your current password');
-      return;
-    }
-    if (newPassword.length < 8) {
-      toast.error('New password must be at least 8 characters long');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error('New passwords do not match');
-      return;
-    }
-
-    toast.success('Password changed successfully! You will use it on your next login.');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-  };
-
-  // Password Strength Calculation
-  const calculatePasswordStrength = (pass: string) => {
-    let score = 0;
-    if (!pass) return 0;
-    if (pass.length >= 8) score += 25;
-    if (pass.length >= 12) score += 15;
-    if (/[A-Z]/.test(pass)) score += 20;
-    if (/[0-9]/.test(pass)) score += 20;
-    if (/[^A-Za-z0-9]/.test(pass)) score += 20;
-    return Math.min(score, 100);
-  };
-
-  const passwordScore = calculatePasswordStrength(newPassword);
-  const getStrengthLabel = () => {
-    if (passwordScore <= 0) return { label: 'Empty', color: '#666666' };
-    if (passwordScore < 40) return { label: 'Weak', color: '#ef4444' };
-    if (passwordScore < 75) return { label: 'Good', color: '#f59e0b' };
-    return { label: 'Very Strong', color: '#10b981' };
-  };
-
-  // Revoke session handler
-  const handleRevokeSession = (sessionId: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-    toast.success('Session revoked successfully.');
-  };
-
-  // Export Data Handler (Produces real downloadable files!)
+  // Export Data Handler
   const handleExportData = (format: 'json' | 'csv') => {
     const sampleData = {
       user: {
         id: user?.id || 1,
-        name:user.name,
-        email:user.email,
-        currency:user.currency,
+        name: user.name,
+        email: user.email,
+        currency: user.currency,
         exportedAt: new Date().toISOString(),
       },
       transactions: [
@@ -306,7 +193,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
     } else {
       const headers = 'ID,Title,Amount,Type,Category,Date\n';
       const rows = sampleData.transactions
-        .map((t) => `${t.id},"${t.title}",${t.amount},${t.type},${t.category},${t.date}`)
+        .map((tx) => `${tx.id},"${tx.title}",${tx.amount},${tx.type},${tx.category},${tx.date}`)
         .join('\n');
       blob = new Blob([headers + rows], { type: 'text/csv' });
       filename = `finora-transactions-${new Date().toISOString().slice(0, 10)}.csv`;
@@ -321,83 +208,8 @@ export function SettingsView({ user, token }: SettingsViewProps) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast.success(`Export downloaded as ${filename}`);
+    toast.success(t('settings_page.data.export_toast', { filename }));
   };
-
-  // Toggle Switch Component
-  const ToggleSwitch = ({
-    checked,
-    onChange,
-    label,
-    description,
-    id,
-  }: {
-    checked: boolean;
-    onChange: (val: boolean) => void;
-    label: string;
-    description?: string;
-    id?: string;
-  }) => (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.85rem 1rem',
-        borderRadius: 'var(--radius-md)',
-        background: '#141414',
-        border: '1px solid var(--border-subtle)',
-        transition: 'all 0.2s ease',
-      }}
-      className="toggle-card hover:border-[#333333]"
-    >
-      <div style={{ paddingRight: '1rem' }}>
-        <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#ffffff' }}>{label}</div>
-        {description && (
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-            {description}
-          </div>
-        )}
-      </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        id={id}
-        onClick={() => {
-          onChange(!checked);
-          markUnsaved();
-        }}
-        style={{
-          width: '46px',
-          height: '26px',
-          borderRadius: '9999px',
-          background: checked ? 'var(--accent-primary)' : '#262626',
-          border: '1px solid',
-          borderColor: checked ? 'rgba(16, 185, 129, 0.4)' : '#333333',
-          position: 'relative',
-          cursor: 'pointer',
-          flexShrink: 0,
-          transition: 'all 0.2s ease',
-          boxShadow: checked ? '0 0 12px rgba(16, 185, 129, 0.35)' : 'none',
-        }}
-      >
-        <span
-          style={{
-            position: 'absolute',
-            top: '2px',
-            left: checked ? '22px' : '3px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: '#ffffff',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-            transition: 'left 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        />
-      </button>
-    </div>
-  );
 
   return (
     <div style={{ paddingBottom: '3.5rem' }}>
@@ -416,9 +228,13 @@ export function SettingsView({ user, token }: SettingsViewProps) {
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Admin</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+              {t('settings_page.breadcrumbs.admin')}
+            </span>
             <ChevronRight size={14} color="var(--text-muted)" />
-            <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: '600' }}>Settings</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: '600' }}>
+              {t('settings_page.breadcrumbs.settings')}
+            </span>
           </div>
           <h1
             style={{
@@ -429,10 +245,10 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               margin: 0,
             }}
           >
-            Settings & Preferences
+            {t('settings_page.header.title')}
           </h1>
           <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: '0.25rem 0 0 0' }}>
-            Manage your account security, currency parameters, appearance themes, and notifications.
+            {t('settings_page.header.subtitle')}
           </p>
         </div>
 
@@ -462,7 +278,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   animation: 'pulse 1.5s infinite',
                 }}
               />
-              Unsaved changes
+              {t('settings_page.header.unsaved_changes')}
             </div>
           ) : (
             <div
@@ -480,11 +296,12 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               }}
             >
               <CheckCircle2 size={13} />
-              Up to date
+              {t('settings_page.header.up_to_date')}
             </div>
           )}
 
           <button
+            type="button"
             onClick={handleSaveAll}
             disabled={isSaving}
             style={{
@@ -508,12 +325,12 @@ export function SettingsView({ user, token }: SettingsViewProps) {
             {isSaving ? (
               <>
                 <RefreshCw size={15} style={{ animation: 'spin 0.8s linear infinite' }} />
-                <span>Saving...</span>
+                <span>{t('settings_page.header.saving')}</span>
               </>
             ) : (
               <>
                 <Save size={15} />
-                <span>Save All Settings</span>
+                <span>{t('settings_page.header.save_all')}</span>
               </>
             )}
           </button>
@@ -537,7 +354,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
           style={{
             position: 'absolute',
             top: '-50px',
-            right: '-50px',
+            insetInlineEnd: '-50px',
             width: '180px',
             height: '180px',
             background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
@@ -576,16 +393,21 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   border: '2px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                
+                {imageprofile ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imageprofile} alt={user?.name || 'User'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  user?.name?.[0]?.toUpperCase() || 'U'
+                )}
               </div>
               <button
                 type="button"
                 onClick={() => setShowAvatarModal(true)}
-                title="Change Avatar"
+                title={t('settings_page.hero.change_avatar')}
                 style={{
                   position: 'absolute',
                   bottom: '-2px',
-                  right: '-2px',
+                  insetInlineEnd: '-2px',
                   width: '26px',
                   height: '26px',
                   borderRadius: '50%',
@@ -625,7 +447,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   }}
                 >
                   <ShieldCheck size={11} color={user?.email_verified_at === null ? 'var(--text-muted)' : 'var(--accent-primary)'} />
-                  {user?.email_verified_at === null ? "UNVERIFIED" : "VERIFIED"}
+                  {user?.email_verified_at === null ? t('settings_page.hero.unverified') : t('settings_page.hero.verified')}
                 </span>
               </div>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0.5rem 0' }}>
@@ -634,15 +456,18 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 <span>🌍 {user?.country}</span>
                 <span>•</span>
-                <span>💰 Default Currency: <strong style={{ color: '#ffffff' }}>{user?.currency || 'USD'}</strong></span>
+                <span>
+                  💰 {t('settings_page.hero.default_currency')}{' '}
+                  <strong style={{ color: '#ffffff' }}>{user?.currency || 'USD'}</strong>
+                </span>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
           <div style={{ display: 'flex', gap: '0.6rem' }}>
-            
             <button
+              type="button"
               onClick={() => setActiveTab('appearance')}
               style={{
                 padding: '0.5rem 0.9rem',
@@ -660,7 +485,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               className="hover:border-zinc-500 transition-colors"
             >
               <Palette size={13} />
-              Customize UI
+              {t('settings_page.hero.customize_ui')}
             </button>
           </div>
         </div>
@@ -678,18 +503,19 @@ export function SettingsView({ user, token }: SettingsViewProps) {
         }}
       >
         {[
-          { id: 'profile', label: 'Profile & Account', icon: UserIcon },
-          { id: 'financial', label: 'Financial & Currency', icon: DollarSign },
-          { id: 'security', label: 'Security & Access', icon: Shield },
-          { id: 'notifications', label: 'Notifications & Alerts', icon: Bell },
-          { id: 'appearance', label: 'Theme & Interface', icon: Palette },
-          { id: 'data', label: 'Data & Privacy', icon: Layers },
+          { id: 'profile', label: t('settings_page.tabs.profile'), icon: UserIcon },
+          { id: 'financial', label: t('settings_page.tabs.financial'), icon: DollarSign },
+          { id: 'security', label: t('settings_page.tabs.security'), icon: Shield },
+          { id: 'notifications', label: t('settings_page.tabs.notifications'), icon: Bell },
+          { id: 'appearance', label: t('settings_page.tabs.appearance'), icon: Palette },
+          { id: 'data', label: t('settings_page.tabs.data'), icon: Layers },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id as TabType)}
               style={{
                 display: 'flex',
@@ -718,7 +544,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
       {/* TAB CONTENT: PROFILE */}
       {activeTab === 'profile' && (
-        <SettingProfiles user={user} token={token}/>
+        <SettingProfiles user={user} token={token} />
       )}
 
       {/* TAB CONTENT: FINANCIAL & CURRENCY */}
@@ -727,11 +553,10 @@ export function SettingsView({ user, token }: SettingsViewProps) {
       )}
 
       {/* TAB CONTENT: SECURITY & ACCESS */}
-      
       {activeTab === 'security' && (
-        <SettingSecurety user={user} token={token}/>
+        <SettingSecurety user={user} token={token} />
       )}
-      
+
       {/* TAB CONTENT: NOTIFICATIONS & ALERTS */}
       {activeTab === 'notifications' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -760,26 +585,29 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               </div>
               <div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                  Financial Warning System & Alerts
+                  {t('settings_page.notifications_tab.title')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                  Automate push notices and email triggers for overspending
+                  {t('settings_page.notifications_tab.subtitle')}
                 </p>
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <ToggleSwitch
-                label="Budget Limit Alert"
-                description={`Send warning when any category spending exceeds ${budgetThreshold}% of its allocated monthly budget.`}
+                label={t('settings_page.notifications_tab.budget_alert')}
+                description={t('settings_page.notifications_tab.budget_alert_desc', { threshold: budgetThreshold })}
                 checked={budgetAlerts}
-                onChange={setBudgetAlerts}
+                onChange={(val) => {
+                  setBudgetAlerts(val);
+                  markUnsaved();
+                }}
               />
 
               {budgetAlerts && (
                 <div style={{ padding: '1rem', background: '#161616', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Trigger threshold:</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{t('settings_page.notifications_tab.trigger_threshold')}</span>
                     <strong style={{ color: 'var(--accent-primary)' }}>{budgetThreshold}%</strong>
                   </div>
                   <input
@@ -795,23 +623,28 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                     style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                    <span>50% (Cautious)</span>
-                    <span>80% (Recommended)</span>
-                    <span>100% (Strict)</span>
+                    <span>{t('settings_page.notifications_tab.threshold_labels.cautious')}</span>
+                    <span>{t('settings_page.notifications_tab.threshold_labels.recommended')}</span>
+                    <span>{t('settings_page.notifications_tab.threshold_labels.strict')}</span>
                   </div>
                 </div>
               )}
 
               <ToggleSwitch
-                label="Large Outflow Alert"
-                description="Trigger an instant high-priority alert for any single transaction above a defined amount."
+                label={t('settings_page.notifications_tab.large_tx_alert')}
+                description={t('settings_page.notifications_tab.large_tx_desc')}
                 checked={largeTxAlert}
-                onChange={setLargeTxAlert}
+                onChange={(val) => {
+                  setLargeTxAlert(val);
+                  markUnsaved();
+                }}
               />
 
               {largeTxAlert && (
                 <div style={{ padding: '0.85rem 1rem', background: '#161616', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Alert me for amounts over:</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    {t('settings_page.notifications_tab.alert_over')}
+                  </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     <span style={{ color: 'var(--accent-primary)', fontWeight: '700' }}>{user?.currency || 'USD'}</span>
                     <input
@@ -836,24 +669,33 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               )}
 
               <ToggleSwitch
-                label="Weekly Financial Summary Digest"
-                description="Receive a Monday morning breakdown of income, category spending, and savings velocity."
+                label={t('settings_page.notifications_tab.weekly_digest')}
+                description={t('settings_page.notifications_tab.weekly_digest_desc')}
                 checked={weeklyDigest}
-                onChange={setWeeklyDigest}
+                onChange={(val) => {
+                  setWeeklyDigest(val);
+                  markUnsaved();
+                }}
               />
 
               <ToggleSwitch
-                label="Upcoming Subscription & Bill Reminders"
-                description="Get notified 48 hours before recurring subscriptions or bills are due."
+                label={t('settings_page.notifications_tab.bill_reminders')}
+                description={t('settings_page.notifications_tab.bill_reminders_desc')}
                 checked={billReminders}
-                onChange={setBillReminders}
+                onChange={(val) => {
+                  setBillReminders(val);
+                  markUnsaved();
+                }}
               />
 
               <ToggleSwitch
-                label="Browser Push Notifications"
-                description="Show desktop browser alerts for real-time wallet synchronization."
+                label={t('settings_page.notifications_tab.push_notifications')}
+                description={t('settings_page.notifications_tab.push_notifications_desc')}
                 checked={pushNotifications}
-                onChange={setPushNotifications}
+                onChange={(val) => {
+                  setPushNotifications(val);
+                  markUnsaved();
+                }}
               />
             </div>
           </div>
@@ -874,16 +716,18 @@ export function SettingsView({ user, token }: SettingsViewProps) {
           >
             <div style={{ marginBottom: '1.25rem' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                Finora Dark Canvas Themes
+                {t('settings_page.appearance.themes_title')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                Select an engineered dark mode palette tailored for prolonged financial analysis
+                {t('settings_page.appearance.themes_subtitle')}
               </p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
               {THEME_OPTIONS.map((theme) => {
                 const isSelected = selectedTheme === theme.id;
+                const themeName = t(`settings_page.appearance.themes.${theme.key}`);
+                const themeDesc = t(`settings_page.appearance.themes.${theme.key}_desc`);
                 return (
                   <button
                     key={theme.id}
@@ -891,7 +735,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                     onClick={() => {
                       setSelectedTheme(theme.id);
                       markUnsaved();
-                      toast.success(`Theme set to ${theme.name}`);
+                      toast.success(t('settings_page.appearance.theme_set_toast', { name: themeName }));
                     }}
                     style={{
                       padding: '1rem',
@@ -901,7 +745,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                       display: 'flex',
                       flexDirection: 'column',
                       cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'start',
                       position: 'relative',
                       boxShadow: isSelected ? `0 0 18px ${theme.accent}33` : 'none',
                     }}
@@ -936,12 +780,12 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '700', color: '#ffffff' }}>
-                        {theme.name}
+                        {themeName}
                       </span>
                       {isSelected && <Check size={14} color={theme.accent} strokeWidth={3} />}
                     </div>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                      {theme.description}
+                      {themeDesc}
                     </span>
                   </button>
                 );
@@ -960,24 +804,30 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               }}
             >
               <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', marginBottom: '1rem' }}>
-                Privacy & Display Features
+                {t('settings_page.appearance.privacy_title')}
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 <ToggleSwitch
                   id="privacy-blur"
-                  label="Privacy Blur Mode"
-                  description="Obscures all balance figures and bank account balances with a subtle blur effect when in public."
+                  label={t('settings_page.appearance.privacy_blur')}
+                  description={t('settings_page.appearance.privacy_blur_desc')}
                   checked={privacyBlurMode}
-                  onChange={setPrivacyBlurMode}
+                  onChange={(val) => {
+                    setPrivacyBlurMode(val);
+                    markUnsaved();
+                  }}
                 />
 
                 <ToggleSwitch
                   id="compact-density"
-                  label="Compact Row Density"
-                  description="Reduces padding in tables and cards to view more transaction records simultaneously."
+                  label={t('settings_page.appearance.compact_mode')}
+                  description={t('settings_page.appearance.compact_mode_desc')}
                   checked={compactMode}
-                  onChange={setCompactMode}
+                  onChange={(val) => {
+                    setCompactMode(val);
+                    markUnsaved();
+                  }}
                 />
               </div>
             </div>
@@ -992,10 +842,10 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               }}
             >
               <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.35rem' }}>
-                Privacy Mode Live Preview
+                {t('settings_page.appearance.live_preview_title')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                {privacyBlurMode ? '🔒 Active: Balance numbers are securely concealed.' : '👁️ Inactive: Balances are fully visible.'}
+                {privacyBlurMode ? t('settings_page.appearance.preview_active') : t('settings_page.appearance.preview_inactive')}
               </p>
 
               <div
@@ -1010,7 +860,9 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Checking Account Balance</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {t('settings_page.appearance.checking_balance')}
+                  </div>
                   <div
                     style={{
                       fontSize: '1.5rem',
@@ -1039,7 +891,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   }}
                 >
                   {privacyBlurMode ? <EyeOff size={13} /> : <Eye size={13} />}
-                  <span>{privacyBlurMode ? 'Concealed' : 'Visible'}</span>
+                  <span>{privacyBlurMode ? t('settings_page.appearance.concealed') : t('settings_page.appearance.visible')}</span>
                 </div>
               </div>
             </div>
@@ -1076,10 +928,10 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               </div>
               <div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                  Export Your Financial Data
+                  {t('settings_page.data.export_title')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                  Download your entire transaction history, categories, and account ledgers anytime
+                  {t('settings_page.data.export_subtitle')}
                 </p>
               </div>
             </div>
@@ -1099,10 +951,12 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                     <FileSpreadsheet size={18} color="#10b981" />
-                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>CSV Spreadsheet</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>
+                      {t('settings_page.data.csv_title')}
+                    </span>
                   </div>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                    Standard CSV spreadsheet compatible with Microsoft Excel, Google Sheets, and accounting software.
+                    {t('settings_page.data.csv_desc')}
                   </p>
                 </div>
                 <button
@@ -1126,7 +980,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   className="hover:border-emerald-500 hover:text-emerald-400 transition-colors"
                 >
                   <Download size={13} />
-                  Download CSV Statement
+                  {t('settings_page.data.download_csv')}
                 </button>
               </div>
 
@@ -1144,10 +998,12 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                     <FileJson size={18} color="#3b82f6" />
-                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>Full JSON Backup</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>
+                      {t('settings_page.data.json_title')}
+                    </span>
                   </div>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                    Complete database dump containing metadata, categories, accounts, and user preferences.
+                    {t('settings_page.data.json_desc')}
                   </p>
                 </div>
                 <button
@@ -1171,7 +1027,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   className="hover:border-blue-500 hover:text-blue-400 transition-colors"
                 >
                   <Download size={13} />
-                  Download JSON Backup
+                  {t('settings_page.data.download_json')}
                 </button>
               </div>
             </div>
@@ -1203,10 +1059,10 @@ export function SettingsView({ user, token }: SettingsViewProps) {
               </div>
               <div>
                 <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#f87171', margin: 0 }}>
-                  Danger Zone
+                  {t('settings_page.data.danger_title')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                  Irreversible actions regarding your account and financial archives
+                  {t('settings_page.data.danger_subtitle')}
                 </p>
               </div>
             </div>
@@ -1224,16 +1080,18 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>Clear Cached Analytics</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>
+                    {t('settings_page.data.clear_cache_title')}
+                  </div>
                   <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
-                    Recalculates monthly budget variances, savings velocity, and cached charts.
+                    {t('settings_page.data.clear_cache_desc')}
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => {
                     localStorage.removeItem('finora_cached_stats');
-                    toast.success('Analytics cache cleared and refreshed');
+                    toast.success(t('settings_page.data.clear_cache_toast'));
                   }}
                   style={{
                     padding: '0.45rem 0.85rem',
@@ -1246,7 +1104,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                     cursor: 'pointer',
                   }}
                 >
-                  Clear Cache
+                  {t('settings_page.data.clear_cache_btn')}
                 </button>
               </div>
 
@@ -1262,9 +1120,11 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#f87171' }}>Delete Account</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#f87171' }}>
+                    {t('settings_page.data.delete_acc_title')}
+                  </div>
                   <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
-                    Permanently delete your profile, categories, transactions, and payment methods.
+                    {t('settings_page.data.delete_acc_desc')}
                   </div>
                 </div>
                 <button
@@ -1282,7 +1142,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   }}
                   className="hover:bg-red-600 transition-colors"
                 >
-                  Delete Account
+                  {t('settings_page.data.delete_acc_btn')}
                 </button>
               </div>
             </div>
@@ -1318,7 +1178,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
-                Set Up Two-Factor Authentication
+                {t('settings_page.two_factor.title')}
               </h3>
               <button
                 type="button"
@@ -1330,7 +1190,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
             </div>
 
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 1.25rem 0' }}>
-              Scan this QR code using Google Authenticator, Authy, or 1Password to bind your device.
+              {t('settings_page.two_factor.desc')}
             </p>
 
             {/* QR Code Demo Box */}
@@ -1347,7 +1207,6 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 height: '170px',
               }}
             >
-              {/* QR Pattern visual */}
               <div
                 style={{
                   width: '100%',
@@ -1368,7 +1227,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
             <div style={{ marginBottom: '1.25rem' }}>
               <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                Secret Setup Key (manual entry):
+                {t('settings_page.two_factor.secret_key')}
               </div>
               <div
                 style={{
@@ -1390,7 +1249,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   onClick={() => {
                     navigator.clipboard.writeText('FINO-8X92-MKL4-QP91');
                     setCopiedKey(true);
-                    toast.success('Secret key copied!');
+                    toast.success(t('settings_page.two_factor.key_copied'));
                     setTimeout(() => setCopiedKey(false), 2000);
                   }}
                   style={{ background: 'transparent', border: 'none', color: '#ffffff', cursor: 'pointer' }}
@@ -1402,7 +1261,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Enter 6-Digit Code from App
+                {t('settings_page.two_factor.enter_code')}
               </label>
               <input
                 type="text"
@@ -1442,19 +1301,18 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {t('settings_page.two_factor.cancel')}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   if (twoFactorCode.length < 6) {
-                    toast.error('Please enter a valid 6-digit verification code');
+                    toast.error(t('settings_page.two_factor.invalid_code'));
                     return;
                   }
-                  setTwoFactorEnabled(true);
                   setShow2FAModal(false);
                   setTwoFactorCode('');
-                  toast.success('Two-Factor Authentication is now enabled!');
+                  toast.success(t('settings_page.two_factor.enabled_toast'));
                 }}
                 style={{
                   flex: 1,
@@ -1468,7 +1326,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   cursor: 'pointer',
                 }}
               >
-                Verify & Enable
+                {t('settings_page.two_factor.verify_btn')}
               </button>
             </div>
           </div>
@@ -1517,17 +1375,18 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 <AlertTriangle size={20} />
               </div>
               <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
-                Delete Finora Account
+                {t('settings_page.data.delete_modal.title')}
               </h3>
             </div>
 
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 1.25rem 0' }}>
-              This will permanently delete your account, cancel all active subscriptions, and eradicate all transactions and budgets. This action cannot be reversed.
+              {t('settings_page.data.delete_modal.desc')}
             </p>
 
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                Type <strong style={{ color: '#ef4444' }}>DELETE</strong> to confirm:
+                {t('settings_page.data.delete_modal.type_confirm')}{' '}
+                <strong style={{ color: '#ef4444' }}>DELETE</strong>
               </label>
               <input
                 type="text"
@@ -1566,7 +1425,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   cursor: 'pointer',
                 }}
               >
-                Cancel
+                {t('settings_page.data.delete_modal.cancel')}
               </button>
               <button
                 type="button"
@@ -1574,7 +1433,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 onClick={async () => {
                   setIsDeletingAccount(true);
                   await new Promise((r) => setTimeout(r, 1000));
-                  toast.error('Account deleted. Redirecting to home...');
+                  toast.error(t('settings_page.data.delete_modal.deleted_toast'));
                   router.push('/');
                 }}
                 style={{
@@ -1589,7 +1448,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                   cursor: deleteConfirmationText === 'DELETE' ? 'pointer' : 'not-allowed',
                 }}
               >
-                {isDeletingAccount ? 'Deleting...' : 'Confirm Delete'}
+                {isDeletingAccount ? t('settings_page.data.delete_modal.deleting') : t('settings_page.data.delete_modal.confirm_btn')}
               </button>
             </div>
           </div>
@@ -1623,7 +1482,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
-                Choose Profile Photo
+                {t('settings_page.avatar_modal.title')}
               </h3>
               <button
                 type="button"
@@ -1635,17 +1494,17 @@ export function SettingsView({ user, token }: SettingsViewProps) {
             </div>
 
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-              Pick from our collection of avatars or enter a direct image URL.
+              {t('settings_page.avatar_modal.desc')}
             </p>
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Or Custom Image URL:
+                {t('settings_page.avatar_modal.custom_url')}
               </label>
               <input
                 type="url"
-                value={user?.avatar}
+                value={imageprofile}
                 onChange={(e) => {
-                  channgeProfileImage(e.target.value);
+                  changeProfileImage(e.target.value);
                 }}
                 placeholder="https://images.unsplash.com/..."
                 style={{
@@ -1663,7 +1522,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
 
             <button
               type="button"
-              onClick={() => {setShowAvatarModal(false)}}
+              onClick={() => { setShowAvatarModal(false); }}
               style={{
                 width: '100%',
                 padding: '0.65rem',
@@ -1676,7 +1535,7 @@ export function SettingsView({ user, token }: SettingsViewProps) {
                 cursor: 'pointer',
               }}
             >
-              Done
+              {t('settings_page.avatar_modal.done')}
             </button>
           </div>
         </div>
@@ -1684,3 +1543,5 @@ export function SettingsView({ user, token }: SettingsViewProps) {
     </div>
   );
 }
+
+export default SettingsView;

@@ -775,5 +775,344 @@
     "saving": "Saving...",
     "validation_name": "Please enter a category name",
     "save_error": "Failed to save category"
+  },
+  "notifications_page": {
+    "title": "Notifications & Alerts",
+    "subtitle": "Review, search, archive, and manage your account updates and budget notices.",
+    "refresh_tooltip": "Refresh notifications",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "search_placeholder": "Search notifications...",
+    "clear_search": "Clear search",
+    "sort": {
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "unread_first": "Unread First",
+      "title_asc": "Title (A-Z)"
+    },
+    "reset": "Reset",
+    "reset_tooltip": "Reset all filters",
+    "bulk": {
+      "selected_single": "{{count}} notification selected",
+      "selected_plural": "{{count}} notifications selected",
+      "mark_read": "Mark Read",
+      "restore": "Restore",
+      "archive": "Archive",
+      "delete": "Delete"
+    },
+    "headers": {
+      "select_all": "Select all on this page",
+      "type": "Type",
+      "notification": "Notification",
+      "time": "Time",
+      "action_link": "Action Link",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "No Notifications Found",
+      "search": "No notification matches your search for \"{{query}}\". Try searching with another term.",
+      "archived": "Your archive is currently empty. Notifications you archive will appear here.",
+      "unread": "You have caught up with all updates! No unread notifications.",
+      "actionable": "No notifications currently contain actionable direct links.",
+      "default": "You do not have any notifications registered yet.",
+      "view_all": "View All Notifications"
+    },
+    "badges": {
+      "budget": "Budget Alert",
+      "finance": "Finance",
+      "system": "System",
+      "notification": "Notification",
+      "archived": "Archived",
+      "unread": "Unread"
+    },
+    "time": {
+      "just_now": "Just now",
+      "minutes_ago": "{{count}}m ago",
+      "hours_ago": "{{count}}h ago",
+      "days_ago": "{{count}}d ago"
+    },
+    "actions": {
+      "open_link": "Open Link",
+      "mark_as_read": "Mark as read",
+      "mark_as_unread": "Mark as unread",
+      "archive": "Archive notification",
+      "restore": "Restore from archive",
+      "delete": "Delete notification"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "notifications": "notifications",
+      "per_page": "Per page:",
+      "prev": "Previous page",
+      "next": "Next page"
+    },
+    "detail_modal": {
+      "details_label": "Notification Details",
+      "date_received": "Date Received:",
+      "read_status": "Read Status:",
+      "read": "Read",
+      "unread": "Unread",
+      "attached_action": "ATTACHED ACTION LINK",
+      "visit_link": "Visit Link",
+      "restore_archive": "Restore from Archive",
+      "archive": "Archive",
+      "mark_unread": "Mark as Unread",
+      "mark_read": "Mark as Read",
+      "delete": "Delete",
+      "no_message": "No message content provided."
+    },
+    "delete_modal": {
+      "title": "Confirm Deletion",
+      "msg_bulk": "Are you sure you want to delete {{count}} notifications?",
+      "msg_single": "Are you sure you want to permanently delete this notification?",
+      "warning": "This action cannot be undone. The notification will be removed from your activity history.",
+      "cancel": "Cancel",
+      "delete_btn": "Delete Permanently",
+      "deleting": "Deleting..."
+    },
+    "toasts": {
+      "marked_read": "Marked as read",
+      "marked_unread": "Marked as unread",
+      "all_read": "All notifications marked as read",
+      "restored": "Notification restored from archive",
+      "archived": "Notification moved to archive",
+      "deleted_bulk": "Deleted {{count}} notifications",
+      "deleted_single": "Notification deleted",
+      "bulk_read": "Marked {{count}} notifications as read",
+      "bulk_archived": "Archived {{count}} notifications",
+      "bulk_restored": "Restored {{count}} notifications",
+      "server_error": "Internal server error"
+    }
+  },
+  "settings_page": {
+    "breadcrumbs": {
+      "admin": "Admin",
+      "settings": "Settings"
+    },
+    "header": {
+      "title": "Settings & Preferences",
+      "subtitle": "Manage your profile details, financial preferences, currency, security credentials, and app customization.",
+      "unsaved_changes": "Unsaved changes",
+      "up_to_date": "Up to date",
+      "save_all": "Save All Settings",
+      "saving": "Saving...",
+      "success_save": "Settings and preferences saved successfully!",
+      "error_save": "Failed to save settings. Please try again."
+    },
+    "hero": {
+      "verified": "VERIFIED",
+      "unverified": "UNVERIFIED",
+      "default_currency": "Default Currency:",
+      "customize_ui": "Customize UI",
+      "change_avatar": "Change Avatar"
+    },
+    "tabs": {
+      "profile": "Profile & Account",
+      "financial": "Financial & Currency",
+      "security": "Security & Access",
+      "notifications": "Notifications & Alerts",
+      "appearance": "Theme & Interface",
+      "data": "Data & Privacy"
+    },
+    "profile": {
+      "personal_info": "Personal Information",
+      "personal_info_desc": "Update your contact details and display credentials",
+      "full_name": "Full Name",
+      "full_name_placeholder": "e.g. Alex Morgan",
+      "email": "Email Address",
+      "email_placeholder": "name@example.com",
+      "phone": "Phone Number",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "country": "Country / Region",
+      "bio": "Financial Bio & Wealth Goal",
+      "bio_placeholder": "Tell us about your financial philosophy or targets...",
+      "save_changes": "Save Changes",
+      "saving": "Saving...",
+      "validation": {
+        "cannot_edit": "You cannot edit this profile",
+        "name_required": "Name is required",
+        "email_required": "Email is required",
+        "email_invalid": "Please enter a valid email address",
+        "phone_required": "Phone number is required",
+        "country_required": "Country is required",
+        "update_failed": "Failed to update profile",
+        "something_wrong": "Something went wrong"
+      },
+      "tier": {
+        "active_plan": "Active Plan",
+        "inactive_plan": "Inactive Plan",
+        "plan_pro": "Spendora PRO Enterprise",
+        "plan_free": "Spendora Free",
+        "pro_desc": "Unlimited multi-currency accounts, automated bank synchronization, AI financial advisor.",
+        "free_desc": "Basic features with limited access.",
+        "billing_cycle": "Billing Cycle",
+        "yearly_price": "Yearly ($99/yr)",
+        "free_price": "Free",
+        "next_renewal": "Next Renewal"
+      }
+    },
+    "financial": {
+      "title": "Financial & Currency",
+      "subtitle": "Manage base currency and accounting rules",
+      "base_currency": "Default Base Currency",
+      "base_currency_hint": "All overview metrics, reports, and budgets calculate in this currency.",
+      "fiscal_day": "Fiscal Month Start Day",
+      "fiscal_options": {
+        "day_1": "1st of the month (Standard)",
+        "day_15": "15th of the month",
+        "day_25": "25th of the month (Payday)",
+        "day_last": "Last working day of month"
+      },
+      "auto_fx": "Auto FX Rate Sync",
+      "auto_fx_desc": "Automatically fetch exchange rates via Frankfurter API on transaction entry.",
+      "save_changes": "Save Changes",
+      "saving": "Saving Preferences...",
+      "hero": {
+        "active_base": "Active Base Currency",
+        "active_desc": "All dashboard metrics, budget allocations, and net worth charts automatically format in {{currency}}.",
+        "accounting_cycle": "Accounting Cycle",
+        "day_of_month": "Day {{day}} of Month",
+        "auto_fx_status": "Auto FX Sync",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "toasts": {
+        "error": "Something went wrong",
+        "failed_save": "Cannot update financial settings now. Please try again later."
+      }
+    },
+    "security": {
+      "title": "Password & Credentials",
+      "subtitle": "Ensure your account uses a strong, unique passphrase",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "new_password_placeholder": "Minimum 8 characters",
+      "confirm_password": "Confirm New Password",
+      "confirm_password_placeholder": "Repeat new password",
+      "strength_label": "Strength:",
+      "strength": {
+        "empty": "Empty",
+        "weak": "Weak",
+        "good": "Good",
+        "strong": "Very Strong"
+      },
+      "update_btn": "Update Password",
+      "validation": {
+        "enter_current": "Please enter your current password",
+        "min_length": "New password must be at least 8 characters long",
+        "mismatch": "New passwords do not match",
+        "success": "Password updated successfully",
+        "error": "Failed to update password"
+      },
+      "logout_modal": {
+        "security_action": "Security Action",
+        "title": "Logout of all devices?",
+        "desc": "Are you sure you want to log out of all active sessions across your computers, phones, and browsers?",
+        "warning_note": "Note:",
+        "warning_text": "Your current session will also be terminated. You will need to log back in with your password to continue.",
+        "cancel": "Cancel",
+        "confirm": "Log out everywhere",
+        "signing_out": "Signing out..."
+      }
+    },
+    "notifications_tab": {
+      "title": "Financial Warning System & Alerts",
+      "subtitle": "Automate push notices and email triggers for overspending",
+      "budget_alert": "Budget Limit Alert",
+      "budget_alert_desc": "Send warning when any category spending exceeds {{threshold}}% of its allocated monthly budget.",
+      "trigger_threshold": "Trigger threshold:",
+      "threshold_labels": {
+        "cautious": "50% (Cautious)",
+        "recommended": "80% (Recommended)",
+        "strict": "100% (Strict)"
+      },
+      "large_tx_alert": "Large Outflow Alert",
+      "large_tx_desc": "Trigger an instant high-priority alert for any single transaction above a defined amount.",
+      "alert_over": "Alert me for amounts over:",
+      "weekly_digest": "Weekly Financial Summary Digest",
+      "weekly_digest_desc": "Receive a Monday morning breakdown of income, category spending, and savings velocity.",
+      "bill_reminders": "Upcoming Subscription & Bill Reminders",
+      "bill_reminders_desc": "Get notified 48 hours before recurring subscriptions or bills are due.",
+      "push_notifications": "Browser Push Notifications",
+      "push_notifications_desc": "Show desktop browser alerts for real-time wallet synchronization."
+    },
+    "appearance": {
+      "themes_title": "Finora Dark Canvas Themes",
+      "themes_subtitle": "Select an engineered dark mode palette tailored for prolonged financial analysis",
+      "themes": {
+        "midnight": "Midnight Black",
+        "midnight_desc": "Deep #080808 background with emerald neon accents",
+        "cyber_emerald": "Cyber Emerald",
+        "cyber_emerald_desc": "Vibrant green highlights with carbon dark layers",
+        "deep_obsidian": "Deep Obsidian",
+        "deep_obsidian_desc": "Ultra dark monochrome slate with electric blue touches",
+        "purple_aura": "Amethyst Aura",
+        "purple_aura_desc": "Futuristic purple luxury finance aesthetic"
+      },
+      "theme_set_toast": "Theme set to {{name}}",
+      "privacy_title": "Privacy & Display Features",
+      "privacy_blur": "Privacy Blur Mode",
+      "privacy_blur_desc": "Obscures all balance figures and bank account balances with a subtle blur effect when in public.",
+      "compact_mode": "Compact Row Density",
+      "compact_mode_desc": "Reduces padding in tables and cards to view more transaction records simultaneously.",
+      "live_preview_title": "Privacy Mode Live Preview",
+      "preview_active": "🔒 Active: Balance numbers are securely concealed.",
+      "preview_inactive": "👁️ Inactive: Balances are fully visible.",
+      "checking_balance": "Checking Account Balance",
+      "concealed": "Concealed",
+      "visible": "Visible"
+    },
+    "data": {
+      "export_title": "Export Your Financial Data",
+      "export_subtitle": "Download your entire transaction history, categories, and account ledgers anytime",
+      "csv_title": "CSV Spreadsheet",
+      "csv_desc": "Standard CSV spreadsheet compatible with Microsoft Excel, Google Sheets, and accounting software.",
+      "download_csv": "Download CSV Statement",
+      "json_title": "Full JSON Backup",
+      "json_desc": "Complete database dump containing metadata, categories, accounts, and user preferences.",
+      "download_json": "Download JSON Backup",
+      "export_toast": "Export downloaded as {{filename}}",
+      "danger_title": "Danger Zone",
+      "danger_subtitle": "Irreversible actions regarding your account and financial archives",
+      "clear_cache_title": "Clear Cached Analytics",
+      "clear_cache_desc": "Recalculates monthly budget variances, savings velocity, and cached charts.",
+      "clear_cache_btn": "Clear Cache",
+      "clear_cache_toast": "Analytics cache cleared and refreshed",
+      "delete_acc_title": "Delete Account",
+      "delete_acc_desc": "Permanently delete your profile, categories, transactions, and payment methods.",
+      "delete_acc_btn": "Delete Account",
+      "delete_modal": {
+        "title": "Delete Finora Account",
+        "desc": "This will permanently delete your account, cancel all active subscriptions, and eradicate all transactions and budgets. This action cannot be reversed.",
+        "type_confirm": "Type DELETE to confirm:",
+        "cancel": "Cancel",
+        "confirm_btn": "Confirm Delete",
+        "deleting": "Deleting...",
+        "deleted_toast": "Account deleted. Redirecting to home..."
+      }
+    },
+    "avatar_modal": {
+      "title": "Choose Profile Photo",
+      "desc": "Pick from our collection of avatars or enter a direct image URL.",
+      "custom_url": "Or Custom Image URL:",
+      "done": "Done"
+    },
+    "two_factor": {
+      "title": "Set Up Two-Factor Authentication",
+      "desc": "Scan this QR code using Google Authenticator, Authy, or 1Password to bind your device.",
+      "secret_key": "Secret Setup Key (manual entry):",
+      "key_copied": "Secret key copied!",
+      "enter_code": "Enter 6-Digit Code from App",
+      "cancel": "Cancel",
+      "verify_btn": "Verify & Enable",
+      "invalid_code": "Please enter a valid 6-digit verification code",
+      "enabled_toast": "Two-Factor Authentication is now enabled!"
+    }
   }
 }

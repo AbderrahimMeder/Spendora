@@ -6,27 +6,20 @@ import {
   Eye,
   EyeOff,
   Key,
-  ShieldCheck,
-  Laptop,
-  Smartphone,
-  X,
-  Copy,
-  LogOut,
   Loader2,
-  AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { User } from '@/types';
 import { LogoutAlertModal } from './LogoutAlertModal';
-
-
+import { useTranslation } from 'react-i18next';
 
 interface SettingSecuretyProps {
   user?: User | null;
   token?: string | null | undefined;
 }
 
-export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
+export function SettingSecurety({ token }: SettingSecuretyProps = {}) {
+  const { t } = useTranslation();
   // Password states
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -39,15 +32,15 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
   const handlePasswordFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
-      toast.error('Please enter your current password');
+      toast.error(t('settings_page.security.validation.enter_current'));
       return;
     }
     if (newPassword.length < 8) {
-      toast.error('New password must be at least 8 characters long');
+      toast.error(t('settings_page.security.validation.min_length'));
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast.error('New passwords do not match');
+      toast.error(t('settings_page.security.validation.mismatch'));
       return;
     }
     setOpenLogoutModal(true);
@@ -73,27 +66,25 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
 
       const result = await res.json();
       if (!res.ok) {
-        toast.error('Failed to update password');
+        toast.error(t('settings_page.security.validation.error'));
         return;
       }
       if (result.status === 201) {
-        toast.success('Password updated successfully');
+        toast.success(t('settings_page.security.validation.success'));
         setOpenLogoutModal(false);
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
         return;
       }
-      toast.error('Failed to update password');
-    } catch (err: any) {
-      toast.error(err.message || 'An unexpected error occurred');
+      toast.error(t('settings_page.security.validation.error'));
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : t('settings_page.security.validation.error');
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
   };
-
-  // Handle logout of all devices from the standalone card
-
 
   // Password Strength Calculation
   const calculatePasswordStrength = (pass: string) => {
@@ -109,16 +100,15 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
 
   const passwordScore = calculatePasswordStrength(newPassword);
   const getStrengthLabel = () => {
-    if (passwordScore <= 0) return { label: 'Empty', color: '#666666' };
-    if (passwordScore < 40) return { label: 'Weak', color: '#ef4444' };
-    if (passwordScore < 75) return { label: 'Good', color: '#f59e0b' };
-    return { label: 'Very Strong', color: '#10b981' };
+    if (passwordScore <= 0) return { label: t('settings_page.security.strength.empty'), color: '#666666' };
+    if (passwordScore < 40) return { label: t('settings_page.security.strength.weak'), color: '#ef4444' };
+    if (passwordScore < 75) return { label: t('settings_page.security.strength.good'), color: '#f59e0b' };
+    return { label: t('settings_page.security.strength.strong'), color: '#10b981' };
   };
 
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-
         {/* Change Password Form */}
         <div
           style={{
@@ -145,10 +135,10 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
             </div>
             <div>
               <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                Password & Credentials
+                {t('settings_page.security.title')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                Ensure your account uses a strong, unique passphrase
+                {t('settings_page.security.subtitle')}
               </p>
             </div>
           </div>
@@ -156,7 +146,7 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
           <form onSubmit={handlePasswordFormSubmit} style={{ maxWidth: '640px', display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Current Password
+                {t('settings_page.security.current_password')}
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -181,7 +171,7 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
-                    right: '0.75rem',
+                    insetInlineEnd: '0.75rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     background: 'transparent',
@@ -197,13 +187,13 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
 
             <div>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                New Password
+                {t('settings_page.security.new_password')}
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Minimum 8 characters"
+                placeholder={t('settings_page.security.new_password_placeholder')}
                 style={{
                   width: '100%',
                   padding: '0.65rem 0.85rem',
@@ -221,7 +211,7 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
               {newPassword && (
                 <div style={{ marginTop: '0.5rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginBottom: '0.25rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Strength:</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{t('settings_page.security.strength_label')}</span>
                     <span style={{ color: getStrengthLabel().color, fontWeight: '700' }}>{getStrengthLabel().label}</span>
                   </div>
                   <div style={{ height: '4px', background: '#222222', borderRadius: '2px', overflow: 'hidden' }}>
@@ -240,13 +230,13 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
 
             <div>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Confirm New Password
+                {t('settings_page.security.confirm_password')}
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat new password"
+                placeholder={t('settings_page.security.confirm_password_placeholder')}
                 style={{
                   width: '100%',
                   padding: '0.65rem 0.85rem',
@@ -263,6 +253,7 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
 
             <button
               type="submit"
+              disabled={loading}
               style={{
                 alignSelf: 'flex-start',
                 marginTop: '0.5rem',
@@ -273,8 +264,8 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
                 color: '#ffffff',
                 fontSize: '0.825rem',
                 fontWeight: '700',
-                cursor: `${loading ? 'not-allowed' : 'pointer'}`,
-                opacity: `${loading ? '0.5' : '1'}`,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.5 : 1,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
@@ -285,10 +276,11 @@ export function SettingSecurety({ user, token }: SettingSecuretyProps = {}) {
               ) : (
                 <Key size={14} />
               )}
-              Update Password
+              {t('settings_page.security.update_btn')}
             </button>
           </form>
         </div>
+
         {/* LOGOUT CONFIRMATION ALERT POPUP */}
         <LogoutAlertModal
           isOpen={openLogoutModal}

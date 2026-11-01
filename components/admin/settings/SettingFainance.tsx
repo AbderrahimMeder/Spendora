@@ -1,11 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Coins,
-  ArrowUpRight,
-  ArrowDownRight,
-  Sparkles,
   RefreshCw,
   Globe,
 } from 'lucide-react';
@@ -13,6 +10,8 @@ import { toast } from 'sonner';
 import type { User, CurrencyOption } from '@/types';
 import { useRouter } from 'next/navigation';
 import { ToggleSwitch } from '@/components/ui/toggle';
+import { useTranslation } from 'react-i18next';
+
 export const CURRENCIES: CurrencyOption[] = [
   { code: 'USD', symbol: '$', name: 'US Dollar (USD)' },
   { code: 'EUR', symbol: '€', name: 'Euro (EUR)' },
@@ -26,15 +25,16 @@ interface SettingFainceProps {
   token?: string | null | undefined;
 }
 
-export function SettingFaince({ user, token }: SettingFainceProps) {
-  const route = useRouter()
+export function SettingFaince({ user }: SettingFainceProps) {
+  const { t } = useTranslation();
+  const route = useRouter();
   const [currency, setCurrency] = useState(user?.currency || 'USD');
   const [fiscalStartDay, setFiscalStartDay] = useState('1');
   const [autoConvertExchange, setAutoConvertExchange] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   // Track initial values to disable button when values match default/initial values
-  const [initialState, setInitialState] = useState({
+  const [initialState] = useState({
     currency: user?.currency || 'USD',
     fiscalStartDay: '1',
     defaultTransactionType: 'EXPENSE' as 'EXPENSE' | 'INCOME',
@@ -44,7 +44,6 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
   // Check if anything differs from default/initial values
   const hasChanges =
     currency !== initialState.currency ||
-    //fiscalStartDay !== initialState.fiscalStartDay ||
     autoConvertExchange !== initialState.autoConvertExchange;
 
   const canSave = hasChanges && !isSaving;
@@ -52,32 +51,34 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
 
   const activeCurrencyObj = CURRENCIES.find((c) => c.code === currency) || CURRENCIES[0];
   const activeSymbol = activeCurrencyObj.symbol;
-  const SendData =async()=>{
+
+  const SendData = async () => {
     if (!hasChanges || isSaving) return;
     setIsSaving(true);
-    try{
-      const res  = await fetch('/api/Profile/Fainance',{
-        method:'PATCH',
-        headers:{
-          'content-type':'application/json',
+    try {
+      const res = await fetch('/api/Profile/Fainance', {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
         },
-        body:JSON.stringify({currency:currency})
-      })
-      const data = await res.json()
-      if(!res.ok){
-        toast.error('some thing was wrong')
+        body: JSON.stringify({ currency: currency })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(t('settings_page.financial.toasts.error'));
       }
-      if(data.status===201){
-        toast.success(data.message)
+      if (data.status === 201) {
+        toast.success(data.message);
         route.refresh();
       }
-    }catch(err:any){
-        toast.error(err.message??'can\' editng this now try later')
-    }finally{
-      setIsSaving(false)
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : t('settings_page.financial.toasts.failed_save');
+      toast.error(errMsg);
+    } finally {
+      setIsSaving(false);
     }
-  
-  }
+  };
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
       {/* Column 1: Financial & Currency Parameters Card */}
@@ -111,10 +112,10 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
             </div>
             <div>
               <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-                Financial & Currency
+                {t('settings_page.financial.title')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-                Manage base currency and accounting rules
+                {t('settings_page.financial.subtitle')}
               </p>
             </div>
           </div>
@@ -123,7 +124,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
             {/* Base Currency as a Sleek Select Dropdown */}
             <div>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Default Base Currency
+                {t('settings_page.financial.base_currency')}
               </label>
               <div style={{ position: 'relative' }}>
                 <select
@@ -134,7 +135,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.85rem',
-                    paddingLeft: '2.5rem',
+                    paddingInlineStart: '2.5rem',
                     borderRadius: 'var(--radius-md)',
                     background: '#161616',
                     border: '1px solid var(--border-subtle)',
@@ -154,7 +155,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
                 <div
                   style={{
                     position: 'absolute',
-                    left: '0.85rem',
+                    insetInlineStart: '0.85rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     pointerEvents: 'none',
@@ -167,14 +168,14 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
                 </div>
               </div>
               <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '0.35rem', marginBottom: 0 }}>
-                All overview metrics, reports, and budgets calculate in this currency.
+                {t('settings_page.financial.base_currency_hint')}
               </p>
             </div>
 
             {/* Fiscal Month Start Day */}
             <div>
               <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-                Fiscal Month Start Day
+                {t('settings_page.financial.fiscal_day')}
               </label>
               <select
                 value={fiscalStartDay}
@@ -192,17 +193,17 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
                 }}
                 className="focus:border-emerald-500 transition-colors"
               >
-                <option value="1">1st of the month (Standard)</option>
-                <option value="15">15th of the month</option>
-                <option value="25">25th of the month (Payday)</option>
-                <option value="last">Last working day of month</option>
+                <option value="1">{t('settings_page.financial.fiscal_options.day_1')}</option>
+                <option value="15">{t('settings_page.financial.fiscal_options.day_15')}</option>
+                <option value="25">{t('settings_page.financial.fiscal_options.day_25')}</option>
+                <option value="last">{t('settings_page.financial.fiscal_options.day_last')}</option>
               </select>
             </div>
             {/* Auto FX Sync Toggle */}
             <ToggleSwitch
               id="auto-fx"
-              label="Auto FX Rate Sync"
-              description="Automatically fetch exchange rates via Frankfurter API on transaction entry."
+              label={t('settings_page.financial.auto_fx')}
+              description={t('settings_page.financial.auto_fx_desc')}
               checked={autoConvertExchange}
               onChange={setAutoConvertExchange}
             />
@@ -224,7 +225,7 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
             fontSize: '0.85rem',
             fontWeight: '700',
             cursor: canSave ? 'pointer' : 'not-allowed',
-            opacity: hasChanges&&!isSaving ? 1 : 0.6,
+            opacity: hasChanges && !isSaving ? 1 : 0.6,
             transition: 'all 0.2s ease',
             marginTop: '1.5rem',
             display: 'flex',
@@ -236,10 +237,10 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
           {isSaving ? (
             <>
               <RefreshCw size={14} style={{ animation: 'spin 0.8s linear infinite' }} />
-              <span>Saving Preferences...</span>
+              <span>{t('settings_page.financial.saving')}</span>
             </>
           ) : (
-            <span>Save Changes</span>
+            <span>{t('settings_page.financial.save_changes')}</span>
           )}
         </button>
       </div>
@@ -258,13 +259,13 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Active Base Currency
+                {t('settings_page.financial.hero.active_base')}
               </div>
               <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#ffffff', margin: '0.2rem 0' }}>
                 {activeCurrencyObj.name}
               </h3>
               <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', margin: 0 }}>
-                All dashboard metrics, budget allocations, and net worth charts automatically format in {currency}.
+                {t('settings_page.financial.hero.active_desc', { currency })}
               </p>
             </div>
             <div
@@ -289,16 +290,16 @@ export function SettingFaince({ user, token }: SettingFainceProps) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '1.25rem' }}>
             <div style={{ background: '#161616', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Accounting Cycle</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t('settings_page.financial.hero.accounting_cycle')}</div>
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff', marginTop: '0.15rem' }}>
-                Day {fiscalStartDay} of Month
+                {t('settings_page.financial.hero.day_of_month', { day: fiscalStartDay })}
               </div>
             </div>
             <div style={{ background: '#161616', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Auto FX Sync</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t('settings_page.financial.hero.auto_fx_status')}</div>
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: autoConvertExchange ? '#10b981' : '#f59e0b', marginTop: '0.15rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Globe size={13} />
-                {autoConvertExchange ? 'Enabled' : 'Disabled'}
+                {autoConvertExchange ? t('settings_page.financial.hero.enabled') : t('settings_page.financial.hero.disabled')}
               </div>
             </div>
           </div>

@@ -1,11 +1,14 @@
-'use client'
+'use client';
 import { useState } from "react";
 import { UserIcon, Mail, Smartphone, Sparkles, Loader2 } from "lucide-react";
 import { User } from "@/types";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-export default function SettingProfiles({ user , token }: { user: User | null, token: string|null|undefined }) {
-  const router = useRouter()
+import { useTranslation } from "react-i18next";
+
+export default function SettingProfiles({ user }: { user: User | null; token?: string | null | undefined }) {
+  const router = useRouter();
+  const { t } = useTranslation();
   const [UserProfile, setUserPorfile] = useState({
     name: user?.name ?? '',
     email: user?.email ?? '',
@@ -13,86 +16,86 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
     country: user?.country ?? '',
     bio: user?.bio ?? '',
     hasSubscription: user?.hasSubscription ?? false,
-  })
-  const [loading,setloading]=useState<boolean>(false)
+  });
+  const [loading, setloading] = useState<boolean>(false);
   const CanUserChangeProfile =
     (user?.email ?? '') !== UserProfile.email.trim() ||
     (user?.name ?? '') !== UserProfile.name.trim() ||
     (user?.phone ?? '') !== UserProfile.phone.trim() ||
     (user?.country ?? '') !== UserProfile.country.trim() ||
     (user?.bio ?? '') !== UserProfile.bio.trim();
+
   const validation = (): string | null => {
-      if (!CanUserChangeProfile) {
-          return "You cannot edit this profile";
-      }
-      if (!UserProfile.name.trim()) {
-          return "Name is required";
-      }
+    if (!CanUserChangeProfile) {
+      return t('settings_page.profile.validation.cannot_edit');
+    }
+    if (!UserProfile.name.trim()) {
+      return t('settings_page.profile.validation.name_required');
+    }
 
-      if (!UserProfile.email.trim()) {
-          return "Email is required";
-       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!UserProfile.email.trim()) {
+      return t('settings_page.profile.validation.email_required');
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      if (!emailRegex.test(UserProfile.email.trim())) {
-          return "Please enter a valid email address";
-      }
+    if (!emailRegex.test(UserProfile.email.trim())) {
+      return t('settings_page.profile.validation.email_invalid');
+    }
 
-      if (!UserProfile.phone.trim()) {
-          return "Phone number is required";
-      }
+    if (!UserProfile.phone.trim()) {
+      return t('settings_page.profile.validation.phone_required');
+    }
 
-      if (!UserProfile.country.trim()) {
-           return "Country is required";
-      }
-      return null;
+    if (!UserProfile.country.trim()) {
+      return t('settings_page.profile.validation.country_required');
+    }
+    return null;
   };
 
   const StyleForSaveButton = CanUserChangeProfile && !loading
-      ? "var(--accent-primary)"
-      : "rgba(16, 185, 129, 0.15)";
+    ? "var(--accent-primary)"
+    : "rgba(16, 185, 129, 0.15)";
 
   const SaveUserProfileChange = async () => {
-      setloading(true)
-      const validationError = validation();
-      console.log('clicked')
-      if (validationError) {
-          toast.error(validationError);
-          setloading(false)
-          return;
+    setloading(true);
+    const validationError = validation();
+    if (validationError) {
+      toast.error(validationError);
+      setloading(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/Profile/Information", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: UserProfile.name.trim(),
+          email: UserProfile.email.trim(),
+          phone: UserProfile.phone.trim(),
+          country: UserProfile.country.trim(),
+          bio: UserProfile.bio.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.message || t('settings_page.profile.validation.update_failed'));
+        return;
       }
-      try {
-          const res = await fetch("/api/Profile/Information", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: UserProfile.name.trim(),
-                    email: UserProfile.email.trim(),
-                    phone: UserProfile.phone.trim(),
-                    country: UserProfile.country.trim(),
-                    bio: UserProfile.bio.trim(),
-                }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                toast.error(data.message || "Failed to update profile");
-                return;
-            }
-            if (data.status === 200) {
-                toast.success(data.message);
-                router.refresh();
-            }
-        } catch (error: unknown) {
-            toast.error(
-                error instanceof Error
-                    ? error.message
-                    : "Something went wrong"
-            );
-        }
-        setloading(false)
-    };
+      if (data.status === 200) {
+        toast.success(data.message);
+        router.refresh();
+      }
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t('settings_page.profile.validation.something_wrong')
+      );
+    }
+    setloading(false);
+  };
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
@@ -122,10 +125,10 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
           </div>
           <div>
             <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-              Personal Information
+              {t('settings_page.profile.personal_info')}
             </h3>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
-              Update your contact details and display credentials
+              {t('settings_page.profile.personal_info_desc')}
             </p>
           </div>
         </div>
@@ -133,7 +136,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-              Full  Name
+              {t('settings_page.profile.full_name')}
             </label>
             <input
               type="text"
@@ -141,7 +144,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
               onChange={(e) => {
                 setUserPorfile((prev) => ({ ...prev, name: e.target.value }));
               }}
-              placeholder="e.g. Alex Morgan"
+              placeholder={t('settings_page.profile.full_name_placeholder')}
               style={{
                 width: '100%',
                 padding: '0.65rem 0.85rem',
@@ -158,7 +161,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
 
           <div>
             <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-              Email Address
+              {t('settings_page.profile.email')}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -167,11 +170,11 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
                 onChange={(e) => {
                   setUserPorfile((prev) => ({ ...prev, email: e.target.value }));
                 }}
-                placeholder="name@example.com"
+                placeholder={t('settings_page.profile.email_placeholder')}
                 style={{
                   width: '100%',
                   padding: '0.65rem 0.85rem',
-                  paddingLeft: '2.2rem',
+                  paddingInlineStart: '2.2rem',
                   borderRadius: 'var(--radius-md)',
                   background: '#161616',
                   border: '1px solid var(--border-subtle)',
@@ -181,13 +184,13 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
                 }}
                 className="focus:border-emerald-500 transition-colors"
               />
-              <Mail size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
+              <Mail size={15} color="var(--text-muted)" style={{ position: 'absolute', insetInlineStart: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
             </div>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-              Phone Number
+              {t('settings_page.profile.phone')}
             </label>
             <div style={{ position: 'relative' }}>
               <input
@@ -196,11 +199,11 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
                 onChange={(e) => {
                   setUserPorfile((prev) => ({ ...prev, phone: e.target.value }));
                 }}
-                placeholder="+1 (555) 000-0000"
+                placeholder={t('settings_page.profile.phone_placeholder')}
                 style={{
                   width: '100%',
                   padding: '0.65rem 0.85rem',
-                  paddingLeft: '2.2rem',
+                  paddingInlineStart: '2.2rem',
                   borderRadius: 'var(--radius-md)',
                   background: '#161616',
                   border: '1px solid var(--border-subtle)',
@@ -210,13 +213,13 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
                 }}
                 className="focus:border-emerald-500 transition-colors"
               />
-              <Smartphone size={15} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
+              <Smartphone size={15} color="var(--text-muted)" style={{ position: 'absolute', insetInlineStart: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
             </div>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-              Country / Region
+              {t('settings_page.profile.country')}
             </label>
             <select
               value={UserProfile.country}
@@ -249,7 +252,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
 
           <div>
             <label style={{ display: 'block', fontSize: '0.775rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>
-              Financial Bio & Wealth Goal
+              {t('settings_page.profile.bio')}
             </label>
             <textarea
               rows={3}
@@ -257,7 +260,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
               onChange={(e) => {
                 setUserPorfile((prev) => ({ ...prev, bio: e.target.value }));
               }}
-              placeholder="Tell us about your financial philosophy or targets..."
+              placeholder={t('settings_page.profile.bio_placeholder')}
               style={{
                 width: '100%',
                 padding: '0.65rem 0.85rem',
@@ -276,7 +279,7 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
             type="button"
             disabled={!CanUserChangeProfile || loading}
             onClick={() => {
-              SaveUserProfileChange()
+              SaveUserProfileChange();
             }}
             style={{
               width: '100%',
@@ -291,13 +294,12 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
             }}
           >
             {loading ? (
-                    < span className="flex justify-center">
-                    Saving...<Loader2 className="h-4 w-4 animate-spin" style={{marginTop:'4px'}} />
-                    </span >
-                  
-                ) : (
-                    "Save Changes"
-                )}
+              <span className="flex justify-center items-center gap-2">
+                {t('settings_page.profile.saving')}<Loader2 className="h-4 w-4 animate-spin" />
+              </span>
+            ) : (
+              t('settings_page.profile.save_changes')
+            )}
           </button>
         </div>
       </div>
@@ -315,16 +317,18 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', 
-                color: `${UserProfile.hasSubscription ? 'var(--accent-primary)' : 'var(--text-muted)'}`, 
-                fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {UserProfile.hasSubscription ? 'Active Plan' : 'Inactive Plan'} 
+              <div style={{
+                fontSize: '0.75rem',
+                color: `${UserProfile.hasSubscription ? 'var(--accent-primary)' : 'var(--text-muted)'}`,
+                fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em'
+              }}>
+                {UserProfile.hasSubscription ? t('settings_page.profile.tier.active_plan') : t('settings_page.profile.tier.inactive_plan')}
               </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', margin: '0.2rem 0' }}>
-                {UserProfile.hasSubscription ? 'Spendora PRO Enterprise' : 'Spendora Free'}
+                {UserProfile.hasSubscription ? t('settings_page.profile.tier.plan_pro') : t('settings_page.profile.tier.plan_free')}
               </h3>
               <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', margin: 0 }}>
-                {UserProfile.hasSubscription ? 'Unlimited multi-currency accounts, automated bank synchronization, AI financial advisor.' : 'Basic features with limited access.'}
+                {UserProfile.hasSubscription ? t('settings_page.profile.tier.pro_desc') : t('settings_page.profile.tier.free_desc')}
               </p>
             </div>
             <div
@@ -346,12 +350,16 @@ export default function SettingProfiles({ user , token }: { user: User | null, t
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: '1.25rem' }}>
             <div style={{ background: '#161616', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Billing Cycle</div>
-              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>{UserProfile.hasSubscription ? 'Yearly ($99/yr)' : 'Free'}</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t('settings_page.profile.tier.billing_cycle')}</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>
+                {UserProfile.hasSubscription ? t('settings_page.profile.tier.yearly_price') : t('settings_page.profile.tier.free_price')}
+              </div>
             </div>
             <div style={{ background: '#161616', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Next Renewal</div>
-              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#10b981' }}>{UserProfile.hasSubscription ? 'Oct 15, 2027' : '-'}</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t('settings_page.profile.tier.next_renewal')}</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#10b981' }}>
+                {UserProfile.hasSubscription ? 'Oct 15, 2027' : '-'}
+              </div>
             </div>
           </div>
         </div>
