@@ -38,7 +38,8 @@ export function Dashboard({ user, token }: { user: User, token: string }) {
                     route.push('/login');
                 }
                 if (data.status == 200) {
-                    setTransactions(data.transactions);
+                    setTransactions(data.transactions??[])
+                    console.log(data.transactions)
                 }
                 setLoading(false);
             } catch (error) {
@@ -103,16 +104,16 @@ export function Dashboard({ user, token }: { user: User, token: string }) {
         const totalIncomeThisMouth = transactions
             .filter((t: Transaction) => t.type === "INCOME" && t.date.startsWith(`${year}-${month}`))
             .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
-        const totalExpensesThisMouth = transactions.filter(
-            (t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${year}-${month}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalExpensesThisMouth = transactions
+            .filter((t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${year}-${month}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
         //last month 
-        const totalIncomelastMonth = transactions.filter(
-            (t: Transaction) => (t.type === "INCOME") && t.date.startsWith(`${previousMonthStr}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
-        const totalExpenseslastMonth = transactions.filter(
-            (t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${previousMonthStr}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalIncomelastMonth = transactions
+            .filter((t: Transaction) => (t.type === "INCOME") && t.date.startsWith(`${previousMonthStr}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalExpenseslastMonth = transactions
+            .filter((t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${previousMonthStr}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
         const savings = totalIncomeThisMouth - totalExpensesThisMouth
         const savingsLastMounth = totalIncomelastMonth - totalExpenseslastMonth
         const savingsRate = Number(savingsLastMounth) > 0
@@ -121,10 +122,10 @@ export function Dashboard({ user, token }: { user: User, token: string }) {
         const Incomerate = Number(totalIncomeThisMouth) / Number(totalIncome) * 100
         const totalbalancerate = Number(totalIncomeThisMouth - totalExpensesThisMouth) / Number(totalIncome - totalExpenses) * 100
         return {
-            totalBalance: totalIncome * rate - totalExpenses * rate,
+            totalBalance: (totalIncome -totalExpenses) * rate,
             totalIncome: totalIncomeThisMouth * rate,
             totalExpenses: totalExpensesThisMouth * rate,
-            savings: savings * rate,
+            savings: savings *rate,
             savingsRate,
             transactionCount: transactions.length,
             Incomerate,
@@ -132,8 +133,7 @@ export function Dashboard({ user, token }: { user: User, token: string }) {
         };
     }, [transactions]);
     const [isBudgetModalOpen, setIsBudgetModalOpen] = useState<boolean>(false);
-    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);   
     // Refresh handler
     const handleRefresh = () => {
         setIsRefreshing(true);

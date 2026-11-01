@@ -1,5 +1,5 @@
 "use client"
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -23,13 +23,15 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { User } from '@/types';
-
+import {Notification} from '@/components/notifications/notification';
 interface DashboardLayoutProps {
   children?: ReactNode;
   user: User;
+  token:string;
+  loadingNotifications?:boolean;
 }
 
-export default function DashboardLayout({ children, user }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, user, token}: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -38,7 +40,33 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     Management: true,
   });
+  const [notifications, setNotifications] = useState<[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const fetchNotifications = async () => {
+    try {
+      setLoadingNotifications(true)
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/notifications`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      setNotifications(data.data);
+      setLoadingNotifications(false)
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+  useEffect(() => {
+    fetchNotifications();
+  }, [token]);
   const toggleDropdown = (label: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
@@ -82,7 +110,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : 'U');
   const userName = user?.name || '';
   const userEmail = user?.email || '';
-
+ 
   return (
     <div style={{
       display: 'flex',
@@ -374,24 +402,6 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
             })}
           </nav>
 
-          {/* Quick Pro Upgrade Banner / Tip */}
-          {!collapsed && (
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.1rem',
-              borderRadius: 'var(--radius-md)',
-              background: 'linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(20, 20, 20, 0.6) 100%)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                <Sparkles size={16} color="var(--accent-primary)" />
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff' }}>AI Insights Active</span>
-              </div>
-              <p style={{ fontSize: '0.725rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: 0 }}>
-                You saved 18% more this month compared to July. Keep it up!
-              </p>
-            </div>
-          )}
         </div>
 
         {/* User Card & Logout */}
@@ -519,57 +529,11 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
           {/* Right Topbar Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {/* Notifications toggle */}
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="btn-icon"
-                style={{ position: 'relative' }}
-                aria-label="Notifications"
-              >
-                <Bell size={18} />
-                <span style={{
-                  position: 'absolute',
-                  top: '4px',
-                  right: '4px',
-                  width: '7px',
-                  height: '7px',
-                  borderRadius: '50%',
-                  background: 'var(--accent-primary)',
-                }} />
-              </button>
-
-              {showNotifications && (
-                <div style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '44px',
-                  width: '300px',
-                  background: '#141414',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: '0 15px 35px rgba(0,0,0,0.7)',
-                  padding: '1rem',
-                  zIndex: 100,
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>Notifications</span>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-primary)', cursor: 'pointer' }}>Mark all read</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                    <div style={{ padding: '0.6rem', borderRadius: 'var(--radius-sm)', background: '#1c1c1c', fontSize: '0.775rem' }}>
-                      <div style={{ fontWeight: '600', color: '#ffffff' }}>Monthly Salary credited</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>+$4,850.00 deposited into your bank account.</div>
-                    </div>
-                    <div style={{ padding: '0.6rem', borderRadius: 'var(--radius-sm)', background: '#1c1c1c', fontSize: '0.775rem' }}>
-                      <div style={{ fontWeight: '600', color: '#eab308' }}>Budget Alert</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>Food category has reached 65% of monthly limit.</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+          <div style={{ position: 'relative' }}>
+            <Notification token={token} notifications={notifications} loadingNotifications={loadingNotifications} closeNotifications={showNotifications} />
           </div>
-        </header>
+          </div>
+        </header> 
 
         {/* Dynamic Page Content */}
         <main style={{

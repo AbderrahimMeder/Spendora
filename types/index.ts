@@ -81,7 +81,7 @@ export interface Budget {
   categoryBudgets: Record<string, number>;
 }
 
-export type CurrencyCode = 'USD' | 'EUR' | 'MAD' | 'GBP' | 'CAD' | string;
+export type CurrencyCode = 'USD' | 'EUR' | 'MAD' | 'GBP' | 'CAD' |string;
 
 export interface CurrencyOption {
   code: string;
@@ -107,4 +107,18 @@ export interface ExpenseEvolutionPoint {
   date: string;
   amount: number;
   income?: number;
+}
+
+
+export interface Notification{
+    id:string;
+    title: string;
+    message: string;
+    category:string;
+    action_url: string;
+    metadata: object;
+    created_at: string;
+    updated_at: string;
+    archived_at: string | null;
+    read_at: string | null;
 }
