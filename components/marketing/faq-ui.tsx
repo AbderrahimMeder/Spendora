@@ -1,6 +1,8 @@
-'use client'
+'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   HelpCircle,
   ChevronDown,
@@ -15,51 +17,60 @@ interface FaqItem {
 }
 
 export function FaqUI() {
+  const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
 
   const faqData: FaqItem[] = [
     {
-      q: 'What is Spendora?',
-      a: 'Spendora is a simple, smart platform that helps you organize your finances, manage expenses and accounts, and stay focused on what matters most to your financial growth.',
+      q: t('faq_page.items.q1'),
+      a: t('faq_page.items.a1'),
       category: 'general',
     },
     {
-      q: 'Is Spendora free to use?',
-      a: 'Yes, you can start using Spendora for free. Additional premium intelligence and automation features may be available depending on your plan.',
+      q: t('faq_page.items.q2'),
+      a: t('faq_page.items.a2'),
       category: 'general',
     },
     {
-      q: 'Can I access my data from different devices?',
-      a: 'Yes. Your data is stored securely online with encrypted cloud synchronization, allowing you to access your dashboard from desktop, tablet, and mobile browsers.',
+      q: t('faq_page.items.q3'),
+      a: t('faq_page.items.a3'),
       category: 'platform',
     },
     {
-      q: 'Is my data secure?',
-      a: 'Yes. We use modern security practices, encrypted bearer sessions, and strict data isolation policies to protect your account and personal financial records.',
+      q: t('faq_page.items.q4'),
+      a: t('faq_page.items.a4'),
       category: 'security',
     },
     {
-      q: 'Can I create an account without paying?',
-      a: 'Yes. You can create an account and start using the platform immediately without entering a credit card or payment information.',
+      q: t('faq_page.items.q5'),
+      a: t('faq_page.items.a5'),
       category: 'general',
     },
     {
-      q: 'Can I delete my account?',
-      a: 'Yes. You stay in complete control of your data. You can request the permanent deletion of your account and all associated financial records at any time.',
+      q: t('faq_page.items.q6'),
+      a: t('faq_page.items.a6'),
       category: 'security',
     },
     {
-      q: 'What happens if I forget my password?',
-      a: 'You can use the password recovery option on the login page to securely receive a password reset link and regain instant access to your account.',
+      q: t('faq_page.items.q7'),
+      a: t('faq_page.items.a7'),
       category: 'account',
     },
     {
-      q: 'How can I contact support?',
-      a: 'You can contact our support team anytime through our Contact page or directly by email at support@spendora.com. We typically respond within 24 hours.',
+      q: t('faq_page.items.q8'),
+      a: t('faq_page.items.a8'),
       category: 'support',
     },
+  ];
+
+  const categories = [
+    { id: 'all', label: t('faq_page.categories.all') },
+    { id: 'general', label: t('faq_page.categories.general') },
+    { id: 'platform', label: t('faq_page.categories.platform') },
+    { id: 'security', label: t('faq_page.categories.security') },
+    { id: 'account', label: t('faq_page.categories.account') },
   ];
 
   const filteredFaqs = faqData.filter((item) => {
@@ -115,7 +126,7 @@ export function FaqUI() {
             }}
           >
             <HelpCircle size={14} />
-            <span>Help Center & FAQ</span>
+            <span>{t('faq_page.hero.badge')}</span>
           </div>
 
           <h1
@@ -128,7 +139,8 @@ export function FaqUI() {
               marginBottom: '1.25rem',
             }}
           >
-            Frequently Asked <span style={{ color: 'var(--accent-primary)' }}>Questions</span>
+            {t('faq_page.hero.title_part1')}{' '}
+            <span style={{ color: 'var(--accent-primary)' }}>{t('faq_page.hero.title_part2')}</span>
           </h1>
 
           <p
@@ -140,7 +152,7 @@ export function FaqUI() {
               margin: '0 auto 2.5rem auto',
             }}
           >
-            Find quick answers to common questions about using Spendora, account privacy, multi-device support, and billing.
+            {t('faq_page.hero.description')}
           </p>
 
           {/* Interactive Search Bar */}
@@ -157,7 +169,7 @@ export function FaqUI() {
             />
             <input
               type="text"
-              placeholder="Search questions (e.g. 'free', 'devices', 'security')..."
+              placeholder={t('faq_page.hero.search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
@@ -174,13 +186,7 @@ export function FaqUI() {
 
           {/* Category Filter Chips */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {[
-              { id: 'all', label: 'All Questions' },
-              { id: 'general', label: 'General' },
-              { id: 'platform', label: 'Platform & Devices' },
-              { id: 'security', label: 'Privacy & Security' },
-              { id: 'account', label: 'Account & Access' },
-            ].map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
@@ -220,6 +226,7 @@ export function FaqUI() {
                     overflow: 'hidden',
                     border: isOpen ? '1px solid var(--accent-border)' : '1px solid var(--border-subtle)',
                     transition: 'border-color 0.2s ease',
+                    textAlign: 'start',
                   }}
                 >
                   <button
@@ -235,7 +242,7 @@ export function FaqUI() {
                       color: '#ffffff',
                       fontSize: '1rem',
                       fontWeight: '700',
-                      textAlign: 'left',
+                      textAlign: 'start',
                       cursor: 'pointer',
                       gap: '1rem',
                     }}
@@ -275,9 +282,11 @@ export function FaqUI() {
               style={{ padding: '3rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}
             >
               <HelpCircle size={32} style={{ marginBottom: '0.75rem', opacity: 0.5 }} />
-              <div style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff' }}>No matching questions found</div>
+              <div style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff' }}>
+                {t('faq_page.not_found.title')}
+              </div>
               <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                Try searching for a different keyword or contact our support team.
+                {t('faq_page.not_found.description')}
               </p>
             </div>
           )}
@@ -298,14 +307,15 @@ export function FaqUI() {
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '1.5rem',
+            textAlign: 'start',
           }}
         >
           <div>
             <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.35rem' }}>
-              Still have questions?
+              {t('faq_page.banner.title')}
             </div>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Can't find the answer you're looking for? Reach out to our friendly support team.
+              {t('faq_page.banner.description')}
             </p>
           </div>
 
@@ -314,7 +324,7 @@ export function FaqUI() {
             className="btn btn-primary"
             style={{ fontSize: '0.9rem', padding: '0.75rem 1.4rem', textDecoration: 'none' }}
           >
-            <span>Get in Touch</span>
+            <span>{t('faq_page.banner.button')}</span>
             <ArrowRight size={16} />
           </Link>
         </div>
@@ -324,4 +334,3 @@ export function FaqUI() {
 }
 
 export default FaqUI;
-

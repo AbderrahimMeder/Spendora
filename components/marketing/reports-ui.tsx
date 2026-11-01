@@ -1,27 +1,14 @@
-'use client'
+'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart3,
-  PieChart,
-  TrendingUp,
   ArrowRight,
   Zap,
   ArrowUpRight,
   ArrowDownRight,
-  Clock,
-  CheckCircle2,
-  Building2,
-  Sliders,
-  Eye,
-  Flame,
-  Coffee,
-  ShoppingBag,
-  Car,
-  Home as HomeIcon,
-  Tv,
-  Activity,
-  LucideIcon,
 } from 'lucide-react';
 
 interface MonthlyDataPoint {
@@ -31,25 +18,8 @@ interface MonthlyDataPoint {
   savings: number;
 }
 
-interface CategoryBreakdownItem {
-  name: string;
-  amount: number;
-  pct: number;
-  color: string;
-  icon: LucideIcon;
-  trend: string;
-}
-
-interface BiggestExpenseItem {
-  merchant: string;
-  category: string;
-  date: string;
-  account: string;
-  amount: number;
-  tag: string;
-}
-
 export function ReportsUI() {
+  const { t } = useTranslation();
   // Interactive Controls State
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('monthly');
 
@@ -67,28 +37,16 @@ export function ReportsUI() {
 
   const maxSpend = Math.max(...monthlyData.map((d) => d.spend));
 
-  // Category distribution data
-  const categoryBreakdown: CategoryBreakdownItem[] = [
-    { name: 'Food & Dining', amount: 980, pct: 31.4, color: '#10b981', icon: Coffee, trend: '-12% vs July' },
-    { name: 'Housing & Utilities', amount: 850, pct: 27.2, color: '#8b5cf6', icon: HomeIcon, trend: 'Stable' },
-    { name: 'Transport & Fuel', amount: 440, pct: 14.1, color: '#3b82f6', icon: Car, trend: '+5% vs July' },
-    { name: 'Shopping & Retail', amount: 400, pct: 12.8, color: '#ec4899', icon: ShoppingBag, trend: '-24% vs July' },
-    { name: 'Subscriptions', amount: 350, pct: 11.2, color: '#f59e0b', icon: Tv, trend: 'Unchanged' },
-    { name: 'Other Discretionary', amount: 100, pct: 3.3, color: '#06b6d4', icon: Activity, trend: '-8% vs July' },
-  ];
-
-  // Biggest expenses list
-  const biggestExpenses: BiggestExpenseItem[] = [
-    { merchant: 'Housing Management', category: 'Housing', date: 'Aug 01', account: 'CIH Bank', amount: 2800, tag: 'Fixed' },
-    { merchant: 'Marjane Hypermarket', category: 'Food & Groceries', date: 'Aug 14', account: 'Attijariwafa', amount: 950, tag: 'Essential' },
-    { merchant: 'Apple Authorized Service', category: 'Tech & Maintenance', date: 'Aug 19', account: 'CIH Bank', amount: 650, tag: 'Outlier' },
-    { merchant: 'Restaurant La Table', category: 'Dining Out', date: 'Aug 26', account: 'Cash Wallet', amount: 320, tag: 'Social' },
-    { merchant: 'Total Energies Station', category: 'Transport', date: 'Aug 22', account: 'CIH Bank', amount: 280, tag: 'Fuel' },
+  const timeframes = [
+    { id: 'daily', label: t('reports.hero.timeframes.daily') },
+    { id: 'weekly', label: t('reports.hero.timeframes.weekly') },
+    { id: 'monthly', label: t('reports.hero.timeframes.monthly') },
+    { id: 'quarterly', label: t('reports.hero.timeframes.quarterly') },
+    { id: 'yearly', label: t('reports.hero.timeframes.yearly') },
   ];
 
   return (
     <div style={{ color: 'var(--text-primary)', overflowX: 'hidden', background: '#070707' }}>
-
       {/* =========================================================================
           01. HERO SECTION: See the bigger picture
       ========================================================================== */}
@@ -135,7 +93,7 @@ export function ReportsUI() {
             }}
           >
             <BarChart3 size={15} />
-            <span>Spendora Financial Intelligence & Reports</span>
+            <span>{t('reports.hero.badge')}</span>
           </div>
 
           {/* Headline */}
@@ -149,7 +107,10 @@ export function ReportsUI() {
               marginBottom: '1.35rem',
             }}
           >
-            See the <span style={{ background: 'linear-gradient(135deg, #34d399 0%, #38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>bigger picture.</span>
+            {t('reports.hero.title_part1')}{' '}
+            <span style={{ background: 'linear-gradient(135deg, #34d399 0%, #38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              {t('reports.hero.title_part2')}
+            </span>
           </h1>
 
           {/* Subtitle */}
@@ -162,7 +123,7 @@ export function ReportsUI() {
               margin: '0 auto 2.75rem auto',
             }}
           >
-            Turn hundreds of transactions into clear, visual financial intelligence. Discover spending patterns, compare timelines, and understand where your money moves.
+            {t('reports.hero.description')}
           </p>
 
           {/* Live Interactive Analytics Preview Workbench */}
@@ -176,7 +137,7 @@ export function ReportsUI() {
               border: '1px solid #1f1f1f',
               borderRadius: 'var(--radius-lg)',
               boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.95), 0 0 40px rgba(16, 185, 129, 0.06)',
-              textAlign: 'left',
+              textAlign: 'start',
             }}
           >
             {/* Top Toolbar */}
@@ -194,10 +155,10 @@ export function ReportsUI() {
             >
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Analytics Studio
+                  {t('reports.hero.studio_label')}
                 </div>
                 <div style={{ fontSize: '1.15rem', fontWeight: '800', color: '#ffffff' }}>
-                  Financial Velocity & Trajectory
+                  {t('reports.hero.studio_title')}
                 </div>
               </div>
 
@@ -212,10 +173,10 @@ export function ReportsUI() {
                   gap: '0.25rem',
                 }}
               >
-                {['daily', 'weekly', 'monthly', 'quarterly', 'yearly'].map((tf) => (
+                {timeframes.map((tf) => (
                   <button
-                    key={tf}
-                    onClick={() => setSelectedTimeframe(tf)}
+                    key={tf.id}
+                    onClick={() => setSelectedTimeframe(tf.id)}
                     style={{
                       padding: '0.45rem 0.9rem',
                       borderRadius: 'var(--radius-sm)',
@@ -223,13 +184,13 @@ export function ReportsUI() {
                       fontWeight: '700',
                       border: 'none',
                       cursor: 'pointer',
-                      background: selectedTimeframe === tf ? 'var(--accent-primary)' : 'transparent',
-                      color: selectedTimeframe === tf ? '#000000' : 'var(--text-secondary)',
+                      background: selectedTimeframe === tf.id ? 'var(--accent-primary)' : 'transparent',
+                      color: selectedTimeframe === tf.id ? '#000000' : 'var(--text-secondary)',
                       textTransform: 'capitalize',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    {tf}
+                    {tf.label}
                   </button>
                 ))}
               </div>
@@ -245,42 +206,42 @@ export function ReportsUI() {
               }}
             >
               <div style={{ background: '#121212', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #1a1a1a' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Cash Inflow</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('reports.hero.kpis.cash_inflow')}</div>
                 <div style={{ fontSize: '1.65rem', fontWeight: '800', color: 'var(--accent-primary)', marginTop: '0.2rem' }}>
                   +15,000 <span style={{ fontSize: '0.85rem' }}>MAD</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <ArrowUpRight size={13} /> +3.4% vs last month
+                  <ArrowUpRight size={13} /> {t('reports.hero.kpis.cash_inflow_change')}
                 </div>
               </div>
 
               <div style={{ background: '#121212', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #1a1a1a' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Monthly Spend</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('reports.hero.kpis.monthly_spend')}</div>
                 <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#ffffff', marginTop: '0.2rem' }}>
                   3,120 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>MAD</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <ArrowDownRight size={13} /> -18.9% less than July
+                  <ArrowDownRight size={13} /> {t('reports.hero.kpis.monthly_spend_change')}
                 </div>
               </div>
 
               <div style={{ background: '#121212', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #1a1a1a' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Net Savings Rate</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('reports.hero.kpis.savings_rate')}</div>
                 <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#38bdf8', marginTop: '0.2rem' }}>
-                  79.2% <span style={{ fontSize: '0.85rem' }}>(+11,880 MAD)</span>
+                  79.2% <span style={{ fontSize: '0.85rem' }}>{t('reports.hero.kpis.savings_rate_sub')}</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  Above 65% monthly goal
+                  {t('reports.hero.kpis.savings_goal')}
                 </div>
               </div>
 
               <div style={{ background: '#121212', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid #1a1a1a' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Average Daily Burn</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('reports.hero.kpis.daily_burn')}</div>
                 <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#f59e0b', marginTop: '0.2rem' }}>
-                  104 <span style={{ fontSize: '0.85rem' }}>MAD / day</span>
+                  104 <span style={{ fontSize: '0.85rem' }}>{t('reports.hero.kpis.daily_burn_unit')}</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  Safe budget zone
+                  {t('reports.hero.kpis.budget_zone')}
                 </div>
               </div>
             </div>
@@ -289,10 +250,10 @@ export function ReportsUI() {
             <div style={{ background: '#111111', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid #1a1a1a' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                 <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>
-                  Cash-Flow Evolution & Monthly Trend (MAD)
+                  {t('reports.hero.chart.title')}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  🟢 Savings Flow &nbsp;|&nbsp; ⚪ Spend Outflow
+                  {t('reports.hero.chart.legend')}
                 </span>
               </div>
 
@@ -344,15 +305,15 @@ export function ReportsUI() {
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.65rem' }}>
               <Zap size={16} />
-              <span>Data Transformation Pipeline</span>
+              <span>{t('reports.pipeline.badge')}</span>
             </div>
 
             <h2 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '0.85rem' }}>
-              From Transactions to Understanding
+              {t('reports.pipeline.title')}
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '640px', margin: '0 auto' }}>
-              Raw bank statements give you noise. Spendora transforms messy, unorganized debit lines into structured behavioral clarity.
+              {t('reports.pipeline.description')}
             </p>
           </div>
 
@@ -366,10 +327,12 @@ export function ReportsUI() {
             }}
           >
             {/* Raw transactions */}
-            <div className="glass-card" style={{ padding: '2rem', background: '#0e0e0e', borderRadius: 'var(--radius-lg)', border: '1px solid #222222' }}>
+            <div className="glass-card" style={{ padding: '2rem', background: '#0e0e0e', borderRadius: 'var(--radius-lg)', border: '1px solid #222222', textAlign: 'start' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ef4444', textTransform: 'uppercase' }}>Before: Raw Cryptic Data</span>
-                <span className="badge badge-dark">Unfiltered Noise</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ef4444', textTransform: 'uppercase' }}>
+                  {t('reports.pipeline.before_title')}
+                </span>
+                <span className="badge badge-dark">{t('reports.pipeline.before_badge')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontFamily: 'monospace', fontSize: '0.825rem' }}>
                 <div style={{ background: '#141414', padding: '0.65rem 0.85rem', borderRadius: '4px', color: '#888888', display: 'flex', justifyContent: 'space-between' }}>
@@ -392,30 +355,32 @@ export function ReportsUI() {
             </div>
 
             {/* Clear insight */}
-            <div className="glass-card" style={{ padding: '2rem', background: '#0e0e0e', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent-border)' }}>
+            <div className="glass-card" style={{ padding: '2rem', background: '#0e0e0e', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent-border)', textAlign: 'start' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--accent-primary)', textTransform: 'uppercase' }}>After: Spendora Intelligence</span>
-                <span className="badge badge-green">Meaningful Clarity</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--accent-primary)', textTransform: 'uppercase' }}>
+                  {t('reports.pipeline.after_title')}
+                </span>
+                <span className="badge badge-green">{t('reports.pipeline.after_badge')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <div style={{ background: '#141414', padding: '0.75rem 1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '0.9rem' }}>Restaurant La Table</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--accent-primary)' }}>Food & Dining · CIH Bank</div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--accent-primary)' }}>{t('reports.pipeline.food_category')}</div>
                   </div>
                   <span style={{ fontWeight: '800', color: '#ffffff' }}>120 MAD</span>
                 </div>
                 <div style={{ background: '#141414', padding: '0.75rem 1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '0.9rem' }}>Marjane Groceries</div>
-                    <div style={{ fontSize: '0.72rem', color: '#3b82f6' }}>Essential Household · Attijariwafa</div>
+                    <div style={{ fontSize: '0.72rem', color: '#3b82f6' }}>{t('reports.pipeline.household_category')}</div>
                   </div>
                   <span style={{ fontWeight: '800', color: '#ffffff' }}>950 MAD</span>
                 </div>
                 <div style={{ background: '#141414', padding: '0.75rem 1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '0.9rem' }}>4 Active Subscriptions</div>
-                    <div style={{ fontSize: '0.72rem', color: '#f59e0b' }}>Recurring Tech & Media</div>
+                    <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '0.9rem' }}>{t('reports.pipeline.subscriptions_title')}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#f59e0b' }}>{t('reports.pipeline.subscriptions_category')}</div>
                   </div>
                   <span style={{ fontWeight: '800', color: '#ffffff' }}>350 MAD</span>
                 </div>
@@ -457,22 +422,23 @@ export function ReportsUI() {
 
           <div style={{ position: 'relative', zIndex: 1 }}>
             <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '1rem', lineHeight: 1.15 }}>
-              See your money <span style={{ color: 'var(--accent-primary)' }}>differently.</span>
+              {t('reports.cta.title_part1')}{' '}
+              <span style={{ color: 'var(--accent-primary)' }}>{t('reports.cta.title_part2')}</span>
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '520px', margin: '0 auto 2.5rem auto', lineHeight: '1.6' }}>
-              Gain the financial clarity and confidence you've always wanted. Start exploring your reports today.
+              {t('reports.cta.description')}
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link href="/register" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}>
-                <span>Start for Free — Enter Spendora</span>
+                <span>{t('reports.cta.button')}</span>
                 <ArrowRight size={18} />
               </Link>
             </div>
 
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              100% Free · No Credit Card Required
+              {t('reports.cta.guarantee')}
             </div>
           </div>
         </div>
@@ -482,4 +448,3 @@ export function ReportsUI() {
 }
 
 export default ReportsUI;
-

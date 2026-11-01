@@ -2,5 +2,455 @@
   "dashboard": "Tableau de bord",
   "welcome": "Bon retour",
   "settings": "Paramètres",
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+  "home": {
+    "hero": {
+      "badge": "Clarté des finances personnelles",
+      "title_part1": "Où va votre",
+      "title_part2": "argent ?",
+      "description": "Comprenez vos dépenses, suivez vos sorties d'argent et visualisez clairement votre vie financière — tout en un seul endroit.",
+      "start_free": "Commencer gratuitement",
+      "see_how_it_works": "Voir comment ça marche",
+      "preview": {
+        "url": "spendora.app/dashboard",
+        "badge": "Aperçu financier en direct",
+        "total_balance": "Solde total",
+        "currency": "MAD",
+        "balance_sources": "CIH Bank + Attijariwafa + Espèces",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_monitored": "4 services surveillés"
+      }
+    },
+    "accounts": {
+      "badge": "Comptes multiples",
+      "title_part1": "Tout votre argent,",
+      "title_part2": "au même endroit.",
+      "description": "L'argent est souvent réparti entre différents comptes bancaires et de l'argent liquide. Spendora regroupe toutes ces sources afin que vous puissiez comprendre votre situation financière globale sans vous connecter à plusieurs portails bancaires.",
+      "linked_accounts": "Comptes financiers associés",
+      "cih_bank": "CIH Bank",
+      "cih_type": "Compte courant principal",
+      "attijari_bank": "Attijariwafa Bank",
+      "attijari_type": "Compte d'épargne",
+      "cash": "Espèces",
+      "cash_type": "Portefeuille physique",
+      "total_balance": "Solde total"
+    },
+    "testimonials": {
+      "badge": "Expériences utilisateurs",
+      "title": "Ce que nos utilisateurs vivent avec Spendora",
+      "prev_aria": "Témoignage précédent",
+      "next_aria": "Témoignage suivant",
+      "item1": {
+        "quote": "Spendora m'a enfin aidé à comprendre où va mon argent chaque mois. Aucune complexité, juste une clarté instantanée.",
+        "name": "Yassine E.",
+        "role": "Jeune salarié",
+        "city": "Casablanca"
+      },
+      "item2": {
+        "quote": "Gérer mon allocation mensuelle et mes dépenses en espèces était un vrai casse-tête. Maintenant, je connais exactement mon budget restant.",
+        "name": "Salma K.",
+        "role": "Étudiante universitaire",
+        "city": "Rabat"
+      },
+      "item3": {
+        "quote": "Suivre plusieurs virements bancaires et dépenses de projets en MAD sans tableaux complexes est un véritable soulagement.",
+        "name": "Amine B.",
+        "role": "Designer indépendant",
+        "city": "Marrakech"
+      },
+      "item4": {
+        "quote": "Le suivi des abonnements à lui seul m'a fait économiser des centaines de dirhams sur des services inutilisés que j'avais oubliés.",
+        "name": "Noura T.",
+        "role": "Responsable marketing produit",
+        "city": "Tanger"
+      }
+    },
+    "faq": {
+      "badge": "Des questions ?",
+      "title": "Foire aux questions",
+      "q1": "Qu'est-ce que Spendora ?",
+      "a1": "Spendora est une plateforme qui vous aide à comprendre et à gérer vos activités financières personnelles en un seul endroit unifié.",
+      "q2": "Spendora est-il gratuit ?",
+      "a2": "Oui. Spendora est actuellement entièrement gratuit.",
+      "q3": "Puis-je gérer plusieurs comptes ?",
+      "a3": "Oui. Vous pouvez gérer plusieurs comptes bancaires et suivre vos liquidités dans une vue combinée.",
+      "q4": "Puis-je suivre mes dépenses ?",
+      "a4": "Oui. Vous pouvez organiser et analyser vos dépenses par catégorie, commerçant et date.",
+      "q5": "Puis-je suivre mes abonnements ?",
+      "a5": "Oui. Spendora vous aide à garder le contrôle sur vos paiements récurrents, dates de renouvellement et coûts totaux d'abonnement.",
+      "q6": "Puis-je créer des budgets ?",
+      "a6": "Oui. Vous pouvez définir des limites de dépenses par catégorie et suivre vos montants restants en temps réel.",
+      "q7": "Puis-je utiliser Spendora sur mobile ?",
+      "a7": "La première version est disponible sur le Web avec une interface adaptée aux mobiles. Des applications natives Android, iOS et Windows sont prévues pour l'avenir.",
+      "q8": "Mes informations financières sont-elles confidentielles ?",
+      "a8": "Spendora est conçu avec un souci constant de confidentialité et de sécurité, vous laissant le contrôle total de vos informations personnelles."
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "about": {
+    "hero": {
+      "badge": "Bienvenue sur Spendora · Clarté financière",
+      "title_part1": "Bienvenue sur Spendora.",
+      "title_part2": "Une façon plus claire de comprendre votre argent.",
+      "description": "Spendora vous aide à comprendre où va votre argent, à suivre vos dépenses, à gérer vos comptes et abonnements et à obtenir une vue claire de votre activité financière.",
+      "get_started": "Commencer",
+      "explore": "Découvrir Spendora",
+      "preview": {
+        "url": "spendora.app/overview",
+        "badge": "Espace financier en direct",
+        "total_balance": "Solde net total",
+        "currency": "MAD",
+        "balance_breakdown": "Banque (11 700 MAD) + Espèces (700 MAD)",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_monitored": "4 services (Netflix, Spotify, Gym, Cloud)"
+      }
+    },
+    "problem": {
+      "badge": "Le problème que nous résolvons",
+      "title_part1": "Vous savez combien vous avez.",
+      "title_part2": "Mais savez-vous où cela va ?",
+      "description": "La plupart des gens consultent leur application bancaire tous les jours, mais le solde bancaire n'indique que le montant restant — jamais l'histoire qui se cache derrière vos habitudes de dépenses."
+    },
+    "principles": {
+      "title": "Nos principes directeurs",
+      "subtitle": "Les convictions fondamentales qui façonnent chaque détail et algorithme de Spendora.",
+      "simplicity": {
+        "title": "Simplicité",
+        "quote": "La gestion d'argent ne devrait pas sembler compliquée.",
+        "desc": "Nous éliminons le superflu, les menus sans fin et les feuilles de calcul lourdes pour que vous puissiez enregistrer une dépense en moins de 5 secondes."
+      },
+      "transparency": {
+        "title": "Transparence",
+        "quote": "Sachez exactement où va votre argent.",
+        "desc": "Une répartition limpide de chaque dirham dépensé entre commerçants, comptes et catégories, sans aucune supposition."
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "quote": "Vos informations financières vous appartiennent.",
+        "desc": "Nous ne vendons jamais vos données, n'intégrons aucun traceur publicitaire tiers et ne transigeons jamais sur la confidentialité de vos dossiers."
+      },
+      "security": {
+        "title": "Sécurité",
+        "quote": "Votre argent mérite une protection rigoureuse.",
+        "desc": "Conçu avec des jetons de session chiffrés, des politiques d'API strictes et des normes d'infrastructure renforcées."
+      },
+      "control": {
+        "title": "Contrôle",
+        "quote": "Votre argent. Vos décisions.",
+        "desc": "Définissez des limites personnalisées par catégorie, organisez vos portefeuilles d'espèces aux côtés de vos comptes bancaires et maîtrisez le rythme de votre budget."
+      },
+      "clarity": {
+        "title": "Clarté",
+        "quote": "Transformez vos activités financières en données compréhensibles.",
+        "desc": "Transformez les relevés bancaires bruts et indéchiffrables en superbes rapports visuels qui révèlent votre comportement réel de dépense."
+      }
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "features": {
+    "hero": {
+      "badge": "Suite de fonctionnalités Spendora",
+      "title_part1": "Tout ce dont vous avez besoin pour",
+      "title_part2": "comprendre votre argent.",
+      "description": "Des dépenses quotidiennes aux comptes, abonnements, budgets et rapports — Spendora réunit toute votre activité financière en un seul endroit clair.",
+      "start_free": "Commencer gratuitement",
+      "explore": "Découvrir les fonctionnalités",
+      "preview": {
+        "url": "spendora.com/overview",
+        "badge": "Un espace de travail unifié",
+        "total_balance": "Solde net total",
+        "currency": "MAD",
+        "balance_sources": "CIH Bank + Attijariwafa + Espèces",
+        "monthly_spending": "Dépenses mensuelles",
+        "spending_limit": "/ 4 500 MAD",
+        "active_subscriptions": "Abonnements actifs",
+        "subscription_rate": "MAD / mois",
+        "services_tracked": "4 services récurrents suivis"
+      }
+    },
+    "accounts": {
+      "badge": "Agrégation multi-comptes",
+      "title_part1": "Tout votre argent,",
+      "title_part2": "au même endroit.",
+      "description": "Ne perdez plus de temps à consulter différents supports. Regroupez vos comptes bancaires, votre épargne et votre argent liquide avec Spendora.",
+      "check1": "Comptes et banques multiples",
+      "check2": "Suivi des espèces et liquidités",
+      "check3": "Soldes individuels et cumulés",
+      "check4": "Flux d'activité filtré par compte",
+      "cih_bank": "CIH Bank",
+      "attijari_bank": "Attijariwafa Bank",
+      "cash": "Espèces",
+      "total_combined": "Solde cumulé total"
+    },
+    "expenses": {
+      "badge": "Intelligence des dépenses",
+      "title_part1": "Voyez chaque dépense.",
+      "title_part2": "Comprenez chaque habitude.",
+      "description": "Chaque achat raconte une histoire. Spendora vous aide à comprendre la vôtre avec un contexte complet : montant, catégorie, commerçant, date, compte et notes.",
+      "items": {
+        "restaurant": "Restaurant",
+        "food": "Alimentation",
+        "uber": "Uber",
+        "transport": "Transport",
+        "amazon": "Amazon",
+        "shopping": "Shopping",
+        "netflix": "Netflix",
+        "subscription": "Abonnement"
+      }
+    },
+    "categories": {
+      "badge": "Habitudes et commerces",
+      "title": "Sachez ce que vous dépensez — et où.",
+      "description": "Comprenez les habitudes qui motivent vos dépenses. Regroupez vos achats en catégories claires et visualisez les commerçants qui perçoivent votre argent.",
+      "food_title": "Alimentation",
+      "restaurant_a": "Restaurant A",
+      "restaurant_b": "Restaurant B",
+      "shopping_title": "Shopping",
+      "amazon": "Amazon",
+      "local_store": "Magasin de proximité",
+      "tags": {
+        "food": "Alimentation",
+        "transport": "Transport",
+        "shopping": "Shopping",
+        "bills": "Factures",
+        "entertainment": "Divertissement",
+        "travel": "Voyages",
+        "health": "Santé",
+        "education": "Éducation",
+        "custom": "+ Catégories personnalisées"
+      }
+    },
+    "reports": {
+      "badge": "Analytique visuelle",
+      "title": "Ayez une vue d'ensemble.",
+      "description": "Transformez des centaines de transactions en données immédiatement compréhensibles sur des périodes quotidiennes, hebdomadaires, mensuelles et annuelles.",
+      "top_category_label": "Catégorie principale",
+      "top_category_value": "Restauration (38%)",
+      "top_merchant_label": "Commerçant principal",
+      "top_merchant_value": "Marjane (850 MAD)",
+      "primary_source_label": "Source principale",
+      "primary_source_value": "CIH Bank (68%)",
+      "charts_footer": "Graphiques : Histogrammes · Courbes · Graphiques en anneau · Cartes récapitulatives"
+    },
+    "budgets": {
+      "badge": "Limites et contrôles",
+      "title_part1": "Gardez le cap sur",
+      "title_part2": "vos dépenses.",
+      "description": "Fixez vos limites. Suivez votre progression. Gardez le contrôle. Planifiez vos dépenses à l'avance et comparez votre budget prévu et réel chaque mois.",
+      "food_budget": "Budget Alimentation",
+      "used_badge": "74,6 % utilisé",
+      "budget_label": "Budget",
+      "spent_label": "Dépensé",
+      "remaining_label": "Restant"
+    },
+    "subscriptions": {
+      "badge": "Suivi des récurrences",
+      "title": "Ne perdez plus jamais la trace de vos prélèvements.",
+      "description": "Les petits montants s'accumulent vite. Spendora vous montre le coût réel de l'ensemble de vos abonnements récurrents.",
+      "netflix": "Netflix",
+      "spotify": "Spotify",
+      "gym": "Salle de sport",
+      "cloud": "Stockage Cloud",
+      "per_month": "MAD / mois",
+      "monthly_label": "Abonnements mensuels",
+      "monthly_value": "350 MAD / mois",
+      "yearly_label": "Coût annuel",
+      "yearly_value": "4 200 MAD / an"
+    },
+    "cta": {
+      "title_part1": "Maîtrisez votre argent.",
+      "title_part2": "Prenez les bonnes décisions.",
+      "description": "Commencez à comprendre où va votre argent, organisez vos dépenses et prenez le contrôle de votre vie financière.",
+      "button": "Commencer avec Spendora — Gratuit"
+    }
+  },
+  "reports": {
+    "hero": {
+      "badge": "Intelligence financière et rapports Spendora",
+      "title_part1": "Ayez une",
+      "title_part2": "vue d'ensemble.",
+      "description": "Transformez des centaines de transactions en intelligence financière claire et visuelle. Découvrez vos habitudes de dépenses, comparez les périodes et comprenez où va votre argent.",
+      "studio_label": "Studio d'analyse",
+      "studio_title": "Vélocité et trajectoire financière",
+      "timeframes": {
+        "daily": "quotidien",
+        "weekly": "hebdomadaire",
+        "monthly": "mensuel",
+        "quarterly": "trimestriel",
+        "yearly": "annuel"
+      },
+      "kpis": {
+        "cash_inflow": "Flux total entrant",
+        "cash_inflow_change": "+3,4 % par rapport au mois dernier",
+        "monthly_spend": "Dépense mensuelle totale",
+        "monthly_spend_change": "-18,9 % par rapport à juillet",
+        "savings_rate": "Taux d'épargne net",
+        "savings_rate_sub": "(+11 880 MAD)",
+        "savings_goal": "Au-dessus de l'objectif mensuel de 65 %",
+        "daily_burn": "Dépense quotidienne moyenne",
+        "daily_burn_unit": "MAD / jour",
+        "budget_zone": "Zone budgétaire saine"
+      },
+      "chart": {
+        "title": "Évolution du flux de trésorerie et tendance mensuelle (MAD)",
+        "legend": "🟢 Flux d'épargne  |  ⚪ Sorties de dépenses"
+      }
+    },
+    "pipeline": {
+      "badge": "Pipeline de transformation des données",
+      "title": "Des transactions brutes à la compréhension",
+      "description": "Les relevés bancaires bruts créent de la confusion. Spendora transforme les lignes de débit désordonnées en une clarté comportementale structurée.",
+      "before_title": "Avant : Données brutes et cryptiques",
+      "before_badge": "Bruit non filtré",
+      "after_title": "Après : Intelligence Spendora",
+      "after_badge": "Clarté significative",
+      "food_category": "Alimentation et restaurants · CIH Bank",
+      "household_category": "Courses du foyer · Attijariwafa",
+      "subscriptions_title": "4 abonnements actifs",
+      "subscriptions_category": "Tech et médias récurrents"
+    },
+    "cta": {
+      "title_part1": "Voyez votre argent",
+      "title_part2": "autrement.",
+      "description": "Obtenez la clarté financière et la confiance dont vous avez toujours rêvé. Commencez à explorer vos rapports dès aujourd'hui.",
+      "button": "Commencer gratuitement — Découvrir Spendora",
+      "guarantee": "100 % gratuit · Aucune carte de crédit requise"
+    }
+  },
+  "contact": {
+    "hero": {
+      "badge": "Contact et assistance",
+      "title_part1": "Contactez-",
+      "title_part2": "nous",
+      "description": "Une question, besoin d'aide ou un commentaire à partager ? Notre équipe est là pour vous accompagner à chaque étape."
+    },
+    "info": {
+      "title": "Nos coordonnées",
+      "description": "Que vous ayez besoin d'aide, d'un partenariat ou de nous donner votre avis, nous sommes ravis de vous aider.",
+      "email_title": "Support par e-mail",
+      "response_time_title": "Délai de réponse",
+      "response_time_value": "Généralement sous 24 heures",
+      "availability_title": "Disponibilité",
+      "availability_value": "Disponible du lundi au vendredi",
+      "privacy_notice": "Votre adresse e-mail et vos messages sont strictement confidentiels et ne sont jamais partagés avec des tiers."
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "subtitle": "Remplissez le formulaire ci-dessous et notre équipe vous répondra rapidement.",
+      "full_name_label": "Nom complet *",
+      "full_name_placeholder": "ex. Yassine El Amrani",
+      "email_label": "Adresse e-mail *",
+      "email_placeholder": "vous@example.com",
+      "subject_label": "Sujet",
+      "subject_placeholder": "ex. Question sur le suivi multi-comptes",
+      "message_label": "Message *",
+      "message_placeholder": "Écrivez votre message ou votre question ici...",
+      "send_button": "Envoyer le message",
+      "sending_button": "Envoi en cours...",
+      "success_title": "Message reçu !",
+      "success_message": "Merci de nous avoir contactés. Nous examinerons votre demande et vous répondrons sous 24 heures.",
+      "send_another": "Envoyer un autre message",
+      "required_error": "Veuillez remplir tous les champs obligatoires.",
+      "toast_success": "Merci ! Votre message a été envoyé avec succès."
+    },
+    "cta": {
+      "title": "Nous sommes ravis d'échanger avec vous.",
+      "description": "Envoyez-nous un message et nous vous répondrons dès que possible. Vos retours nous aident à améliorer Spendora chaque jour.",
+      "footer": "Équipe support Spendora · Disponible du lundi au vendredi"
+    }
+  },
+  "faq_page": {
+    "hero": {
+      "badge": "Centre d'aide et FAQ",
+      "title_part1": "Foire aux",
+      "title_part2": "questions",
+      "description": "Trouvez des réponses rapides aux questions courantes sur l'utilisation de Spendora, la confidentialité des données, l'accès multi-appareils et la facturation.",
+      "search_placeholder": "Rechercher une question (ex. 'gratuit', 'appareils', 'sécurité')..."
+    },
+    "categories": {
+      "all": "Toutes les questions",
+      "general": "Général",
+      "platform": "Plateforme et appareils",
+      "security": "Confidentialité et sécurité",
+      "account": "Compte et accès"
+    },
+    "items": {
+      "q1": "Qu'est-ce que Spendora ?",
+      "a1": "Spendora est une plateforme simple et intelligente qui vous aide à organiser vos finances, gérer vos dépenses et vos comptes, et rester concentré sur votre santé financière.",
+      "q2": "L'utilisation de Spendora est-elle gratuite ?",
+      "a2": "Oui, vous pouvez commencer à utiliser Spendora gratuitement. Des fonctionnalités d'intelligence et d'automatisation avancées peuvent être disponibles selon votre formule.",
+      "q3": "Puis-je accéder à mes données depuis plusieurs appareils ?",
+      "a3": "Oui. Vos données sont stockées en toute sécurité en ligne avec synchronisation cloud chiffrée, vous permettant d'accéder à votre tableau de bord sur ordinateur, tablette et mobile.",
+      "q4": "Mes données sont-elles sécurisées ?",
+      "a4": "Oui. Nous appliquons des protocoles de sécurité modernes, des sessions sécurisées chiffrées et une isolation stricte des données pour protéger votre compte et vos données financières.",
+      "q5": "Puis-je créer un compte sans payer ?",
+      "a5": "Oui. Vous pouvez créer un compte et commencer à utiliser la plateforme immédiatement sans saisir de carte de crédit ni d'informations de paiement.",
+      "q6": "Puis-je supprimer mon compte ?",
+      "a6": "Oui. Vous restez totalement maître de vos données. Vous pouvez demander la suppression définitive de votre compte et de tous vos historiques financiers à tout moment.",
+      "q7": "Que se passe-t-il si j'oublie mon mot de passe ?",
+      "a7": "Vous pouvez utiliser l'option de récupération de mot de passe sur la page de connexion pour recevoir un lien sécurisé et réinitialiser votre accès instantanément.",
+      "q8": "Comment puis-je contacter le support ?",
+      "a8": "Vous pouvez contacter notre équipe à tout moment via notre page Contact ou directement par e-mail à support@spendora.com. Nous répondons généralement en moins de 24 heures."
+    },
+    "not_found": {
+      "title": "Aucune question trouvée",
+      "description": "Essayez de rechercher un autre mot-clé ou contactez notre équipe support."
+    },
+    "banner": {
+      "title": "Vous avez encore des questions ?",
+      "description": "Vous ne trouvez pas la réponse souhaitée ? N'hésitez pas à solliciter notre équipe support.",
+      "button": "Nous contacter"
+    }
+  },
+  "navbar": {
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "reports": "Rapports",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "sign_in": "Connexion",
+    "start_free": "Commencer gratuitement",
+    "my_account": "Mon compte",
+    "logged_in": "Connecté",
+    "logout": "Déconnexion",
+    "menu_toggle": "Ouvrir le menu"
+  },
+  "footer": {
+    "description": "Une façon plus claire de comprendre votre argent. Suivez vos dépenses, gérez vos comptes et prenez le contrôle de votre vie financière.",
+    "section_spendora": "Spendora",
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "about": "À propos",
+    "faq": "FAQ",
+    "section_product": "Produit",
+    "accounts": "Comptes",
+    "expenses": "Dépenses",
+    "budgets": "Budgets",
+    "subscriptions": "Abonnements",
+    "reports": "Rapports",
+    "section_support": "Assistance",
+    "help_center": "Centre d'aide",
+    "contact_us": "Contactez-nous",
+    "section_legal": "Légal",
+    "privacy_policy": "Politique de confidentialité",
+    "terms_of_service": "Conditions d'utilisation",
+    "copyright": "© 2026 Spendora. Tous droits réservés.",
+    "tagline": "Maîtrisez votre argent. Prenez les bonnes décisions."
+  }
 }

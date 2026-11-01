@@ -1,6 +1,4 @@
-
-import Navbar from '@/components/marketing/home/Navbar';
-import Footer from '@/components/marketing/home/Footer';
+import React from 'react';
 import ContactUI from '@/components/marketing/contact-ui';
 
 export default function ContactPage() {
@@ -12,4 +10,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
