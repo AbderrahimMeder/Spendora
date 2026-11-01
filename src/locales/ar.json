@@ -455,5 +455,101 @@
     "terms_of_service": "شروط الخدمة",
     "copyright": "© 2026 Spendora. جميع الحقوق محفوظة.",
     "tagline": "اعرف أموالك. وامتلك قراراتك."
+  },
+  "admin_dashboard": {
+    "header": {
+      "welcome": "مرحباً بعودتك",
+      "refresh_title": "تحديث الإحصائيات",
+      "refresh_success": "تم تحديث مؤشرات لوحة التحكم بنجاح!",
+      "fetch_error": "فشل في جلب المعاملات",
+      "session_expired": "انتهت الجلسة. يرجى تسجيل الدخول مجدداً."
+    },
+    "stats": {
+      "wallet_title": "في محفظتك",
+      "wallet_subtitle": "صافي القيمة المتاحة",
+      "wallet_badge": "ارتفاع بنسبة {{rate}}% عن الشهر الماضي",
+      "income_title": "دخل هذا الشهر",
+      "income_subtitle": "الإيرادات والتدفقات الواردة",
+      "income_badge": "{{rate}}% تدفق وارد",
+      "expense_title": "مصاريف هذا الشهر",
+      "expense_subtitle": "النفقات والفواتير",
+      "expense_badge": "-3.1% من الهدف المحدد",
+      "savings_title": "المدخرات والاحتياطي",
+      "savings_subtitle": "معدل الادخار الصافي",
+      "savings_badge": "معدل ادخار {{rate}}%"
+    },
+    "transactions": {
+      "title": "المعاملات الأخيرة",
+      "subtitle": "النشاط المالي والتدفقات النقدية في الوقت الفعلي",
+      "filter_all": "الكل",
+      "filter_expense": "مصاريف",
+      "filter_income": "دخل",
+      "view_all": "عرض الكل",
+      "empty": "لا توجد معاملات مطابقة للبحث أو التصفية.",
+      "type_income": "دخل",
+      "type_expense": "مصروف",
+      "status_completed": "مكتملة",
+      "status_pending": "معلقة",
+      "view_details_tooltip": "انقر لعرض تفاصيل المعاملة والإيصال",
+      "default_title": "معاملة"
+    },
+    "budget": {
+      "title": "متابعة الميزانية الشهرية",
+      "subtitle": "تتبع حدود النفقات والمبلغ المتبقي",
+      "spent_so_far": "تم إنفاقه حتى الآن",
+      "remaining": "المتبقي",
+      "status_on_track": "في المسار الصحيح",
+      "status_approaching": "يقترب من الحد",
+      "status_critical": "حد حرج",
+      "status_over": "تجاوز الميزانية",
+      "top_categories": "ميزانيات أهم الفئات",
+      "cap": "الحد الأقصى:"
+    },
+    "budget_modal": {
+      "title": "تعديل الميزانية الشهرية",
+      "subtitle": "تحديد السقف الإجمالي للإنفاق والحدود الفردية للفئات",
+      "total_limit": "الحد الشهري الإجمالي",
+      "category_ceilings": "سقف الفئات",
+      "cancel": "إلغاء",
+      "save": "حفظ الميزانية",
+      "error_invalid": "يرجى إدخال ميزانية شهرية إجمالية صحيحة",
+      "success_updated": "تم تحديث إعدادات الميزانية بنجاح!"
+    },
+    "categories": {
+      "food": "الطعام والبقالة",
+      "housing": "السكن والإيجار",
+      "transport": "المواصلات والوقود",
+      "shopping": "التسوق والمشتريات",
+      "entertainment": "الترفيه",
+      "health": "الصحة والعناية",
+      "utilities": "الفواتير والخدمات",
+      "other": "أخرى"
+    },
+    "sidebar": {
+      "brand_subtitle": "متتبع الثروة الذكي",
+      "overview": "نظرة عامة",
+      "transactions": "المعاملات",
+      "management": "الإدارة",
+      "categories": "الفئات",
+      "payment_methods": "طرق الدفع",
+      "budgets": "الميزانيات",
+      "notifications": "الإشعارات",
+      "reports": "التحليلات والتقارير",
+      "settings": "الإعدادات",
+      "sign_out": "تسجيل الخروج",
+      "logout_success": "تم تسجيل الخروج بنجاح",
+      "logout_error": "فشل تسجيل الخروج"
+    },
+    "notifications_popover": {
+      "button_aria": "الإشعارات ({{count}} غير مقروءة)",
+      "title": "الإشعارات ({{count}})",
+      "mark_all_read": "تحديد الكل كمقروء",
+      "empty": "لا توجد إشعارات حتى الآن.",
+      "default_title": "إشعار",
+      "mark_as_read": "تحديد كمقروء",
+      "delete": "حذف الإشعار",
+      "view_all": "عرض الكل",
+      "loading": "جارٍ تحميل الإشعارات"
+    }
   }
 }

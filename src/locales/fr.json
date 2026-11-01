@@ -452,5 +452,101 @@
     "terms_of_service": "Conditions d'utilisation",
     "copyright": "© 2026 Spendora. Tous droits réservés.",
     "tagline": "Maîtrisez votre argent. Prenez les bonnes décisions."
+  },
+  "admin_dashboard": {
+    "header": {
+      "welcome": "Bon retour",
+      "refresh_title": "Actualiser les statistiques",
+      "refresh_success": "Indicateurs du tableau de bord actualisés avec succès !",
+      "fetch_error": "Échec de la récupération des transactions",
+      "session_expired": "Session expirée. Veuillez vous reconnecter."
+    },
+    "stats": {
+      "wallet_title": "dans votre portefeuille",
+      "wallet_subtitle": "Valeur nette disponible",
+      "wallet_badge": "{{rate}}% par rapport au mois dernier",
+      "income_title": "Revenus de ce mois",
+      "income_subtitle": "Recettes et rentrées",
+      "income_badge": "{{rate}}% de rentrées",
+      "expense_title": "Dépenses de ce mois",
+      "expense_subtitle": "Sorties et factures",
+      "expense_badge": "-3,1 % dépensé par rapport à l'objectif",
+      "savings_title": "Épargne et réserve",
+      "savings_subtitle": "Taux d'épargne net",
+      "savings_badge": "{{rate}}% de taux d'épargne"
+    },
+    "transactions": {
+      "title": "Transactions récentes",
+      "subtitle": "Activité financière et flux de trésorerie en temps réel",
+      "filter_all": "Tout",
+      "filter_expense": "Dépenses",
+      "filter_income": "Revenus",
+      "view_all": "Voir tout",
+      "empty": "Aucune transaction ne correspond à votre filtre.",
+      "type_income": "Revenu",
+      "type_expense": "Dépense",
+      "status_completed": "Terminé",
+      "status_pending": "En attente",
+      "view_details_tooltip": "Cliquer pour voir le détail et le reçu",
+      "default_title": "Transaction"
+    },
+    "budget": {
+      "title": "Suivi du budget mensuel",
+      "subtitle": "Suivez les plafonds de dépenses et la marge restante",
+      "spent_so_far": "Dépensé jusqu'ici",
+      "remaining": "restant",
+      "status_on_track": "En bonne voie",
+      "status_approaching": "Limite proche",
+      "status_critical": "Limite critique",
+      "status_over": "Budget dépassé",
+      "top_categories": "Plafonds par catégorie principale",
+      "cap": "Plafond :"
+    },
+    "budget_modal": {
+      "title": "Ajuster le budget mensuel",
+      "subtitle": "Définir le plafond global et les limites par catégorie",
+      "total_limit": "Plafond mensuel total",
+      "category_ceilings": "Plafonds par catégorie",
+      "cancel": "Annuler",
+      "save": "Enregistrer le budget",
+      "error_invalid": "Veuillez entrer un budget mensuel total valide",
+      "success_updated": "Paramètres du budget mis à jour avec succès !"
+    },
+    "categories": {
+      "food": "Alimentation et courses",
+      "housing": "Logement et loyer",
+      "transport": "Transport et carburant",
+      "shopping": "Shopping et achats",
+      "entertainment": "Divertissement",
+      "health": "Santé et bien-être",
+      "utilities": "Factures et services",
+      "other": "Autre"
+    },
+    "sidebar": {
+      "brand_subtitle": "Gestionnaire de patrimoine intelligent",
+      "overview": "Vue d'ensemble",
+      "transactions": "Transactions",
+      "management": "Gestion",
+      "categories": "Catégories",
+      "payment_methods": "Moyens de paiement",
+      "budgets": "Budgets",
+      "notifications": "Notifications",
+      "reports": "Analyses et rapports",
+      "settings": "Paramètres",
+      "sign_out": "Déconnexion",
+      "logout_success": "Déconnexion réussie",
+      "logout_error": "Échec de la déconnexion"
+    },
+    "notifications_popover": {
+      "button_aria": "Notifications ({{count}} non lues)",
+      "title": "Notifications ({{count}})",
+      "mark_all_read": "Tout marquer comme lu",
+      "empty": "Aucune notification pour l'instant.",
+      "default_title": "Notification",
+      "mark_as_read": "Marquer comme lu",
+      "delete": "Supprimer la notification",
+      "view_all": "Voir tout",
+      "loading": "Chargement des notifications"
+    }
   }
 }

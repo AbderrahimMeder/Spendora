@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Target, Check } from 'lucide-react';
 import { CURRENCIES } from '@/utils/dashboardUtils';
 import { getCategoryDetails } from '@/utils/dashboardUtils';
@@ -20,7 +21,8 @@ export default function BudgetModal({
   currency = 'USD',
   onSave
 }: BudgetModalProps) {
-  if (!isOpen) return null;
+  const { t } = useTranslation();
+
 
   const [totalBudget, setTotalBudget] = useState(currentBudget.totalBudget || 4500);
   const [categoryBudgets, setCategoryBudgets] = useState<Record<string, number>>({
@@ -48,7 +50,7 @@ export default function BudgetModal({
     e.preventDefault();
     const numTotal = Number(totalBudget);
     if (isNaN(numTotal) || numTotal <= 0) {
-      toast.error('Please enter a valid total monthly budget');
+      toast.error(t('admin_dashboard.budget_modal.error_invalid'));
       return;
     }
 
@@ -57,11 +59,13 @@ export default function BudgetModal({
       categoryBudgets
     });
 
-    toast.success('Budget settings updated successfully!');
+    toast.success(t('admin_dashboard.budget_modal.success_updated'));
     onClose();
   };
 
   const categories = Object.keys(categoryBudgets);
+
+  if (!isOpen) return null;
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -86,10 +90,10 @@ export default function BudgetModal({
             </div>
             <div>
               <h3 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#ffffff', margin: 0 }}>
-                Adjust Monthly Budget
+                {t('admin_dashboard.budget_modal.title')}
               </h3>
               <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', margin: 0 }}>
-                Set overall spend ceiling and individual category limits
+                {t('admin_dashboard.budget_modal.subtitle')}
               </p>
             </div>
           </div>
@@ -107,7 +111,7 @@ export default function BudgetModal({
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Total Budget Input */}
             <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Total Monthly Limit ({currencyObj.symbol})</label>
+              <label className="form-label">{t('admin_dashboard.budget_modal.total_limit')} ({currencyObj.symbol})</label>
               <input
                 type="number"
                 step="50"
@@ -123,7 +127,7 @@ export default function BudgetModal({
             {/* Category Budgets Divider */}
             <div>
               <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
-                Category Ceilings
+                {t('admin_dashboard.budget_modal.category_ceilings')}
               </div>
 
               <div style={{
@@ -153,7 +157,7 @@ export default function BudgetModal({
                         color: details.color,
                         marginBottom: '0.3rem',
                       }}>
-                        {details.name}
+                        {t(`admin_dashboard.categories.${catKey.replace('cat-', '')}`, details.name)}
                       </label>
                       <div style={{ position: 'relative' }}>
                         <input
@@ -179,7 +183,7 @@ export default function BudgetModal({
               onClick={onClose}
               className="btn btn-secondary"
             >
-              Cancel
+              {t('admin_dashboard.budget_modal.cancel')}
             </button>
             <button
               type="submit"
@@ -187,7 +191,7 @@ export default function BudgetModal({
               style={{ gap: '0.4rem' }}
             >
               <Check size={16} />
-              <span>Save Budget</span>
+              <span>{t('admin_dashboard.budget_modal.save')}</span>
             </button>
           </div>
         </form>

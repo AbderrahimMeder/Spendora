@@ -1,51 +1,31 @@
 'use client';
+
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowUpDown,
-  Search,
   ExternalLink,
-  Plus,
-  Utensils,
-  Home,
-  Car,
-  ShoppingBag,
-  Film,
-  HeartPulse,
-  Zap,
-  GraduationCap,
-  Briefcase,
-  Laptop,
-  TrendingUp,
-  Coins,
-  CircleEllipsis,
   CheckCircle2,
   Clock,
   ChevronRight,
-  LucideIcon
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getCategoryDetails, } from '@/utils/dashboardUtils';
 import { Transaction } from '@/types';
-import { useAuth } from '@/hooks/auth';
-
 
 interface RecentTransactionsProps {
   transactions?: Transaction[];
   currency?: string;
   rate: number;
-  onAddTransaction?: (type: 'expense' | 'income') => void;
-  onViewAll?: () => void;
 }
 
 export default function RecentTransactions({
   transactions = [],
-  onAddTransaction,
   rate,
   currency,
 }: RecentTransactionsProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { t } = useTranslation();
   const [filterType, setFilterType] = useState<string>('ALL');
 
   const filtered = transactions.filter((tx) => {
@@ -77,11 +57,11 @@ export default function RecentTransactions({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <ArrowUpDown size={18} color="var(--accent-primary)" />
             <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
-              Recent Transactions
+              {t('admin_dashboard.transactions.title')}
             </h2>
           </div>
           <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', margin: 0 }}>
-            Real-time financial activity and cash flows
+            {t('admin_dashboard.transactions.subtitle')}
           </p>
         </div>
 
@@ -94,29 +74,38 @@ export default function RecentTransactions({
             borderRadius: 'var(--radius-md)',
             border: '1px solid var(--border-subtle)',
           }}>
-            {(['all', 'expense', 'income'] as const).map((t) => (
-              <button
-                key={t.toLocaleUpperCase()}
-                onClick={() => setFilterType(t.toLocaleUpperCase())}
-                style={{
-                  background: filterType === t.toLocaleUpperCase() ? 'var(--accent-primary)' : 'transparent',
-                  color: filterType === t.toLocaleUpperCase() ? '#000000' : 'var(--text-secondary)',
-                  fontWeight: filterType === t.toLocaleUpperCase() ? '700' : '500',
-                  fontSize: '0.725rem',
-                  padding: '0.35rem 0.7rem',
-                  borderRadius: '5px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textTransform: 'capitalize',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {t}
-              </button>
-            ))}
+            {(['all', 'expense', 'income'] as const).map((tab) => {
+              const label = tab === 'all'
+                ? t('admin_dashboard.transactions.filter_all')
+                : tab === 'expense'
+                ? t('admin_dashboard.transactions.filter_expense')
+                : t('admin_dashboard.transactions.filter_income');
+              return (
+                <button
+                  key={tab.toLocaleUpperCase()}
+                  type="button"
+                  onClick={() => setFilterType(tab.toLocaleUpperCase())}
+                  style={{
+                    background: filterType === tab.toLocaleUpperCase() ? 'var(--accent-primary)' : 'transparent',
+                    color: filterType === tab.toLocaleUpperCase() ? '#000000' : 'var(--text-secondary)',
+                    fontWeight: filterType === tab.toLocaleUpperCase() ? '700' : '500',
+                    fontSize: '0.725rem',
+                    padding: '0.35rem 0.7rem',
+                    borderRadius: '5px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textTransform: 'capitalize',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           <button
+            type="button"
             className="btn btn-secondary"
             style={{
               padding: '0.4rem 0.75rem',
@@ -124,12 +113,13 @@ export default function RecentTransactions({
               gap: '0.3rem',
             }}
           >
-            <Link href="/transactions" style={{ textDecoration: 'none', color: 'inherit', padding: 0 }} >View All</Link>
+            <Link href="/transactions" style={{ textDecoration: 'none', color: 'inherit', padding: 0 }}>
+              {t('admin_dashboard.transactions.view_all')}
+            </Link>
             <ExternalLink size={13} />
           </button>
         </div>
       </div>
-
 
       {/* Transactions List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
@@ -142,7 +132,7 @@ export default function RecentTransactions({
             border: '1px dashed var(--border-subtle)',
           }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
-              No transactions match your search or filter.
+              {t('admin_dashboard.transactions.empty')}
             </p>
           </div>
         ) : (
@@ -174,14 +164,14 @@ export default function RecentTransactions({
                   e.currentTarget.style.borderColor = 'var(--border-subtle)';
                   e.currentTarget.style.transform = 'translateX(0)';
                 }}
-                title="Click to view full transaction details & receipt"
+                title={t('admin_dashboard.transactions.view_details_tooltip')}
               >
                 {/* Left: Icon & Meta */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ fontSize: '0.875rem', fontWeight: '700', color: '#ffffff' }}>
-                        {tx.title || tx.description || 'Transaction'}
+                        {tx.title || tx.description || t('admin_dashboard.transactions.default_title')}
                       </span>
                       <span style={{
                         fontSize: '0.675rem',
@@ -192,7 +182,7 @@ export default function RecentTransactions({
                         fontWeight: '700',
                         textTransform: 'uppercase',
                       }}>
-                        {isIncome ? 'Income' : 'Expense'}
+                        {isIncome ? t('admin_dashboard.transactions.type_income') : t('admin_dashboard.transactions.type_expense')}
                       </span>
                     </div>
 
@@ -204,16 +194,13 @@ export default function RecentTransactions({
                           <span>{tx.time}</span>
                         </>
                       )}
-                      <span>•</span>
-                      <span style={{ color: 'var(--text-secondary)' }}>{'g'}</span>
-
                     </div>
                   </div>
                 </div>
 
                 {/* Right: Amount & Status & Chevron */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                  <div style={{ textAlign: 'end', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
                     <div style={{
                       fontSize: '0.95rem',
                       fontWeight: '800',
@@ -232,7 +219,7 @@ export default function RecentTransactions({
                       color: tx.status === 'Pending' ? '#eab308' : '#10b981',
                     }}>
                       {tx.status === 'Pending' ? <Clock size={10} /> : <CheckCircle2 size={10} />}
-                      <span>{tx.status || 'Completed'}</span>
+                      <span>{tx.status === 'Pending' ? t('admin_dashboard.transactions.status_pending') : t('admin_dashboard.transactions.status_completed')}</span>
                     </div>
                   </div>
                   <ChevronRight size={16} color="var(--text-muted)" />
@@ -245,4 +232,3 @@ export default function RecentTransactions({
     </div>
   );
 }
-

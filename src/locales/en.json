@@ -452,5 +452,101 @@
     "terms_of_service": "Terms of Service",
     "copyright": "© 2026 Spendora. All rights reserved.",
     "tagline": "Know your money. Own your decisions."
+  },
+  "admin_dashboard": {
+    "header": {
+      "welcome": "Welcome back",
+      "refresh_title": "Refresh statistics",
+      "refresh_success": "Dashboard metrics refreshed successfully!",
+      "fetch_error": "Failed to fetch transactions",
+      "session_expired": "Session expired. Please log in again."
+    },
+    "stats": {
+      "wallet_title": "in your wallet",
+      "wallet_subtitle": "Available Net Worth",
+      "wallet_badge": "{{rate}}% up from last month",
+      "income_title": "This month Income",
+      "income_subtitle": "Revenue & Inflows",
+      "income_badge": "{{rate}}% inflow",
+      "expense_title": "This Month Expense",
+      "expense_subtitle": "Outflows & Bills",
+      "expense_badge": "-3.1% spent vs target",
+      "savings_title": "Savings & Buffer",
+      "savings_subtitle": "Net Stash Rate",
+      "savings_badge": "{{rate}}% savings rate"
+    },
+    "transactions": {
+      "title": "Recent Transactions",
+      "subtitle": "Real-time financial activity and cash flows",
+      "filter_all": "All",
+      "filter_expense": "Expense",
+      "filter_income": "Income",
+      "view_all": "View All",
+      "empty": "No transactions match your search or filter.",
+      "type_income": "Income",
+      "type_expense": "Expense",
+      "status_completed": "Completed",
+      "status_pending": "Pending",
+      "view_details_tooltip": "Click to view full transaction details & receipt",
+      "default_title": "Transaction"
+    },
+    "budget": {
+      "title": "Monthly Budget Progress",
+      "subtitle": "Track monthly expense limits and remaining headroom",
+      "spent_so_far": "Spent so far",
+      "remaining": "remaining",
+      "status_on_track": "On Track",
+      "status_approaching": "Approaching Limit",
+      "status_critical": "Critical Limit",
+      "status_over": "Over Budget",
+      "top_categories": "Top Category Budgets",
+      "cap": "Cap:"
+    },
+    "budget_modal": {
+      "title": "Adjust Monthly Budget",
+      "subtitle": "Set overall spend ceiling and individual category limits",
+      "total_limit": "Total Monthly Limit",
+      "category_ceilings": "Category Ceilings",
+      "cancel": "Cancel",
+      "save": "Save Budget",
+      "error_invalid": "Please enter a valid total monthly budget",
+      "success_updated": "Budget settings updated successfully!"
+    },
+    "categories": {
+      "food": "Food & Groceries",
+      "housing": "Housing & Rent",
+      "transport": "Transport & Fuel",
+      "shopping": "Shopping & Retail",
+      "entertainment": "Entertainment",
+      "health": "Health & Wellness",
+      "utilities": "Utilities",
+      "other": "Other"
+    },
+    "sidebar": {
+      "brand_subtitle": "Smart Wealth Tracker",
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "management": "Management",
+      "categories": "Categories",
+      "payment_methods": "Payment Methods",
+      "budgets": "Budgets",
+      "notifications": "Notifications",
+      "reports": "Analytics & Reports",
+      "settings": "Settings",
+      "sign_out": "Sign Out",
+      "logout_success": "Logout successful",
+      "logout_error": "Logout failed"
+    },
+    "notifications_popover": {
+      "button_aria": "Notifications ({{count}} unread)",
+      "title": "Notifications ({{count}})",
+      "mark_all_read": "Mark all read",
+      "empty": "No notifications yet.",
+      "default_title": "Notification",
+      "mark_as_read": "Mark as read",
+      "delete": "Delete notification",
+      "view_all": "View all",
+      "loading": "Loading notifications"
+    }
   }
 }
