@@ -2,16 +2,14 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Wallet, Menu, X, ArrowRight } from 'lucide-react';
-import { DashboardItems } from '@/config/dashboard-link';
+import { NavLinks } from '@/config/dashboard-link';
 import { useAuth } from '@/hooks/auth';
 import { User } from '@/types';
 
 export default function Navbar({ user }: User) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileToggle, setProfileToggle] = useState(false);
-  const dashboardLinks = DashboardItems;
   const { logout } = useAuth();
-
   const navLinks = [
     { label: 'About', href: '/about' },
     { label: 'Features', href: '/features' },
@@ -32,7 +30,7 @@ export default function Navbar({ user }: User) {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '1.1rem 1.5rem',
+        padding: '1.1rem ',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -63,7 +61,7 @@ export default function Navbar({ user }: User) {
         </Link>
 
         {/* Desktop Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }} className="desktop-links">
+        <div style={{ display: 'flex', position: 'relative', alignItems: 'center', gap: '1.75rem', left: '-50px' }} className="desktop-links">
           {navLinks.map((link) => {
             const isInternalPage = link.href.startsWith('/');
             return isInternalPage && !link.href.startsWith('/#') ? (
@@ -76,8 +74,9 @@ export default function Navbar({ user }: User) {
                   fontSize: '0.875rem',
                   fontWeight: '600',
                   transition: 'color 0.15s ease',
+
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(16, 185, 129, 0.50)')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
               >
                 {link.label}
@@ -148,7 +147,7 @@ export default function Navbar({ user }: User) {
                 <img
                   src={user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"}
                   alt={user?.name || "User"}
-                  onClick={() => setProfileToggle((prev) => !prev)}
+                  onClick={() => setProfileToggle(!profileToggle)}
                   style={{
                     width: "36px",
                     height: "36px",
@@ -208,12 +207,12 @@ export default function Navbar({ user }: User) {
                     </div>
 
                     {/* Links */}
-                    {dashboardLinks.map((item) => {
+                    {NavLinks.map((item) => {
                       const Icon = item.icon;
 
                       return (
                         <Link
-                          href={item.href}
+                          href={item.href??'/'}
                           key={item.label}
                           onClick={() => setProfileToggle(false)}
                           style={{

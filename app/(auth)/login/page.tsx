@@ -46,9 +46,11 @@ export default function Login({ onSwitchToForgotPassword }: LoginProps) {
                 })
             });
             const data = await res.json();
-            router.push('/error?code=500')
             const islimiting = res.headers.get('Retry-After')??0!==0
-            if(islimiting && data.status===429)return toast.warning(`Please try again after ${res.headers.get("Retry-After")} seconds`)
+            if(islimiting && data.status===429){
+                toast.warning(`Please try again after ${res.headers.get("Retry-After")} seconds`)
+                return;
+            }
             if (data.status === 200) {
                 toast.success('welcome back');
                 router.push('/dashboard');

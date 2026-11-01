@@ -12,7 +12,7 @@ import { getExchangeRate } from '@/utils/exchange';
 import { LoadingTransaction } from '@/components/ui/loading';
 
 
-export  function Dashboard({user, token}:{user:User,token:string}) {
+export function Dashboard({ user, token }: { user: User, token: string }) {
     const APP_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!
     const route = useRouter();
     const [loading, setLoading] = useState(false);
@@ -27,18 +27,19 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                if(!response.ok){
+                if (!response.ok) {
                     route.push('/login')
                     toast.error('Failed to fetch transactions')
                 }
                 const data = await response.json();
-                
+
                 if (data.status == 401) {
                     toast.error('Session expired. Please log in again.');
                     route.push('/login');
                 }
                 if (data.status == 200) {
-                    setTransactions(data.transactions);
+                    setTransactions(data.transactions??[])
+                    console.log(data.transactions)
                 }
                 setLoading(false);
             } catch (error) {
@@ -55,14 +56,35 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
     const [transactions, setTransactions] = useState<Transaction[]>([])
 
     const [budget, setBudget] = useState<Budget>();
-    const [rate, setrate] = useState(1);
+    const [rate, setrate] = useState<number>(1);
+
     useEffect(() => {
-        const fetchrate = async () => {
-            const rate = await getExchangeRate(user?.currency || "USD");
-            setrate(rate)
-        }
-        fetchrate();
-    }, [user])
+        let cancelled = false;
+
+        const fetchRate = async () => {
+            try {
+                const currency = user?.currency || "USD";
+                const rate = await getExchangeRate(currency);
+
+                if (!cancelled) {
+                    setrate(rate);
+                }
+            } catch (error) {
+                console.error("Failed to fetch exchange rate:", error);
+
+                if (!cancelled) {
+                    setrate(1); // خاص state ديال rate يسمح بـ null
+                }
+            }
+        };
+
+        fetchRate();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user?.currency]);
+
     const stats = useMemo(() => {
         const now = new Date();
         const year = now.getFullYear();
@@ -82,16 +104,16 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
         const totalIncomeThisMouth = transactions
             .filter((t: Transaction) => t.type === "INCOME" && t.date.startsWith(`${year}-${month}`))
             .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
-        const totalExpensesThisMouth = transactions.filter(
-            (t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${year}-${month}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalExpensesThisMouth = transactions
+            .filter((t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${year}-${month}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
         //last month 
-        const totalIncomelastMonth = transactions.filter(
-            (t: Transaction) => (t.type === "INCOME") && t.date.startsWith(`${previousMonthStr}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
-        const totalExpenseslastMonth = transactions.filter(
-            (t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${previousMonthStr}`)
-        ).reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalIncomelastMonth = transactions
+            .filter((t: Transaction) => (t.type === "INCOME") && t.date.startsWith(`${previousMonthStr}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
+        const totalExpenseslastMonth = transactions
+            .filter((t: Transaction) => (t.type === "EXPENSE") && t.date.startsWith(`${previousMonthStr}`))
+            .reduce((acc: number, t: Transaction) => acc + Number(t.amount), 0);
         const savings = totalIncomeThisMouth - totalExpensesThisMouth
         const savingsLastMounth = totalIncomelastMonth - totalExpenseslastMonth
         const savingsRate = Number(savingsLastMounth) > 0
@@ -100,10 +122,10 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
         const Incomerate = Number(totalIncomeThisMouth) / Number(totalIncome) * 100
         const totalbalancerate = Number(totalIncomeThisMouth - totalExpensesThisMouth) / Number(totalIncome - totalExpenses) * 100
         return {
-            totalBalance: totalIncome * rate - totalExpenses * rate,
+            totalBalance: (totalIncome -totalExpenses) * rate,
             totalIncome: totalIncomeThisMouth * rate,
             totalExpenses: totalExpensesThisMouth * rate,
-            savings: savings * rate,
+            savings: savings *rate,
             savingsRate,
             transactionCount: transactions.length,
             Incomerate,
@@ -111,8 +133,7 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
         };
     }, [transactions]);
     const [isBudgetModalOpen, setIsBudgetModalOpen] = useState<boolean>(false);
-    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);   
     // Refresh handler
     const handleRefresh = () => {
         setIsRefreshing(true);
@@ -123,13 +144,13 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
     };
 
     // Computed financial stats
-    const categorySpending:any[] = [];
+    const categorySpending: any[] = [];
 
     const userName = user?.name || '';
 
     return (
         <>
-        {/* 1. Overview Header with live controls */}
+            {/* 1. Overview Header with live controls */}
             {loading ?
                 <LoadingTransaction hight={200} />
                 :
@@ -213,7 +234,7 @@ export  function Dashboard({user, token}:{user:User,token:string}) {
                     </>
                 )}
         </>
-            
+
 
     );
 }

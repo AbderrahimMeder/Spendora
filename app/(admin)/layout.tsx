@@ -15,7 +15,7 @@ export default async function AdminLayout({
     return (
         <>
             {
-                <DashboardLayout user={user}>
+                <DashboardLayout user={user} token={token}>
                     {children}
                 </DashboardLayout>
             }
