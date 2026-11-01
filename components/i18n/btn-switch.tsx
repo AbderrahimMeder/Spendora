@@ -33,7 +33,7 @@ export default function LanguageSwitcher() {
           focus:border-emerald-500
           focus:ring-2 focus:ring-emerald-500/10
           rounded-xl
-          pl-10 pr-10 py-2.5
+          pl-10 pr-10 py-1.5
           text-sm font-medium
           outline-none
           cursor-pointer

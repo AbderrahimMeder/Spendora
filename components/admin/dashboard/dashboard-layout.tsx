@@ -99,7 +99,8 @@ export default function DashboardLayout({ children, user, token }: DashboardLayo
 
   const navLinks = NavLinks;
 
-  const getNavLabel = (label: string) => {
+ const getNavLabel = (label: string) => {
+    
     switch (label) {
       case 'Overview':
         return t('admin_dashboard.sidebar.overview');
@@ -115,14 +116,14 @@ export default function DashboardLayout({ children, user, token }: DashboardLayo
         return t('admin_dashboard.sidebar.budgets');
       case 'Notifications':
         return t('admin_dashboard.sidebar.notifications');
-      case 'Analytics & Reports':
+      case 'Reports':
         return t('admin_dashboard.sidebar.reports');
       case 'Settings':
         return t('admin_dashboard.sidebar.settings');
       default:
         return label;
     }
-  };  
+  }; 
   const userInitial = user?.name
     ? user.name.charAt(0).toUpperCase()
     : user?.email
@@ -461,6 +462,7 @@ export default function DashboardLayout({ children, user, token }: DashboardLayo
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
+            flexDirection:collapsed?'column':'row',
             padding: collapsed ? '0' : '0.4rem',
             justifyContent: collapsed ? 'center' : 'flex-start',
           }}>
@@ -490,18 +492,12 @@ export default function DashboardLayout({ children, user, token }: DashboardLayo
                 </div>
               </div>
             )}
-          </div>
-
-          <button
-            type="button"
+            <div
             onClick={handleLogout}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: collapsed ? 'center' : 'flex-start',
               gap: '0.75rem',
-              width: '100%',
-              padding: '0.65rem 0.85rem',
+              width:collapsed? '76%':'15%',
+              padding: '0.65rem 0.65rem',
               background: 'rgba(239, 68, 68, 0.08)',
               border: '1px solid rgba(239, 68, 68, 0.2)',
               borderRadius: 'var(--radius-md)',
@@ -521,9 +517,12 @@ export default function DashboardLayout({ children, user, token }: DashboardLayo
             }}
             title="Sign Out"
           >
-            <LogOut size={16} />
-            {!collapsed && <span>{t('navbar.logout')}</span>}
-          </button>
+            <LogOut size={14} />
+            
+            </div>
+          </div>
+
+          
         </div>
       </aside>
 

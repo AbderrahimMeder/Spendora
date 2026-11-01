@@ -33,7 +33,7 @@ export const NavLinks:DashboardItem[] = [
     },
     { label: 'Budgets', href: '/budgets', icon: Target, badge: null },
     { label: "Notifications", href: "/notifications", icon: Bell, badge: null },
-    { label: 'Analytics & Reports', href: '/reports', icon: BarChart3, badge: '21' },
+    { label: 'Reports', href: '/reports', icon: BarChart3, badge: '21' },
     { label: 'Settings', href: '/setting', icon: Settings, badge: null },
   ];
 
