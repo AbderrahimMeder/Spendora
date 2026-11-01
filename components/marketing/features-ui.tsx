@@ -150,7 +150,7 @@ export function FeaturesUI() {
             }}
           >
             <Sparkles size={14} />
-            <span>Finora Features Suite</span>
+            <span>Spendora Features Suite</span>
           </div>
 
           <h1
@@ -176,7 +176,7 @@ export function FeaturesUI() {
               margin: '0 auto 2.5rem auto',
             }}
           >
-            From everyday expenses to accounts, subscriptions, budgets, and reports — Finora brings your financial activity together in one clear place.
+            From everyday expenses to accounts, subscriptions, budgets, and reports — Spendora brings your financial activity together in one clear place.
           </p>
 
           <div
@@ -206,7 +206,7 @@ export function FeaturesUI() {
             </a>
           </div>
 
-          {/* Premium Finora Dashboard Visual */}
+          {/* Premium Spendora Dashboard Visual */}
           <div
             className="glass-card"
             style={{
@@ -235,7 +235,7 @@ export function FeaturesUI() {
                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
                 <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  finora.app/overview
+                  spendora.com/overview
                 </span>
               </div>
               <span className="badge badge-green">One Unified Workspace</span>
@@ -306,7 +306,7 @@ export function FeaturesUI() {
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.65', marginBottom: '1.5rem' }}>
-              Stop checking different places to understand your money. Bring your bank accounts, savings, and physical cash together with Finora.
+              Stop checking different places to understand your money. Bring your bank accounts, savings, and physical cash together with Spendora.
             </p>
 
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.875rem', color: '#ffffff' }}>
@@ -395,7 +395,7 @@ export function FeaturesUI() {
               </h2>
 
               <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.65', marginBottom: '1.5rem' }}>
-                Every purchase tells a story. Finora helps you understand yours with full context including amount, category, merchant, date, account, and notes.
+                Every purchase tells a story. Spendora helps you understand yours with full context including amount, category, merchant, date, account, and notes.
               </p>
             </div>
           </div>
@@ -594,7 +594,7 @@ export function FeaturesUI() {
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '640px', margin: '0 auto' }}>
-              Small payments can add up. Finora helps you see the full cost of all recurring subscriptions.
+              Small payments can add up. Spendora helps you see the full cost of all recurring subscriptions.
             </p>
           </div>
 
@@ -667,7 +667,7 @@ export function FeaturesUI() {
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link href="/register" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}>
-                <span>Start Using Finora — Free</span>
+                <span>Start Using Spendora — Free</span>
                 <ArrowRight size={18} />
               </Link>
             </div>

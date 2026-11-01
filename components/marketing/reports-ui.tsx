@@ -135,7 +135,7 @@ export function ReportsUI() {
             }}
           >
             <BarChart3 size={15} />
-            <span>Finora Financial Intelligence & Reports</span>
+            <span>Spendora Financial Intelligence & Reports</span>
           </div>
 
           {/* Headline */}
@@ -352,7 +352,7 @@ export function ReportsUI() {
             </h2>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '640px', margin: '0 auto' }}>
-              Raw bank statements give you noise. Finora transforms messy, unorganized debit lines into structured behavioral clarity.
+              Raw bank statements give you noise. Spendora transforms messy, unorganized debit lines into structured behavioral clarity.
             </p>
           </div>
 
@@ -394,7 +394,7 @@ export function ReportsUI() {
             {/* Clear insight */}
             <div className="glass-card" style={{ padding: '2rem', background: '#0e0e0e', borderRadius: 'var(--radius-lg)', border: '1px solid var(--accent-border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--accent-primary)', textTransform: 'uppercase' }}>After: Finora Intelligence</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--accent-primary)', textTransform: 'uppercase' }}>After: Spendora Intelligence</span>
                 <span className="badge badge-green">Meaningful Clarity</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -466,7 +466,7 @@ export function ReportsUI() {
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
               <Link href="/register" className="btn btn-primary" style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}>
-                <span>Start for Free — Enter Finora</span>
+                <span>Start for Free — Enter Spendora</span>
                 <ArrowRight size={18} />
               </Link>
             </div>

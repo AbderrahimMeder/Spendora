@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/CurrentUser';
 import type { Metadata } from 'next';
 import { User } from '@/types';
 export const metadata: Metadata = {
-  title: 'Finora',
+  title: 'Spnedora',
   description: 'Personal finance management',
 };
 
@@ -17,10 +17,10 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body>
-      <Navbar user={user} />
-      {children}
-      <Footer />
-    </body>
+        <Navbar user={user} />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

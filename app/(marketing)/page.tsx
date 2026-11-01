@@ -50,7 +50,7 @@ export default function Home() {
   // Testimonials Data
   const testimonials: TestimonialItem[] = [
     {
-      quote: "Finora finally helped me understand where my money goes every month. No clutter, just instant clarity.",
+      quote: "spnodra finally helped me understand where my money goes every month. No clutter, just instant clarity.",
       name: "Yassine E.",
       role: "Young Employee",
       city: "Casablanca",
@@ -98,12 +98,12 @@ export default function Home() {
   // FAQ Data
   const faqs: FaqItem[] = [
     {
-      q: 'What is Finora?',
-      a: 'Finora is a platform that helps you understand and manage your personal financial activity in one unified place.',
+      q: 'What is Spendora?',
+      a: 'Spendora is a platform that helps you understand and manage your personal financial activity in one unified place.',
     },
     {
-      q: 'Is Finora free?',
-      a: 'Yes. Finora is currently completely free to use.',
+      q: 'Is Spendora free?',
+      a: 'Yes. Spendora is currently completely free to use.',
     },
     {
       q: 'Can I manage multiple accounts?',
@@ -115,19 +115,19 @@ export default function Home() {
     },
     {
       q: 'Can I track subscriptions?',
-      a: 'Yes. Finora helps you keep track of recurring payments, renewal dates, and total subscription costs.',
+      a: 'Yes. Spendora helps you keep track of recurring payments, renewal dates, and total subscription costs.',
     },
     {
       q: 'Can I create budgets?',
       a: 'Yes. You can set category spending limits and track your remaining amounts in real time.',
     },
     {
-      q: 'Can I use Finora on mobile?',
+      q: 'Can I use Spendora on mobile?',
       a: 'The first version is available on the Web with a responsive mobile-friendly interface. Native Android, iOS, and Windows apps are planned for the future.',
     },
     {
       q: 'Is my financial information private?',
-      a: 'Finora is designed with privacy and security in mind, keeping you in full control of your personal information.',
+      a: 'Spendora is designed with privacy and security in mind, keeping you in full control of your personal information.',
     },
   ];
 
@@ -241,7 +241,7 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Visual: Polished Finora Dashboard */}
+            {/* Visual: Polished spendora Dashboard */}
             <div
               className="glass-card"
               style={{
@@ -271,7 +271,7 @@ export default function Home() {
                   <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
                   <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
                   <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                    finora.app/dashboard
+                    spendora.app/dashboard
                   </span>
                 </div>
                 <span className="badge badge-green">Live Financial View</span>
@@ -400,7 +400,7 @@ export default function Home() {
               </h2>
 
               <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.65', marginBottom: '1.5rem' }}>
-                People often have money spread across different bank accounts and cash. Finora brings these sources together so you can understand your overall financial situation without logging into multiple bank portals.
+                People often have money spread across different bank accounts and cash. Spnedora brings these sources together so you can understand your overall financial situation without logging into multiple bank portals.
               </p>
             </div>
 
@@ -490,7 +490,7 @@ export default function Home() {
           </div>
 
           <h2 style={{ fontSize: '2.2rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '2.5rem' }}>
-            What people experience using Finora
+            What people experience using Spnedora
           </h2>
 
           <div
@@ -686,7 +686,7 @@ export default function Home() {
                   className="btn btn-primary"
                   style={{ fontSize: '1rem', padding: '0.85rem 2.2rem', textDecoration: 'none' }}
                 >
-                  <span>Start Using Finora — Free</span>
+                  <span>Start Using Spnedora — Free</span>
                   <ArrowRight size={18} />
                 </Link>
               </div>
@@ -694,9 +694,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      {/* 07. Footer */}
-      <Footer />
     </div>
   );
 }

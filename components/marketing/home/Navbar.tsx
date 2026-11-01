@@ -57,7 +57,7 @@ export default function Navbar({ user }: User) {
           </div>
           <div>
             <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em' }}>
-              Fin<span style={{ color: 'var(--accent-primary)' }}>ora</span>
+              Spend<span style={{ color: 'var(--accent-primary)' }}>ora</span>
             </span>
           </div>
         </Link>
